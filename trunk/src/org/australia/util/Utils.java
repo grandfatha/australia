@@ -76,15 +76,15 @@ public class Utils {
 	
 	
 	
-	public static Individual getIndividualRouletteWheel(SortedSet<IndividualImpl> individuals){
+/*	public static Individual getIndividualRouletteWheel(SortedSet<IndividualImpl> individuals){
 		
-		/*
+		
 		 * 1	1..3
 		 * 2	4..5
 		 * 3	6
 		 * 
 		 * 
-		 */
+		 
 		
 		int size = individuals.size();		// eg 10
 
@@ -111,7 +111,7 @@ public class Utils {
 			helpIndex++;
 		}
 		
-		/*
+		
 		 * beispiel oben
 		 * individuals = 123
 		 * size = 3
@@ -127,7 +127,7 @@ public class Utils {
 		 * 
 		 * 
 		 * 
-		 */
+		 
 
 
 
@@ -140,13 +140,13 @@ public class Utils {
 	public static void main(String[] args) {
 			
 		
-		/*
+		
 		 * 1	1..3
 		 * 2	4..5
 		 * 3	6
 		 * 
 		 * 
-		 */
+		 
 		
 		for (int la = 0; la < 10; la++) {
 			
@@ -182,6 +182,58 @@ public class Utils {
 		}
 
 		
+	}*/
+
+	
+	/**
+	 * returns value with highest chance for lowest value
+	 * @param size range in which values are set 
+	 * @return random value 0..size-1
+	 * @author jochen
+	 */
+	public static int rouletteWheel(int size){
+
+		long cumValue=0;
+		long[] cumValues = new long[size];
+		
+		for(int s=size, i=0; i<size; i++, s--){
+			cumValue += s;
+			cumValues[i] = cumValue;
+		}
+		
+		long random = ((long)(Math.random()*cumValue))+1;	// 1..size
+
+		int currentValue=0;
+		
+		for(currentValue=0; currentValue < size; currentValue++){
+			if(cumValues[currentValue] >= random){
+				break;
+			}
+		}
+
+		/*
+		 * size = 3
+		 * cumValues[0] = 3
+		 * cumValues[1] = 5
+		 * cumValues[2] = 6
+		 * 
+		 * (random 0 => 0)
+		 * random 1 => 0
+		 * random 2 => 0
+		 * random 3 => 0
+		 * random 4 => 1
+		 * random 5 => 1
+		 * random 6 => 2
+		 */
+		
+		return currentValue;
+	}
+	
+
+	public static void main(String[] args) {
+		for(int i=0; i<10;i++){
+			rouletteWheel(3);
+		}
 	}
 
 
