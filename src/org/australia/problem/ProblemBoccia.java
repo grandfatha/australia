@@ -171,5 +171,23 @@ public class ProblemBoccia implements Problem{
 		return "Warehouses: " + warehouses + ", Customers: " + customers;
 	}
 	
+	/*  testing */
+	public static void main(String[] args) {
+		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
+		System.out.println(problem);
+		
+		System.out.println("Demands:");
+		for (int i=0; i< problem.getNeeds().length; i++) {
+			
+			System.out.println(i + ": " +problem.getNeeds()[i]);
+		}
+		System.out.println("Capacity:");
+		for (int i=0; i< problem.getCap().length; i++) {
+			
+			System.out.println(i + ": " +problem.getCap()[i]);
+		}
+
+	}
+	
 
 }

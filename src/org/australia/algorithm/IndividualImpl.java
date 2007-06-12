@@ -3,6 +3,7 @@ package org.australia.algorithm;
 import java.util.Collection;
 import java.util.HashSet;
 import org.australia.problem.*;
+import org.australia.util.Utils;
 
 public class IndividualImpl implements Comparable<Individual>, Individual {
 
@@ -10,6 +11,8 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	private Double fitness;
 	
 	private Problem problem;
+	
+	private boolean changed = true;	// flag -> we do'nt have to calc fitness each time
 	
 	// Constructor		//////////////////////////////////////////////////////////////////////////
 	private IndividualImpl(Problem problem) {
@@ -20,7 +23,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	private IndividualImpl(Problem problem,  int[] gene) {
 		this.problem = problem;
 		this.gene = gene;
-		this.calculateFitness();
+		this.changed = true;
 	}
 
 	// Factory methods		//////////////////////////////////////////////////////////////////////////
@@ -34,14 +37,10 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	public static Individual createInstance(Problem problem, int[] gene){
 		if(problem==null || gene ==null){
 			throw new RuntimeException("Problem oder gene is null");
-			//			return null;
 		}
 		
 		Individual individual = new IndividualImpl(problem, gene);
 		
-//		if(!individual.checkConstraints()){
-//			return null;
-//		}
 		return individual;
 		
 	}
@@ -53,6 +52,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * @author jochen
 	 */
 	public static Individual generateRandomIndividual(Problem problem){
+
 		IndividualImpl result = new IndividualImpl(problem);
 		
 		// number of customers
@@ -64,28 +64,12 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		// number of warehouses
 		double warehouses = problem.getWarehouses();
 		
-		// counter for trys with invalid genes
-		int counter = 0;
-
-		// Loop until we get a valid Individual
-//		do{
-			
-			// assign every customer a random warehouse
-			//TODO make less random and improve nearest neighbor...
-			for (int i = 0; i < numberOfCustomers; i++) {
-				result.gene[i] = getRandomWarehouse(warehouses);
-			}
-			
-			// if no valid gene can be generated in 1000 trys throw exception
-			if(++counter > 100000000){
-				System.out.println("Could not generate valid gene");
-				throw new RuntimeException("Could not generate valid gene");
-			}
-			
-//		}while(!result.checkConstraints());
-		
-		// calculate fitness and save to instance variable
-		result.calculateFitness();
+		// assign every customer a random warehouse
+		//TODO make less random and improve nearest neighbor...
+		for (int i = 0; i < numberOfCustomers; i++) {
+			result.gene[i] = getRandomWarehouse(warehouses);
+		}
+						
 		
 		return result;
 	}
@@ -257,67 +241,46 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		int randomWarehouse = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
 		
 		gene[randomCustomer] = randomWarehouse;
-		calculateFitness();
+		
+		this.changed = true;
 		
 	}
 	
-	//TODO to be deleted
-	private static void p(Object o){
-		System.out.println(o);
-	}
 	
-	//TODO to be deleted
-	private void calculateFitnessTest(){
-		if (gene==null){
-			throw new RuntimeException("Gene is null");
-		}
+	public Individual haveSex(Individual partner){
 
-		double fitness = 0.0;
-		
-		
-		// add transport costs
-		double customers = problem.getCustomers();		// 50
-		double[][] costs = problem.getCosts();
+		Individual baby = null;
 
-		assert(costs.length== gene.length);
-
-//		double warehouses = problem.getWarehouses();	// 10
-//		for (int i = 0; i < warehouses; i++) {
-//			for (int j = 0; j < customers; j++) {
-//				if(gene[j]-1 == i){
-//					fitness += costs[j][i];
-//				}
-//			}
-//		}
-//		
-		// get the costs from customer i to its warehouse (gene[i])
-		for (int i = 0; i < customers; i++) {
-			fitness += costs[i][gene[i]];
-			p(costs[i][gene[i]]);
-		}
-
-		p(fitness);
+		int[] babyGene = new int[this.getGene().length];
 		
-		
-//		double temp1 = fitness;
-		
-		// add fixcosts
-		double[] fixcosts = problem.getFixcosts();
-		
-		Collection<Integer> warehouseSet = new HashSet<Integer>();
-		for (int g : gene) {
-			warehouseSet.add(g);
+		// random array with true or false
+		boolean[] pattern = Utils.getRandomPattern(this.getGene().length);	
+	
+		// iterate over gene
+		for (int i = 0; i < this.getGene().length; i++) {
+			
+			if(pattern[i]){	// true at posistion i
+				
+				babyGene[i] = this.getGene()[i];
+				
+			}else{
+				
+				babyGene[i] = partner.getGene()[i];
+			}
 		}
 		
-		for (Integer currentWareHouse : warehouseSet) {
-			fitness += fixcosts[currentWareHouse];
+		// create baby via factory method
+		// return null if invalid
+		baby = IndividualImpl.createInstance(this.getProblem(), babyGene);
+
+		if(baby==null){
+			throw new RuntimeException("Baby is null");
 		}
 		
-//		System.out.println("Kosten: " + (fitness - temp1));
-		
-//		this.fitness = fitness;
-		p(fitness);
+		return baby;
 	}
+
+	
 
 	public int getAmountWarehouses(){
 		Collection<Integer> warehouseSet = new HashSet<Integer>();
@@ -357,8 +320,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		return problem;
 	}
 	public Double getFitness(){
-		if(fitness == null && gene != null){
+		if(this.changed == true){
 			calculateFitness();
+			this.changed=false;
 		}
 		return fitness;
 	}
