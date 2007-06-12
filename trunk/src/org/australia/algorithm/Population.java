@@ -6,19 +6,18 @@ import org.australia.problem.Problem;
 
 public interface Population {
 
-	public SortedSet<Individual> getIndividuals();
-	public Problem getProblem();
-
-//	public void initialize(int amount);
-	public void evolve();
-	public void evolveRoulette();
+//	public Problem getProblem();
 	
 	public Individual getBestIndividual();
 	public Individual getWorstIndividual();
 	public Individual getRandomIndividual();
 	public Individual getIndividual(int number);
+	public Individual getIndividualByRouletteWheel();
+	
+	public void selectBestHalf();
+
 	public int getSize();
 	public boolean add(Individual individual);
 	public boolean remove(Individual individual);
-	public void selectBestHalf();
+	
 }
