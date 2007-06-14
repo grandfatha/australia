@@ -16,23 +16,25 @@ public class PopulationImpl implements Population{
 	
 
 	// Constructor		//////////////////////////////////////////////////////////////////////////////
-	public PopulationImpl(Problem problem, int amount){
-		this.problem = problem;
-		initialize(amount);
-	}
-	
 	public PopulationImpl(Problem problem){
 		individuals = new TreeSet<Individual>();
 		this.problem = problem;
 	}
 
+	public PopulationImpl(Problem problem, int amount){
+		this.problem = problem;
+		initialize(amount);
+	}
+	
+
+	// Private Methods 	//////////////////////////////////////////////////////////////////////////////
 	private void initialize(int amount){
 		individuals = new TreeSet<Individual>();
 		
-		for (int i = 0; i < amount; i++) {
+		while(getSize() < amount){
 			individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));
-			System.out.println("Created Individual Number: " + i);
 		}
+		System.out.println("Individuals created");
 	}
 	
 //	public void evolve(){
@@ -132,16 +134,9 @@ public class PopulationImpl implements Population{
 	}
 
 	public Individual getRandomIndividual(){
-		Iterator<Individual> iterator = individuals.iterator();
+		int random = (int)(Math.random()* this.getSize());	// 0..size-1
 		
-		int random = (int)(Math.random()*individuals.size());
-		
-		Individual currentIndividual = null;
-		
-		for (int i = 0; i <= random; i++) {
-			currentIndividual = iterator.next();
-		}
-		return currentIndividual;
+		return getIndividual(random);
 		
 	}
 	

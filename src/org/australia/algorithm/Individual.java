@@ -7,6 +7,7 @@ public interface Individual extends Comparable<Individual> {
 //	public void calculateFitness();
 	public double getFeeCosts();
 	public void mutate();
+	public void mutateDisallowFacility();
 	public Double getFitness();
 	public Problem getProblem();
 	public int[] getGene();
