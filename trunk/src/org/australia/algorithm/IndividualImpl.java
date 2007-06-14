@@ -7,12 +7,17 @@ import org.australia.util.Utils;
 
 public class IndividualImpl implements Comparable<Individual>, Individual {
 
-	private int[] gene;		// size: Number of customers; int[0] = 123 means customer 0 gets goods from warehouse 123
+	private int[] gene;		// size: Number of customers; int[0] = 123 --> customer 0 gets goods from warehouse 123
+
 	private Double fitness;
+	private boolean changed = true;	// flag -> we do'nt have to calc fitness each time
 	
 	private Problem problem;
 	
-	private boolean changed = true;	// flag -> we do'nt have to calc fitness each time
+	
+	
+	
+	
 	
 	// Constructor		//////////////////////////////////////////////////////////////////////////
 	private IndividualImpl(Problem problem) {
@@ -25,6 +30,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		this.gene = gene;
 		this.changed = true;
 	}
+	
+	
+	
 
 	// Factory methods		//////////////////////////////////////////////////////////////////////////
 	/**
@@ -69,10 +77,10 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		for (int i = 0; i < numberOfCustomers; i++) {
 			result.gene[i] = getRandomWarehouse(warehouses);
 		}
-						
 		
 		return result;
 	}
+
 
 	/**
 	 * Warehouses are in the range from 0 to #warehouses-1
@@ -145,39 +153,27 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		double customers = problem.getCustomers();		// 50
 		double[][] costs = problem.getCosts();
 
-		assert(costs.length== gene.length);
 
-//		double warehouses = problem.getWarehouses();	// 10
-//		for (int i = 0; i < warehouses; i++) {
-//			for (int j = 0; j < customers; j++) {
-//				if(gene[j]-1 == i){
-//					fitness += costs[j][i];
-//				}
-//			}
-//		}
-//		
 		// get the costs from customer i to its warehouse (gene[i])
 		for (int i = 0; i < customers; i++) {
 			f += costs[i][gene[i]];
 		}
 		
 		
-//		double temp1 = fitness;
-		
 		// add fixcosts
 		double[] fixcosts = problem.getFixcosts();
-		
-		Collection<Integer> warehouseSet = new HashSet<Integer>();
-		for (int g : gene) {
-			warehouseSet.add(g);
+		boolean[] warehouseTaken = new boolean[(int) getProblem().getWarehouses()];
+
+		for(int i=0; i<gene.length; i++){
+			if(!warehouseTaken[gene[i]]){
+				f += fixcosts[gene[i]];
+				warehouseTaken[gene[i]] = true;
+			}
 		}
 		
-		for (Integer currentWareHouse : warehouseSet) {
-			f += fixcosts[currentWareHouse];
-		}
 		
 		// strafkosten / M-Method
-		double fee = 30; 	// fee for one units thats more in warehouse than possible
+		double fee = 1; 	// fee for one units thats more in warehouse than possible
 		
 		double[] assigned = new double[(int) getProblem().getWarehouses()];
 		double[] need = getProblem().getNeeds();
@@ -207,7 +203,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		double feecosts =0.0;
 		
 		// strafkosten / M-Method
-		double fee = 10; 	// fee for one units thats more in warehouse than possible
+		double fee = 20; 	// fee for one units thats more in warehouse than possible
 		
 		double[] assigned = new double[(int) getProblem().getWarehouses()];
 		double[] need = getProblem().getNeeds();
@@ -244,6 +240,15 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 		this.changed = true;
 		
+	}
+	
+	public void mutateDisallowFacility(){
+		int randomWarehouse = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
+		for(int i=0; i<gene.length; i++){
+			while(gene[i]==randomWarehouse){
+				gene[i] = (int)(Math.random() * getProblem().getWarehouses());
+			}
+		}
 	}
 	
 	
