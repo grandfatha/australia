@@ -115,13 +115,13 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		for (int i = 0; i < numberOfCustomers; i++) {
 			result.gene[i] = full;
 		}
-		int actualCustomer = 0;
+		int currentCustomer = 0;	//jc refactored: bad english actual -> current
 		// fill gene
 		for (int i = 0; i < numberOfCustomers; i++) {
 			boolean foundFreeCustomer = false;
 			while (!foundFreeCustomer){
-				actualCustomer = (int) (Math.random() * numberOfCustomers);
-				if (result.gene[actualCustomer] == full){
+				currentCustomer = (int) (Math.random() * numberOfCustomers);
+				if (result.gene[currentCustomer] == full){
 					foundFreeCustomer = true;
 				}
 			}
@@ -129,17 +129,17 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 			int position = 0;
 			while(!validFacility){
 				double[] allCap = problem.getCap();
-				System.out.println("actualCustomer: " + actualCustomer);
+				System.out.println("currentCustomer: " + currentCustomer);
 				System.out.println("position: " + position);
-				int actualFacility = sortedCosts[actualCustomer][position];
-				System.out.println("actual Facility: " + actualFacility);
-				double actualCap = allCap[actualFacility];
+				int currentFacility = sortedCosts[currentCustomer][position];
+				System.out.println("current Facility: " + currentFacility);
+				double currentCap = allCap[currentFacility];
 				for(int j = 0; j < result.gene.length; j++){
-					if(result.gene[j] == actualFacility){
-						actualCap = actualCap - problem.getNeeds()[j];
+					if(result.gene[j] == currentFacility){
+						currentCap = currentCap - problem.getNeeds()[j];
 					}
 				}
-				if (actualCap >= problem.getNeeds()[actualCustomer]){
+				if (currentCap >= problem.getNeeds()[currentCustomer]){
 					validFacility = true;
 				}else{
 					position++;
