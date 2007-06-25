@@ -23,7 +23,7 @@ public class ProblemHolmberg implements Problem {
 	private double[] fixcosts;	// Eröffnungskosten für warehouse
 	private double[][] costs;   // transportkosten
 	private int[][] sortedCosts;
-//	private boolean costsSorted = false;
+
 	
 
 
@@ -77,7 +77,7 @@ public class ProblemHolmberg implements Problem {
 		int [][] sortedCosts = new int[costs.length][costs[0].length];
 		double lowestCosts;
 		int position;
-//		if(costsSorted == false){
+
 			// create an array with customers and alle warehouses, the warehouses with the lowest costs are 
 			// at a lower position in this array
 			for (int i = 0; i < costs.length; i++) {
@@ -98,19 +98,19 @@ public class ProblemHolmberg implements Problem {
 					sortedCosts[i][j] = position;	
 				}
 			}
-//			costsSorted = true;
-			System.out.println("Ergebnisse zeigen: ");
-			// show this result
-			for (int i = 0; i < sortedCosts.length; i++){
-				int[] sortedWarehouses = sortedCosts[i];
-				System.out.print("Customer " + i + ": ");
-				for (int j = 0; j < sortedWarehouses.length; j++) {
-					int warehouseNumber = sortedCosts[i][j];
-					System.out.print(" " + warehouseNumber + " |");	
-				}
-				System.out.println();
-			}
-//		}
+
+//			System.out.println("Ergebnisse zeigen: ");
+//			// show this result
+//			for (int i = 0; i < sortedCosts.length; i++){
+//				int[] sortedWarehouses = sortedCosts[i];
+//				System.out.print("Customer " + i + ": ");
+//				for (int j = 0; j < sortedWarehouses.length; j++) {
+//					int warehouseNumber = sortedCosts[i][j];
+//					System.out.print(" " + warehouseNumber + " |");	
+//				}
+//				System.out.println();
+//			}
+
 		return sortedCosts;
 	}
 	
