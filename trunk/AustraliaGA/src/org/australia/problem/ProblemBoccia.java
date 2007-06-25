@@ -65,7 +65,37 @@ public class ProblemBoccia implements Problem{
 	 * @author benjamin
 	 */
 	public int[][] getSortedCosts(){
-	
+		if(sortedCosts!=null){
+			return sortedCosts;
+		}
+
+		// eventeuell kann man in die Berechnung noch die Anteiligen Kosten des Bedarfs an
+		// den Fixkosten des jeweiligen Lagers hinzunehmen
+		double[][] costs = this.getCosts();
+		sortedCosts = new int[costs.length][costs[0].length];
+		double lowestCosts;
+		int position;
+
+			// create an array with customers and all warehouses, the warehouses with the lowest costs are 
+			// at a lower position in this array
+			for (int i = 0; i < costs.length; i++) {
+				double[] costsForEachCustomer = costs[i].clone();
+				lowestCosts = 0;
+				position = 0;
+				for (int j = 0; j < costsForEachCustomer.length; j++) {
+					lowestCosts = costsForEachCustomer[j];
+					position = j;
+					for (int z = 0; z < costsForEachCustomer.length; z++){
+						double currentCosts = costsForEachCustomer[z];
+						if(lowestCosts > currentCosts){
+							lowestCosts = currentCosts;
+							position = z;
+						}
+					}
+					costsForEachCustomer[position]= 999999.9;
+					sortedCosts[i][j] = position;	
+				}
+			}
 		
 		return sortedCosts;
 	}
