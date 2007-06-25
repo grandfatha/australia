@@ -24,7 +24,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		this.problem = problem;
 	}
 	
-	
+	@Deprecated
 	private IndividualImpl(Problem problem,  int[] gene) {
 		this.problem = problem;
 		this.gene = gene;
@@ -125,18 +125,17 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 			boolean validFacility = false;
 			int position = 0;
 			int currentFacility = -2;
-			while(!validFacility){
+			while(!validFacility){	//TODO Gefahr einer endlosschleife, wenn falsche reihenfolge!!!!!!!!!!!!!!!!!!
+
 //				System.out.println("currentCustomer: " + currentCustomer);
 //				System.out.println("position: " + position);
 				
-				//TODO checken wegen codierung!
-				
-				// get facility
+				// get next best facility
 				currentFacility = sortedCosts[currentCustomer][position];
 
 //				System.out.println("current Facility: " + currentFacility);
 				
-				// check wheather capacity of location is sufficant
+				// check whether capacity of location is sufficant
 				double currentCap = problem.getCap()[currentFacility];
 				for(int j = 0; j < result.gene.length; j++){
 					if(result.gene[j] == currentFacility){
@@ -149,7 +148,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 					position++;
 				}
 			}
-//			result.gene[i] = position;	//jc: must be currentFacility, mustnt it?
+			// set facility to customer
 			result.gene[currentCustomer] = currentFacility;
 		}
 		return result;
@@ -162,11 +161,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * @return a random warehousenumber
 	 */
 	private static int getRandomWarehouse(double warehouses){
-		
-		//TODO testen
-
 		return ((int) (Math.random()*warehouses));	// 0 .. ;warehouses-1
-		
 	}
 
 	
@@ -179,6 +174,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * Current constraints are checked
 	 * - every customer gets goods from (only) one warehouse (implicit)
 	 * - warehouse max. capacity
+	 *
 	 * @return true if valid
 	 * @author jochen
 	 */
@@ -224,7 +220,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 		
 		// add transport costs
-		double customers = problem.getCustomers();		// 50
+		double customers = problem.getCustomers();
 		double[][] costs = problem.getCosts();
 
 
@@ -405,6 +401,12 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		return fitness;
 	}
+	
+	//	 Setter	////////////////////////////////////////////////////////////////////////////////////
+	public void setGene(int[] gene) {
+		this.gene = gene;
+		this.changed = true;
+	}
 
 	// Implements Comparable Interface Methods	////////////////////////////////////////////////////////////////////
 	
@@ -417,6 +419,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	public int compareTo(Individual o) {
 		return this.getFitness().compareTo(o.getFitness());
 	}
+
+
+
 	
 
 }

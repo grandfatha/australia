@@ -34,7 +34,8 @@ public class GA {
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
 			/* create a new generation with doubled size as current ******************/
-			while(newGeneration.getSize() < currentPopulation.getSize() *2){
+			while(newGeneration.getSize() < currentPopulation.getSize() * 1.5){		// size of new population
+																					// higher value results in higher selection pressure
 
 				/* selection *******************************************************/
 				Individual mum = currentPopulation.getIndividualByRouletteWheel();
@@ -54,15 +55,15 @@ public class GA {
 				}
 				
 				if(Math.random() < 0.3){
-					baby.mutateDisallowFacility();	// delete a random facility and save fixcosts
+					baby.mutateDisallowFacility();	// delete a random facility to save fixcosts
 				}
 				
 				/* add new individual to new generation ****************************/
 				newGeneration.add(baby);
 			}
 			
-			/* finally select best half of new Generation **************************/
-			newGeneration.selectBestHalf();
+			/* finally select best of new Generation *******************************/
+			newGeneration.selectBest(currentPopulation.getSize());
 			
 			/* replace current population by new Population ************************/
 			currentPopulation = newGeneration;
