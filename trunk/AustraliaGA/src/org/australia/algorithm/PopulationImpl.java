@@ -5,7 +5,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.australia.problem.Problem;
-import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Utils;
 
 public class PopulationImpl implements Population{
@@ -30,92 +29,20 @@ public class PopulationImpl implements Population{
 	// Private Methods 	//////////////////////////////////////////////////////////////////////////////
 	private void initialize(int amount){
 		individuals = new TreeSet<Individual>();
-		
-		while(getSize() < amount){
-			if (getSize() < (amount / 2) ){
-				individuals.add(IndividualImpl.generateCostspecificIndividual(this.getProblem()));
-			}else{
-				individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));	
-			}
 
-			
+		
+		//jc: we cannot use getSize due to the danger of an endless loop
+		for(int i=0; i<amount/2; i++){
+			individuals.add(IndividualImpl.generateGreedyIndividual(this.getProblem()));
 		}
+
+		while(getSize() < amount){
+			individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));	
+		}
+		
 		System.out.println("Individuals created");
 	}
 	
-//	public void evolve(){
-//		
-//		long counter = 0;
-//		
-//		while(counter < 10000000){
-//			
-//			Individual mum = getRandomIndividual();
-//			Individual dad = getRandomIndividual();
-//			Parents parents = new Parents(mum, dad);
-//			Individual baby = parents.haveHotAndLongAndPossiblySweatySex();
-//
-//// durch die strafkosten nicht mehr nötig
-////			if(!mum.checkConstraints()){
-////				System.out.println("Ungültige Mum");
-////			}
-//			
-//			// mutate up to x times
-//			if(Math.random() < 0.9){
-//				baby.mutate();
-//			}
-//			
-//			
-//			// insert new individual
-//			if(baby.getFitness() < dad.getFitness() && baby.getFitness() < mum.getFitness()){
-//				if(!individuals.contains(baby)){
-//					individuals.remove(getWorstIndividual());
-//					individuals.add(baby);
-//				}
-//			}
-//			
-//			if ((counter % 10000)==0) {
-//				System.out.println(getBestIndividual());	
-//			}
-//			
-//
-//			
-//			counter++;
-//		}
-//	}
-//	
-//	public void evolveRoulette(){
-//		Population newGeneration = new PopulationImpl(this.problem);
-//		
-//		newGeneration.add(getBestIndividual());
-//		
-//		while(newGeneration.getSize() < this.getSize() *2){
-//			Individual mum = this.getIndividualByRouletteWheel();
-//			Individual dad = this.getIndividualByRouletteWheel();
-//		
-//			Individual baby = new Parents(mum, dad).haveHotAndLongAndPossiblySweatySex();
-//			
-//			baby.mutate();
-//			
-//			if(Math.random() < 0.9){
-//				baby.mutate();
-//				if(Math.random() < 0.6){
-//					baby.mutate();
-//					if(Math.random() < 0.3){
-//						baby.mutate();
-//			}}}
-//
-//			
-//			newGeneration.add(baby);
-//		}
-//		
-//		newGeneration.selectBestHalf();
-//
-////		System.out.println(newGeneration.getSize());
-//		individuals = newGeneration.getIndividuals();
-//	}
-	
-	//TODO check
-	//TODO better
 	public void selectBestHalf(){
 		if(getSize()<=0){
 			return;
@@ -131,6 +58,16 @@ public class PopulationImpl implements Population{
 
 	}
 
+	public void selectBest(int size){
+		if(getSize()<=0 || size > this.getSize()){
+			return;
+		}
+
+		while(this.getSize() > size){
+			this.remove(this.getWorstIndividual());
+		}
+	}
+	
 	public Individual getBestIndividual() {
 		return individuals.first();
 	}

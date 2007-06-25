@@ -14,7 +14,6 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	
 	private Problem problem;
 	
-	private static int full = 999;
 	
 	
 	
@@ -78,16 +77,16 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		for (int i = 0; i < numberOfCustomers; i++) {
 			result.gene[i] = getRandomWarehouse(warehouses);
 		}
-		
+
 		return result;
 	}
 	/**
-	 * Generate a costs specific Individual
+	 * Generate a greedy Individual
 	 * @param problem
 	 * @return Individual
 	 * @author benjamin
 	 */
-	public static Individual generateCostspecificIndividual(Problem problem){
+	public static Individual generateGreedyIndividual(Problem problem){
 
 		IndividualImpl result = new IndividualImpl(problem);
 		
@@ -96,15 +95,14 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 		// generate an empty gene
 		result.gene = new int[numberOfCustomers];
-
-		// number of warehouses
-		double warehouses = problem.getWarehouses();
-
+		
+		// get array with [customer][position] where position=0 defines the position of the closest facility 
 		int[][] sortedCosts = problem.getSortedCosts();
 
 		// first take a random customer who can pick the cheapest, possible facility from his sortedCostsList
 		
 		// fill gene with "full"
+		int full = -1;
 		for (int i = 0; i < numberOfCustomers; i++) {
 			result.gene[i] = full;
 		}
@@ -113,6 +111,8 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		// fill gene
 		for (int i = 0; i < numberOfCustomers; i++) {
+			
+			// get a random customer thats hasn't been assigned a facility yet
 			boolean foundFreeCustomer = false;
 			while (!foundFreeCustomer){
 				currentCustomer = (int) (Math.random() * numberOfCustomers);
@@ -120,15 +120,24 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 					foundFreeCustomer = true;
 				}
 			}
+			
+			// assign free facility to customer thats next to him
 			boolean validFacility = false;
 			int position = 0;
+			int currentFacility = -2;
 			while(!validFacility){
-				double[] allCap = problem.getCap();
-				System.out.println("currentCustomer: " + currentCustomer);
-				System.out.println("position: " + position);
-				int currentFacility = sortedCosts[currentCustomer][position];
-				System.out.println("current Facility: " + currentFacility);
-				double currentCap = allCap[currentFacility];
+//				System.out.println("currentCustomer: " + currentCustomer);
+//				System.out.println("position: " + position);
+				
+				//TODO checken wegen codierung!
+				
+				// get facility
+				currentFacility = sortedCosts[currentCustomer][position];
+
+//				System.out.println("current Facility: " + currentFacility);
+				
+				// check wheather capacity of location is sufficant
+				double currentCap = problem.getCap()[currentFacility];
 				for(int j = 0; j < result.gene.length; j++){
 					if(result.gene[j] == currentFacility){
 						currentCap = currentCap - problem.getNeeds()[j];
@@ -140,7 +149,8 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 					position++;
 				}
 			}
-			result.gene[i] = position;
+//			result.gene[i] = position;	//jc: must be currentFacility, mustnt it?
+			result.gene[currentCustomer] = currentFacility;
 		}
 		return result;
 	}
