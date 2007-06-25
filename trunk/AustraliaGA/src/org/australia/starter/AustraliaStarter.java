@@ -12,16 +12,16 @@ public class AustraliaStarter {
 
 	public static void main(String[] args) {
 		
-		Problem problem = ProblemHolmberg.readProblem("problem/p2");
-		problem.getSortedCosts();
+		Problem problem = ProblemHolmberg.readProblem("problem/p1");
+//		problem.getSortedCosts();
 //		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
 		
 		Collection<Individual> ergebnisse = new ArrayList<Individual>();
 		
 		GA ga = new GA(problem);
 		
-		for(int i=1; i<=5;i++){
-			ergebnisse.add(ga.startAlgorithm(200, 2000));
+		for(int i=1; i<=100;i++){
+			ergebnisse.add(ga.startAlgorithm(100, 1000));
 			System.out.println("Ende Durchgang " + i);
 		}
 
