@@ -108,7 +108,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		for (int i = 0; i < numberOfCustomers; i++) {
 			result.gene[i] = full;
 		}
-		int currentCustomer = 0;	//jc refactored: bad english actual -> current
+
+		int currentCustomer = 0;
+
 		// fill gene
 		for (int i = 0; i < numberOfCustomers; i++) {
 			boolean foundFreeCustomer = false;
@@ -158,7 +160,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	}
 
 	
-	// Instance methodes 		////////////////////////////////////////////////////////////////////////////////
+	// Instance methods 		////////////////////////////////////////////////////////////////////////////////
 
 	
 	/**
@@ -208,7 +210,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 			throw new RuntimeException("Gene is null");
 		}
 
-		double f = 0.0;
+		double currentFitness = 0.0;
 		
 		
 		// add transport costs
@@ -218,7 +220,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		// get the costs from customer i to its warehouse (gene[i])
 		for (int i = 0; i < customers; i++) {
-			f += costs[i][gene[i]];
+			currentFitness += costs[i][gene[i]];
 		}
 		
 		
@@ -228,7 +230,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		for(int i=0; i<gene.length; i++){
 			if(!warehouseTaken[gene[i]]){
-				f += fixcosts[gene[i]];
+				currentFitness += fixcosts[gene[i]];
 				warehouseTaken[gene[i]] = true;
 			}
 		}
@@ -252,13 +254,13 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		// each unit in assgigned > cap
 		for(int i=0; i<assigned.length;i++){
 			if(assigned[i] > getProblem().getCap()[i]){
-				f += (assigned[i] - getProblem().getCap()[i]) * fee;
+				currentFitness += (assigned[i] - getProblem().getCap()[i]) * fee;
 			}
 		}
 		
 //		System.out.println("Kosten: " + (fitness - temp1));
 		
-		this.fitness = f;
+		this.fitness = currentFitness;
 	}
 	
 	public double getFeeCosts(){

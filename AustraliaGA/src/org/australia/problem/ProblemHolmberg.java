@@ -65,16 +65,19 @@ public class ProblemHolmberg implements Problem {
 
 	/**
 	 * sort costs for each customer and its facilities
-	 * @param problem
 	 * @return Individual
 	 * @author benjamin
 	 */
 	public int[][] getSortedCosts(){
+		
+		if(sortedCosts!=null){
+			return sortedCosts;
+		}
 
 		// eventeuell kann man in die Berechnung noch die Anteiligen Kosten des Bedarfs an
 		// den Fixkosten des jeweiligen Lagers hinzunehmen
 		double[][] costs = this.getCosts();
-		int [][] sortedCosts = new int[costs.length][costs[0].length];
+		sortedCosts = new int[costs.length][costs[0].length];
 		double lowestCosts;
 		int position;
 
