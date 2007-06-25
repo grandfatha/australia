@@ -161,10 +161,16 @@ public class ProblemHolmberg implements Problem {
 				default:
 					if (iteration < ( result.warehouses*2+2) ){
 						if(iteration%2 == 0){
-							result.fixcosts[facility] = st.nval;
+
+							result.cap[facility] = st.nval;
+
+//							result.fixcosts[facility] = st.nval;
 							break;
 						}else{
-							result.cap[facility] = st.nval;
+//							result.cap[facility] = st.nval;
+
+							result.fixcosts[facility] = st.nval;
+
 							facility++;
 							break;
 						}						
