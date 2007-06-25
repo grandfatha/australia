@@ -99,19 +99,12 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		// number of warehouses
 		double warehouses = problem.getWarehouses();
-		
-//		//copy sorted costs in an local variabl
+
 		int[][] sortedCosts = problem.getSortedCosts();
-//		int[][] localCosts = new int[numberOfCustomers][sortedCosts[0].length];
-		
-//		for (int i = 0; i < sortedCosts.length; i++) {
-//			localCosts[i] = sortedCosts[i].clone();
-//		}
+
 		// first take a random customer who can pick the cheapest, possible facility from his sortedCostsList
 		
 		// fill gene with "full"
-		
-		// fill gene
 		for (int i = 0; i < numberOfCustomers; i++) {
 			result.gene[i] = full;
 		}
