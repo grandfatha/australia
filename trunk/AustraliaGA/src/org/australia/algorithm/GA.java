@@ -33,8 +33,13 @@ public class GA {
 			/* adds the best individual to new generation ****************************/
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
+			/* add 10% random indiduals from foreign countries to new population *****/
+			for(int j=0; j < currentPopulation.getSize()/20; j++){
+				newGeneration.add(IndividualImpl.generateRandomIndividual(problem));
+			}
+			
 			/* create a new generation with doubled size as current ******************/
-			while(newGeneration.getSize() < currentPopulation.getSize() * 1.5){		// size of new population
+			while(newGeneration.getSize() < currentPopulation.getSize() * 2){		// size of new population
 																					// higher value results in higher selection pressure
 
 				/* selection *******************************************************/
@@ -48,14 +53,15 @@ public class GA {
 				Individual baby = mum.haveSex(dad);
 				
 				/* mutate **********************************************************/
-				if(Math.random() < 0.7){
-					for(int j=0; j< (int)(Math.random()*10);j++){ 	// mutate up to 10 times
+				if(Math.random() < 0.5){
+					for(int j=0; j< (int)(Math.random()*5);j++){ 	// mutate up to 10 times
 						baby.mutate();
 					}
 				}
 				
 				if(Math.random() < 0.3){
-					baby.mutateDisallowFacility();	// delete a random facility to save fixcosts
+//					baby.mutateBanFacility();	// delete a random facility to save fixcosts
+					baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 				}
 				
 				/* add new individual to new generation ****************************/

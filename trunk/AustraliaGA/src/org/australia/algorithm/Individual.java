@@ -4,10 +4,12 @@ import org.australia.problem.Problem;
 
 public interface Individual extends Comparable<Individual> {
 	public boolean checkConstraints();
-//	public void calculateFitness();
 	public double getFeeCosts();
+	
 	public void mutate();
-	public void mutateDisallowFacility();
+	public void mutateBanFacility();
+	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+	
 	public Double getFitness();
 	public Problem getProblem();
 	public int[] getGene();
