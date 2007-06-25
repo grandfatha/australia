@@ -5,6 +5,8 @@ import java.util.HashSet;
 import org.australia.problem.*;
 import org.australia.util.Utils;
 
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
+
 public class IndividualImpl implements Comparable<Individual>, Individual {
 
 	private int[] gene;		// size: Number of customers; int[0] = 123 --> customer 0 gets goods from warehouse 123
@@ -210,25 +212,22 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		return true;
 	}
 	
-	
 	public void calculateFitness(){
 		if (gene==null){
 			throw new RuntimeException("Gene is null");
 		}
 
-		double currentFitness = 0.0;
+		double f = 0.0;
 		
 		
 		// add transport costs
 		double customers = problem.getCustomers();
 		double[][] costs = problem.getCosts();
 
-
 		// get the costs from customer i to its warehouse (gene[i])
 		for (int i = 0; i < customers; i++) {
-			currentFitness += costs[i][gene[i]];
+			f += costs[i][gene[i]];
 		}
-		
 		
 		// add fixcosts
 		double[] fixcosts = problem.getFixcosts();
@@ -236,37 +235,17 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		for(int i=0; i<gene.length; i++){
 			if(!warehouseTaken[gene[i]]){
-				currentFitness += fixcosts[gene[i]];
+				f += fixcosts[gene[i]];
 				warehouseTaken[gene[i]] = true;
 			}
 		}
 		
 		
-		// strafkosten / M-Method
-		double fee = 1; 	// fee for one units thats more in warehouse than possible
+		/* strafkosten / M-Method	**************************************************************/
 		
-		double[] assigned = new double[(int) getProblem().getWarehouses()];
-		double[] need = getProblem().getNeeds();
+		f += getFeeCosts();
 		
-		for (int i = 0; i < gene.length; i++) {
-			// i: number of customer
-			//			need[i]	// Need of customer i (0..n-1)
-			//			gene[i] // Number of Warehouse for customer i (0..n-1)
-			//			cap[j]  // capacity of warehouse j (0..n-1)
-
-			assigned[gene[i]] += need[i];
-		}
-		
-		// each unit in assgigned > cap
-		for(int i=0; i<assigned.length;i++){
-			if(assigned[i] > getProblem().getCap()[i]){
-				currentFitness += (assigned[i] - getProblem().getCap()[i]) * fee;
-			}
-		}
-		
-//		System.out.println("Kosten: " + (fitness - temp1));
-		
-		this.fitness = currentFitness;
+		this.fitness = f;
 	}
 	
 	public double getFeeCosts(){
@@ -298,6 +277,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 	}
 	
+	
 	//TODO make less random
 	//TODO daniel wants a true mutation
 	public void mutate(){
@@ -312,15 +292,33 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 	}
 	
-	public void mutateDisallowFacility(){
-		int randomWarehouse = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
+	public void mutateBanFacility(){
+		// this facility will be banned
+		int randomFacility = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
+
 		for(int i=0; i<gene.length; i++){
-			while(gene[i]==randomWarehouse){
+			while(gene[i]==randomFacility){
 				gene[i] = (int)(Math.random() * getProblem().getWarehouses());
 			}
 		}
 	}
-	
+
+	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel(){
+		// this facility will be banned
+		int randomFacility = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
+
+		for(int currentCustomerNr=0; currentCustomerNr<gene.length; currentCustomerNr++){
+
+			while(gene[currentCustomerNr]==randomFacility){
+			
+				int position = Utils.rouletteWheel((int)this.problem.getWarehouses());	// lowest postion has higher chance
+				gene[currentCustomerNr] = this.problem.getSortedCosts()[currentCustomerNr][position];	// replace facility with new
+			
+			}
+			
+		}
+	}
+
 	
 	public Individual haveSex(Individual partner){
 
