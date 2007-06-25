@@ -14,8 +14,11 @@ public interface Population {
 	public Individual getIndividual(int number);
 	public Individual getIndividualByRouletteWheel();
 	
+	@Deprecated
 	public void selectBestHalf();
 
+	public void selectBest(int size);
+	
 	public int getSize();
 	public boolean add(Individual individual);
 	public boolean remove(Individual individual);

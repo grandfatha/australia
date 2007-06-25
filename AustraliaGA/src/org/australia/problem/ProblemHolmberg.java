@@ -65,7 +65,6 @@ public class ProblemHolmberg implements Problem {
 
 	/**
 	 * sort costs for each customer and its facilities
-	 * @return Individual
 	 * @author benjamin
 	 */
 	public int[][] getSortedCosts(){
@@ -81,7 +80,7 @@ public class ProblemHolmberg implements Problem {
 		double lowestCosts;
 		int position;
 
-			// create an array with customers and alle warehouses, the warehouses with the lowest costs are 
+			// create an array with customers and all warehouses, the warehouses with the lowest costs are 
 			// at a lower position in this array
 			for (int i = 0; i < costs.length; i++) {
 				double[] costsForEachCustomer = costs[i].clone();
@@ -91,9 +90,9 @@ public class ProblemHolmberg implements Problem {
 					lowestCosts = costsForEachCustomer[j];
 					position = j;
 					for (int z = 0; z < costsForEachCustomer.length; z++){
-						double actualCosts = costsForEachCustomer[z];
-						if(lowestCosts > actualCosts){
-							lowestCosts = actualCosts;
+						double currentCosts = costsForEachCustomer[z];
+						if(lowestCosts > currentCosts){
+							lowestCosts = currentCosts;
 							position = z;
 						}
 					}
