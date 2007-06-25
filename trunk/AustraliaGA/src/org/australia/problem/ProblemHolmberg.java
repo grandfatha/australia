@@ -154,7 +154,7 @@ public class ProblemHolmberg implements Problem {
 		    		  result.customers=st.nval;
 		    		  result.fixcosts=new double[(int)result.warehouses];
 		    		  result.cap=new double[(int)result.warehouses];
-		    		  result.costs=new double[(int)result.warehouses][(int)result.customers];
+		    		  result.costs=new double[(int)result.customers][(int)result.warehouses];
 		    		  result.needs=new double[(int)result.customers];
 		    		  break;
 					
@@ -179,7 +179,7 @@ public class ProblemHolmberg implements Problem {
 							facility ++;
 							customer = 0;
 						}
-						 result.costs[facility][customer] = st.nval;
+						 result.costs[customer][facility] = st.nval;
 						 customer++;
 						 break;
 					}
