@@ -136,7 +136,7 @@ public class ProblemBoccia implements Problem{
 								facility ++;
 								customer = 0;
 							}
-							 result.costs[customer][facility] = st.nval;
+							 result.costs[customer][facility] = st.nval * result.getNeeds()[customer];
 							 customer++;
 							 break;
 						}
