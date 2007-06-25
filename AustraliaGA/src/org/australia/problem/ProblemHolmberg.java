@@ -122,7 +122,7 @@ public class ProblemHolmberg implements Problem {
 	 * 
 	 * some code was adapted from Ulrich Sperlich
 	 * 
-	 * @author jochen
+	 * @author benjamin
 	 * @param f
 	 * @return new Problem instance
 	 */
@@ -132,18 +132,12 @@ public class ProblemHolmberg implements Problem {
 	
 	// adapted from Ulrich Sperlich
     StreamTokenizer st;
-    int zaehler = 0;
-    int zaehler1 = 0;
-    int zaehler2 = 0;
-    int zaehler3 = 0;
-    double help = 0;
-    double help1 = 0;
-    int needs1=0;
-	int needs2=0;
-
+	int iteration = 0;
+	int facility = 0;
+	int needs = 0;
+	int customer = 0;
 	try {
 		st = new StreamTokenizer(new FileReader(f));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-
 		st.slashStarComments( true );
 		st.ordinaryChar( '/' );
 		st.parseNumbers();
@@ -151,87 +145,48 @@ public class ProblemHolmberg implements Problem {
 
 		for ( int tval; (tval = st.nextToken()) != StreamTokenizer.TT_EOF; ) {
 			if ( tval == StreamTokenizer.TT_NUMBER ){
-    	  
-	    	  if(zaehler==0){
-	    		  //Anzahl der Lager wird gespeichert
-	    		  result.warehouses=st.nval;
-	    	  }
-
-	    	  else if(zaehler==1){
-	    		  //Anzahl der Kunden wird gespeichert
-	    		  result.customers=st.nval;
-	    		  
-	    		  result.fixcosts=new double[(int)result.warehouses];
-	    		  result.cap=new double[(int)result.warehouses];
-//	    		  result.costs=new double[(int)result.customers+2][(int)result.warehouses+2];	// why +2????
-	    		  result.costs=new double[(int)result.customers][(int)result.warehouses];
-	    		  result.needs=new double[(int)result.customers];
-//		    		  all=new double[(int)warehouses][(int)customers];
-    	  }
-	    	  
-    	  else if(zaehler > 1 && zaehler < result.warehouses *2+2){
-    		  
-    		  if(zaehler%2==0){
-    			//Fixkosten der Lager werden gespeichert
-    			//Holmberg hat keine Deklaration
-    			//an welcher Stelle die Fixkosten
-    			//angegeben werden, hier wird von
-    			//der ersten Stelle ausgegangen
-    			  help=st.nval;
-    			  result.fixcosts[zaehler1]=help;
- 
-    			  //@jochen wir denken es ist anders herum - oder auch nicht...
-//    			  result.cap[zaehler1]=st.nval;
-    			  
-    			  zaehler1++;
-    			  
-    		  }
-    		  else {
-    			  //Kapazitäten der Lager werden gespeichert
-    			  result.cap[zaehler2]=st.nval;
-    			  
-//    			  result.fixcosts[zaehler2]=st.nval;
-    			  
-    			  zaehler2++;
-    			  
-    		  }
-    		}
-
-    	  else if(zaehler >=result.warehouses*2+2 && zaehler < result.warehouses*2+2+result.customers ){
-    		  
-    		  //Bedürfnisse der Kunden werden gespeichert
-    		  result.needs[zaehler3]=st.nval;
-    		  
-    		  zaehler3++;
-    	  }
-    	  
-    	  
-    	  else if(zaehler >= result.warehouses*2+2+result.customers){
-    		  if(help1<result.warehouses){
-    			 //Transportkosten werden gespeichert
-    			  
-    			  result.costs[needs1][needs2]=st.nval;
-    			  
-    			  needs2++;
-    			  help1++;
-    		  }
-    		  else{
-    			  help1=0;
-    			  needs2=0;
-    			  needs1++;
-    			  result.costs[needs1][needs2]=st.nval;
-    			  needs2++;
-    			  help1++;
-    		  }
-    	  }
-	        
-	        zaehler++;
-	        
-	      }else if ( tval == StreamTokenizer.TT_EOL ){
-	        
-	      }
+				switch (iteration) {
+				case 0:
+					result.warehouses = st.nval;
+					break;
+					
+				case 1:
+		    		  result.customers=st.nval;
+		    		  result.fixcosts=new double[(int)result.warehouses];
+		    		  result.cap=new double[(int)result.warehouses];
+		    		  result.costs=new double[(int)result.warehouses][(int)result.customers];
+		    		  result.needs=new double[(int)result.customers];
+		    		  break;
+					
+				default:
+					if (iteration < ( result.warehouses*2+2) ){
+						if(iteration%2 == 0){
+							result.fixcosts[facility] = st.nval;
+							break;
+						}else{
+							result.cap[facility] = st.nval;
+							facility++;
+							break;
+						}						
+					}else if (iteration < (( result.warehouses*2+2) + result.customers) ){
+						result.needs[needs] = st.nval;
+						needs++;
+						facility = 0;
+						customer = 0;
+						break;
+					}else{
+						if (customer == result.customers){
+							facility ++;
+							customer = 0;
+						}
+						 result.costs[facility][customer] = st.nval;
+						 customer++;
+						 break;
+					}
+				}
+				iteration++;
+			}	
 		}
-	    
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
