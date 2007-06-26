@@ -9,6 +9,8 @@ public interface Individual extends Comparable<Individual> {
 	public void mutate();
 	public void mutateBanFacility();
 	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+	public void mutateNearNeighbor();
+	public void mutateSwitchFacilities();
 	
 	public Double getFitness();
 	public Problem getProblem();

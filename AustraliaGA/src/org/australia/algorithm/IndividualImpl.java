@@ -82,6 +82,8 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		return result;
 	}
+	
+	
 	/**
 	 * Generate a greedy Individual
 	 * @param problem
@@ -160,7 +162,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	
 	
 	/**
-	 * Generate a greedy Individual
+	 * Generate a greedy Individual select the facility by a roulette wheele algorithm
 	 * @param problem
 	 * @return Individual
 	 * @author benjamin, jochen
@@ -213,15 +215,17 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 //				System.out.println("current Facility: " + currentFacility);
 				
 				// check whether capacity of location is sufficant
-				double currentCap = problem.getCap()[currentFacility];
-				for(int j = 0; j < result.gene.length; j++){
-					if(result.gene[j] == currentFacility){
-						currentCap = currentCap - problem.getNeeds()[j];
-					}
-				}
-				if (currentCap >= problem.getNeeds()[currentCustomer]){
+//				double currentCap = problem.getCap()[currentFacility];
+//				for(int j = 0; j < result.gene.length; j++){
+//					if(result.gene[j] == currentFacility){
+//						currentCap = currentCap - problem.getNeeds()[j];
+//					}
+//				}
+				
+				//dont check if they are valid - we have fees for it
+//				if (currentCap >= problem.getNeeds()[currentCustomer]){
 					validFacility = true;
-				}
+//				}
 			}
 			// set facility to customer
 			result.gene[currentCustomer] = currentFacility;
@@ -366,6 +370,35 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 	}
 	
+	public void mutateSwitchFacilities(){
+		
+		int randomCustomer1 = (int)(Math.random() * gene.length);	// 0 .. n-1
+		int randomCustomer2 = (int)(Math.random() * gene.length);	// 0 .. n-1
+		
+		int temp = gene[randomCustomer1];
+		gene[randomCustomer1] = gene[randomCustomer2];
+		gene[randomCustomer2] = temp;
+		
+		this.changed = true;
+
+	}
+	
+
+	
+	public void mutateNearNeighbor(){
+		
+		int randomCustomer = (int)(Math.random() * gene.length);	// 0 .. n-1
+
+		int position = Utils.rouletteWheel((int)problem.getWarehouses());	// lowest postion has higher chance
+		
+		gene[randomCustomer] = this.problem.getSortedCosts()[randomCustomer][position];
+		
+		this.changed = true;
+		
+	}
+	
+	
+	
 	public void mutateBanFacility(){
 		// this facility will be banned
 		int randomFacility = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
@@ -375,6 +408,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 				gene[i] = (int)(Math.random() * getProblem().getWarehouses());
 			}
 		}
+		this.changed = true;
 	}
 
 	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel(){
@@ -391,6 +425,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 			}
 			
 		}
+		this.changed = true;
 	}
 
 	
