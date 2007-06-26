@@ -1,9 +1,5 @@
 package org.australia.tests;
 
-import org.australia.algorithm.IndividualImpl;
-import org.australia.algorithm.Population;
-import org.australia.algorithm.PopulationImpl;
-import org.australia.util.Utils;
 
 public class TestFitness {
 	public static void main(String[] args) {

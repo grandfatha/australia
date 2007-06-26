@@ -7,8 +7,6 @@ import org.australia.config.Config;
 import org.australia.problem.*;
 import org.australia.util.Utils;
 
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
-
 public class IndividualImpl implements Comparable<Individual>, Individual {
 
 	private int[] gene;		// size: Number of customers; int[0] = 123 --> customer 0 gets goods from warehouse 123
@@ -158,6 +156,80 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		return result;
 	}
 	
+	
+	
+	
+	/**
+	 * Generate a greedy Individual
+	 * @param problem
+	 * @return Individual
+	 * @author benjamin, jochen
+	 */
+	public static Individual generateGreedyIndividualWithRouletteWheel(Problem problem){
+
+		IndividualImpl result = new IndividualImpl(problem);
+		
+		// number of customers
+		int numberOfCustomers = (int)problem.getCustomers();
+		
+		// generate an empty gene
+		result.gene = new int[numberOfCustomers];
+		
+		// get array with [customer][position] where position=0 defines the position of the closest facility 
+		int[][] sortedCosts = problem.getSortedCosts();
+
+		// first take a random customer who can pick the cheapest, possible facility from his sortedCostsList
+		
+		// fill gene with "full"
+		int full = -1;
+		for (int i = 0; i < numberOfCustomers; i++) {
+			result.gene[i] = full;
+		}
+
+		int currentCustomer = 0;
+
+		// fill gene
+		for (int i = 0; i < numberOfCustomers; i++) {
+			
+			// get a random customer thats hasn't been assigned a facility yet
+			boolean foundFreeCustomer = false;
+			while (!foundFreeCustomer){
+				currentCustomer = (int) (Math.random() * numberOfCustomers);
+				if (result.gene[currentCustomer] == full){
+					foundFreeCustomer = true;
+				}
+			}
+			
+			// assign free facility to customer thats next to him
+			boolean validFacility = false;
+			int position = 0;
+			int currentFacility = -2;
+			while(!validFacility){	//TODO Gefahr einer endlosschleife, wenn falsche reihenfolge!!!!!!!!!!!!!!!!!!
+
+				position = Utils.rouletteWheel((int)problem.getWarehouses());	// lowest postion has higher chance
+
+				currentFacility = sortedCosts[currentCustomer][position];
+
+//				System.out.println("current Facility: " + currentFacility);
+				
+				// check whether capacity of location is sufficant
+				double currentCap = problem.getCap()[currentFacility];
+				for(int j = 0; j < result.gene.length; j++){
+					if(result.gene[j] == currentFacility){
+						currentCap = currentCap - problem.getNeeds()[j];
+					}
+				}
+				if (currentCap >= problem.getNeeds()[currentCustomer]){
+					validFacility = true;
+				}
+			}
+			// set facility to customer
+			result.gene[currentCustomer] = currentFacility;
+		}
+		return result;
+	}
+	
+
 	
 	/**
 	 * Warehouses are in the range from 0 to #warehouses-1
@@ -325,18 +397,20 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	public Individual haveSex(Individual partner){
 
 		Individual baby = null;
+		
+		int[] thisGene = this.getGene();
 
-		int[] babyGene = new int[this.getGene().length];
+		int[] babyGene = new int[thisGene.length];
 		
 		// random array with true or false
-		boolean[] pattern = Utils.getRandomPattern(this.getGene().length);	
+		boolean[] pattern = Utils.getRandomPattern(thisGene.length);	
 	
 		// iterate over gene
-		for (int i = 0; i < this.getGene().length; i++) {
+		for (int i = 0; i < thisGene.length; i++) {
 			
 			if(pattern[i]){	// true at posistion i
 				
-				babyGene[i] = this.getGene()[i];
+				babyGene[i] = thisGene[i];
 				
 			}else{
 				

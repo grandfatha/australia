@@ -2,13 +2,14 @@ package org.australia.config;
 
 public class Config {
 	
-	private static boolean writeToDatabase = true;
 	
-	private static double percentageGreedy = 0.5;
+	private static double percentageGreedy = 0.3;
 	
 	private static double fee = 10;
+	private static double newGenerationSize = 2.0;
 	
 	
+	private static boolean writeToDatabase = true;
 	
 	public static final String MYSQL_HOST = "jegga.de";
 	public static final String MYSQL_DATABASE = "australia";
@@ -42,6 +43,14 @@ public class Config {
 
 	public static void setWriteToDatabase(boolean writeToDatabase) {
 		Config.writeToDatabase = writeToDatabase;
+	}
+
+	public static double getNewGenerationSize() {
+		return newGenerationSize;
+	}
+
+	public static void setNewGenerationSize(double newGenerationSize) {
+		Config.newGenerationSize = newGenerationSize;
 	}
 	
 	

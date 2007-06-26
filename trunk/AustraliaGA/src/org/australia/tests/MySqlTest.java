@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.australia.util.Database;
-
 public class MySqlTest {
 	public static void main(String[] args) {
 

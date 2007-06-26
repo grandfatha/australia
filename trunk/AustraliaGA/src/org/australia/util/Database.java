@@ -15,6 +15,10 @@ public class Database {
 		
 		Connection connection = getConnection();
 		
+		if(connection==null){
+			return;
+		}
+		
 		// valid = 0; invalid = -1
 		int valid = -1;
 		if(individual.isValid()){
@@ -35,8 +39,7 @@ public class Database {
 				connection.close();
 				System.out.println("Individual successfully added to database");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Could not close connection to database.");
 			}
 		}
 		
@@ -50,8 +53,9 @@ public class Database {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Could not find drivers for MySql-Database -> check classpath");
+			Config.setWriteToDatabase(false);
+			return null;
 		}
 		
 		try {
