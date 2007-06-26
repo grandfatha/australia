@@ -25,6 +25,8 @@ public class GA {
 	}
 
 	
+	/* start algorithm methods	*****************************************************************************************************/
+
 	/**
 	 * Starts the Genetic Algorithm
 	 * 
@@ -68,20 +70,23 @@ public class GA {
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
 			/* add 10% random indiduals from foreign countries to new population *****/
-//			for(int j=0; j < populationSize/5; j++){
-//				newPopulation.add(IndividualImpl.generateRandomIndividual(problem));
-//			}
+			for(int j=0; j < populationSize*0.1; j++){
+				currentPopulation.remove(currentPopulation.getWorstIndividual());
+			}
+			for(int j=0; j < populationSize*0.1; j++){
+				currentPopulation.add(IndividualImpl.generateRandomIndividual(problem));
+			}
 			
 			/* create a new generation with doubled size as current ******************/
 			while(newGeneration.getSize() < populationSize * Config.getNewGenerationSize()){		// size of new population
 																									// higher value results in higher selection pressure
 
 				/* selection *******************************************************/
-//				Individual mum = currentPopulation.getIndividualByRouletteWheel();
-//				Individual dad = currentPopulation.getIndividualByRouletteWheel();
+				Individual mum = currentPopulation.getIndividualByRouletteWheel();
+				Individual dad = currentPopulation.getIndividualByRouletteWheel();
 
-				Individual mum = currentPopulation.getRandomIndividual();
-				Individual dad = currentPopulation.getRandomIndividual();
+//				Individual mum = currentPopulation.getRandomIndividual();
+//				Individual dad = currentPopulation.getRandomIndividual();
 
 
 				/* recombine *******************************************************/
@@ -89,20 +94,27 @@ public class GA {
 				
 
 				/* mutate **********************************************************/
+				if(Math.random() < 0.2){
+					baby.mutate();
+				}
+
 				if(Math.random() < 0.7){
-					for(int j=0; j< (int)(Math.random()*10);j++){ 	// mutate up to 10 times
-						baby.mutate();
-					}
+					baby.mutateNearNeighbor();
 				}
 				
-				if(Math.random() < 0.3){
+				if(Math.random() < 0.2){
+					baby.mutateSwitchFacilities();
+				}
+
+				if(Math.random() < 0.2){
+					baby.mutateBanFacility();
+				}
+				
+				if(Math.random() < 0.2){
 					baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 				}
 				
-				if(Math.random() < 0.1){
-					baby.mutateBanFacility();	// delete a random facility to save fixcosts
-				}
-				
+
 				/* add new individual to new generation ****************************/
 				newGeneration.add(baby);
 			}
@@ -113,8 +125,8 @@ public class GA {
 			/* replace current population with the new population ************************/
 			currentPopulation = newGeneration;
 			
-			/* Print best indivual every 100 times *********************************/
-			if(currentIteration % 100 == 0){
+			/* Print best indivual every 300 times *********************************/
+			if(currentIteration % 300 == 0){
 				System.out.println(currentPopulation.getBestIndividual());
 			}
 			
@@ -128,6 +140,7 @@ public class GA {
 
 	}
 	
+	// handles the stop criterion
 	private boolean stop(){
 		currentIteration++;
 		
