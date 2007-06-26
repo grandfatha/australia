@@ -19,17 +19,18 @@ public class AustraliaMultipleStarter {
 			}
 		}
 		
-		for (Problem problem : problems) {
+		while (true){
+		
+			Problem problem = problems.get((int)(Math.random()*problems.size()));
+
 			GA ga = new GA(problem);
 			
-			for(int i=1; i<=5;i++){
-				Database.addIndivudual(ga.startAlgorithm(200, 3000));
-				System.out.println("Ende Durchgang " + i + " von Problem " + problem.getInstanceName() );
-			}
+			Database.addIndivudual(ga.startAlgorithm(300, 6000));
+			System.out.println("Ende von Problem " + problem.getInstanceName() );
+			
 		}
 		
-		
-		System.out.println("Ende");
+//		System.out.println("Ende");
 
 	}
 
