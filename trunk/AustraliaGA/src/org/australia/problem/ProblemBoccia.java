@@ -21,6 +21,13 @@ public class ProblemBoccia implements Problem{
 	private double[][] costs;   // transportkosten
 	private int[][] sortedCosts;
 	
+	private String instanceName;
+	
+
+	public String getInstanceName() {
+		return instanceName;
+	}
+
 
 	// Getter
 	public double[] getCap() {

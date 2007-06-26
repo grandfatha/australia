@@ -16,5 +16,7 @@ public interface Problem {
 	public double[] getNeeds();
 	public double getWarehouses();
 	public int[][] getSortedCosts();
+	
+	public String getInstanceName();
 
 }
