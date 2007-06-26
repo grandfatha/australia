@@ -12,8 +12,6 @@ public class PopulationImpl implements Population{
 
 	private Problem problem;
 	private SortedSet<Individual> individuals;
-	private Individual best;
-	
 
 	// Constructor		//////////////////////////////////////////////////////////////////////////////
 	public PopulationImpl(Problem problem){
@@ -73,6 +71,23 @@ public class PopulationImpl implements Population{
 	
 	public Individual getBestIndividual() {
 		return individuals.first();
+	}
+	
+	public Individual getBestValidIndividual(){
+		
+		Iterator<Individual> iterator = individuals.iterator();
+		
+		Individual currentIndividual = null;
+		
+		while(iterator.hasNext()){
+			currentIndividual = iterator.next();
+			if(currentIndividual.isValid()){
+				return currentIndividual;
+			}
+		}
+		
+		// if no individual is valid return null
+		return null;
 	}
 
 	public Individual getWorstIndividual() {
