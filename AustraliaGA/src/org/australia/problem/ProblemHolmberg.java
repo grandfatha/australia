@@ -24,8 +24,12 @@ public class ProblemHolmberg implements Problem {
 	private double[][] costs;   // transportkosten
 	private int[][] sortedCosts;
 
-	
+	private String instanceName;
 
+
+	public String getInstanceName() {
+		return instanceName;
+	}
 
 	public double[] getCap() {
 		return cap;
@@ -129,6 +133,7 @@ public class ProblemHolmberg implements Problem {
 	public static ProblemHolmberg readProblem(File f){
 	ProblemHolmberg result = new ProblemHolmberg();
 	
+	result.instanceName = f.getName();
 	
 	// adapted from Ulrich Sperlich
     StreamTokenizer st;
