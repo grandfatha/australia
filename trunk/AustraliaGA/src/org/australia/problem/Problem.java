@@ -3,7 +3,7 @@ package org.australia.problem;
 public interface Problem {
 
 	public double[] getCap() ;
-
+	
 	/**
 	 * this returns the cummulated costs from the customer to the facility
 	 * double[customerNr][facilityNr]
