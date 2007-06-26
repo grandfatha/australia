@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.australia.config.Config;
 import org.australia.problem.Problem;
 import org.australia.util.Utils;
 
@@ -32,9 +33,11 @@ public class PopulationImpl implements Population{
 
 		
 		//jc: we cannot use getSize due to the danger of an endless loop
-		for(int i=0; i<amount/2; i++){
+		for(int i=0; i< (int)(amount * Config.getPercentageGreedy()); i++){
 			individuals.add(IndividualImpl.generateGreedyIndividual(this.getProblem()));
 		}
+		
+		System.out.println("Greedy generated: " + individuals.size());
 
 		while(getSize() < amount){
 			individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));	

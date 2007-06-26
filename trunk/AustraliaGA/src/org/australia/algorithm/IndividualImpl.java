@@ -2,6 +2,8 @@ package org.australia.algorithm;
 
 import java.util.Collection;
 import java.util.HashSet;
+
+import org.australia.config.Config;
 import org.australia.problem.*;
 import org.australia.util.Utils;
 
@@ -252,7 +254,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		double feecosts =0.0;
 		
 		// strafkosten / M-Method
-		double fee = 20; 	// fee for one units thats more in warehouse than possible
+		double fee = Config.getFee(); 	// fee for one units thats more in warehouse than possible
 		
 		double[] assigned = new double[(int) getProblem().getWarehouses()];
 		double[] need = getProblem().getNeeds();
@@ -381,7 +383,25 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 			geneString.append(gene[i]);
 			geneString.append(",");
 		}
+		geneString.deleteCharAt(geneString.lastIndexOf(","));
 		return geneString.toString();
+	}
+	
+	public String getGeneString(){
+		StringBuilder geneString = new StringBuilder();
+		for (int i = 0; i < gene.length; i++) {
+			geneString.append(gene[i]);
+			geneString.append(",");
+		}
+		geneString.deleteCharAt(geneString.lastIndexOf(","));
+		return geneString.toString();
+	}
+	
+	public boolean isValid(){
+		if(getFeeCosts() > 0.0){
+			return false;
+		}
+		return true;
 	}
 
 	// Getter	////////////////////////////////////////////////////////////////////////////////////

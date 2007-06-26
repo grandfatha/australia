@@ -27,6 +27,7 @@ public class GA {
 		currentPopulation = new PopulationImpl(problem, populationSize);
 
 		/* evolve ********************************************************************/
+		
 		for(int i=0; i<iterations; i++){
 			Population newGeneration = new PopulationImpl(this.problem);
 
@@ -34,34 +35,39 @@ public class GA {
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
 			/* add 10% random indiduals from foreign countries to new population *****/
-			for(int j=0; j < currentPopulation.getSize()/20; j++){
-				newGeneration.add(IndividualImpl.generateRandomIndividual(problem));
-			}
+//			for(int j=0; j < populationSize/5; j++){
+//				newPopulation.add(IndividualImpl.generateRandomIndividual(problem));
+//			}
 			
 			/* create a new generation with doubled size as current ******************/
-			while(newGeneration.getSize() < currentPopulation.getSize() * 2){		// size of new population
-																					// higher value results in higher selection pressure
+			while(newGeneration.getSize() < populationSize * 2){		// size of new population
+																		// higher value results in higher selection pressure
 
 				/* selection *******************************************************/
-				Individual mum = currentPopulation.getIndividualByRouletteWheel();
-				Individual dad = currentPopulation.getIndividualByRouletteWheel();
+//				Individual mum = currentPopulation.getIndividualByRouletteWheel();
+//				Individual dad = currentPopulation.getIndividualByRouletteWheel();
 
-//				Individual mum = currentPopulation.getRandomIndividual();
-//				Individual dad = currentPopulation.getRandomIndividual();
+				Individual mum = currentPopulation.getRandomIndividual();
+				Individual dad = currentPopulation.getRandomIndividual();
+
 
 				/* recombine *******************************************************/
 				Individual baby = mum.haveSex(dad);
 				
+
 				/* mutate **********************************************************/
-				if(Math.random() < 0.5){
+				if(Math.random() < 0.7){
 					for(int j=0; j< (int)(Math.random()*5);j++){ 	// mutate up to 10 times
 						baby.mutate();
 					}
 				}
 				
 				if(Math.random() < 0.3){
-//					baby.mutateBanFacility();	// delete a random facility to save fixcosts
 					baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+				}
+				
+				if(Math.random() < 0.1){
+					baby.mutateBanFacility();	// delete a random facility to save fixcosts
 				}
 				
 				/* add new individual to new generation ****************************/
@@ -69,7 +75,7 @@ public class GA {
 			}
 			
 			/* finally select best of new Generation *******************************/
-			newGeneration.selectBest(currentPopulation.getSize());
+			newGeneration.selectBest(populationSize);
 			
 			/* replace current population by new Population ************************/
 			currentPopulation = newGeneration;
