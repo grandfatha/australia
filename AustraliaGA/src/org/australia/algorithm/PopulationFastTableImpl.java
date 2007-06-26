@@ -4,22 +4,27 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javolution.util.FastTable;
+
 import org.australia.config.Config;
 import org.australia.problem.Problem;
 import org.australia.util.Utils;
 
-public class PopulationImpl implements Population{
+public class PopulationFastTableImpl implements Population{
 
 	private Problem problem;
-	private SortedSet<Individual> individuals;
+	private FastTable<Individual> individuals;
+	
+	private boolean changed = true;
 
 	// Constructor		//////////////////////////////////////////////////////////////////////////////
-	public PopulationImpl(Problem problem){
-		individuals = new TreeSet<Individual>();
+	public PopulationFastTableImpl(Problem problem){
+		individuals = new FastTable<Individual>();
+		individuals.setValueComparator(new IndividualComparator());
 		this.problem = problem;
 	}
 
-	public PopulationImpl(Problem problem, int amount){
+	public PopulationFastTableImpl(Problem problem, int amount){
 		this.problem = problem;
 		initialize(amount);
 	}
@@ -27,7 +32,8 @@ public class PopulationImpl implements Population{
 
 	// Private Methods 	//////////////////////////////////////////////////////////////////////////////
 	private void initialize(int amount){
-		individuals = new TreeSet<Individual>();
+		individuals = new FastTable<Individual>();
+		individuals.setValueComparator(new IndividualComparator());
 
 		individuals.add(IndividualImpl.generateGreedyIndividual(this.getProblem()));
 		
@@ -39,60 +45,43 @@ public class PopulationImpl implements Population{
 		System.out.println("Greedy generated: " + individuals.size());
 
 		while(getSize() < amount){
-			individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));	
+			individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));
 		}
-		
 		System.out.println("Individuals created");
-	}
-	
-	public void selectBestHalf(){
-		if(getSize()<=0){
-			return;
-		}
-		Iterator<Individual> iterator = individuals.iterator();
-		
-		SortedSet<Individual> bestIndividuals = new TreeSet<Individual>();
-
-		for(int i=0; i< getSize() /2;i++){
-			bestIndividuals.add(iterator.next());
-		}
-		this.individuals = bestIndividuals;
-
 	}
 
 	public void selectBest(int size){
 		if(getSize()<=0 || size > this.getSize()){
 			return;
 		}
+		sort();
+		individuals.removeRange(size, individuals.size());
 
-		while(this.getSize() > size){
-			this.remove(this.getWorstIndividual());
-		}
 	}
 	
 	public Individual getBestIndividual() {
-		return individuals.first();
+		sort();
+		return individuals.getFirst();
 	}
 	
 	public Individual getBestValidIndividual(){
-		
-		Iterator<Individual> iterator = individuals.iterator();
-		
+		sort();
 		Individual currentIndividual = null;
 		
-		while(iterator.hasNext()){
-			currentIndividual = iterator.next();
+		for (int i = 0, n = individuals.size(); i < n; i++) {
+			currentIndividual = individuals.get(i);
 			if(currentIndividual.isValid()){
 				return currentIndividual;
 			}
-		}
+	     }
 		
 		// if no individual is valid return null
 		return null;
 	}
 
 	public Individual getWorstIndividual() {
-		return individuals.last();
+		sort();
+		return individuals.getLast();
 	}
 
 	public Individual getRandomIndividual(){
@@ -121,20 +110,13 @@ public class PopulationImpl implements Population{
 	 * @see org.australia.algorithm.Population#getIndividual(int)
 	 */
 	public Individual getIndividual(int number) {
-		
-		if(number >= individuals.size()){
+		if(number >= getSize()){
 			return null;
 		}
 
-		Iterator<Individual> iterator = individuals.iterator();
-		
-		Individual currentIndividual = null;
-		
-		for(int i=0; i<= number; i++){
-			currentIndividual = iterator.next();
-		}
+		sort();
 
-		return currentIndividual;
+		return individuals.get(number);
 	}
 
 	public int getSize() {
@@ -142,14 +124,34 @@ public class PopulationImpl implements Population{
 	}
 
 	public boolean add(Individual individual) {
-		return individuals.add(individual);
+		changed = true;
+		individuals.addLast(individual);
+		return true;
+		
 	}
 
 	public boolean remove(Individual individual) {
 		return individuals.remove(individual);
 	}
 
+	private void sort(){
+		if(changed==true){
+			individuals.sort();
+		}
+		changed=false;
+	}
 	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		sort();
+		for(int i=0; i<individuals.size(); i++){
+			result.append(getIndividual(i).toString());
+			result.append("\n");
+		}
+
+		return result.toString();
+	}
 
 	
 }

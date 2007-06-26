@@ -5,9 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 
-import org.australia.algorithm.Individual;
-import org.australia.algorithm.IndividualImpl;
-
 /**
  * @author jochen
  * Problem represents a "australia" problem

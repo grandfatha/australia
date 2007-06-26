@@ -1,5 +1,6 @@
 package org.australia.algorithm;
 
+import org.australia.config.Config;
 import org.australia.problem.Problem;
 
 public class GA {
@@ -55,7 +56,6 @@ public class GA {
 	
 	private Individual startAlgorithm(){
 
-
 		/* create start population **************************************************/
 		currentPopulation = new PopulationImpl(problem, populationSize);
 
@@ -73,8 +73,8 @@ public class GA {
 //			}
 			
 			/* create a new generation with doubled size as current ******************/
-			while(newGeneration.getSize() < populationSize * 2){		// size of new population
-																		// higher value results in higher selection pressure
+			while(newGeneration.getSize() < populationSize * Config.getNewGenerationSize()){		// size of new population
+																									// higher value results in higher selection pressure
 
 				/* selection *******************************************************/
 //				Individual mum = currentPopulation.getIndividualByRouletteWheel();
@@ -90,7 +90,7 @@ public class GA {
 
 				/* mutate **********************************************************/
 				if(Math.random() < 0.7){
-					for(int j=0; j< (int)(Math.random()*5);j++){ 	// mutate up to 10 times
+					for(int j=0; j< (int)(Math.random()*10);j++){ 	// mutate up to 10 times
 						baby.mutate();
 					}
 				}
@@ -110,7 +110,7 @@ public class GA {
 			/* finally select best of new Generation *******************************/
 			newGeneration.selectBest(populationSize);
 			
-			/* replace current population by new Population ************************/
+			/* replace current population with the new population ************************/
 			currentPopulation = newGeneration;
 			
 			/* Print best indivual every 100 times *********************************/
@@ -119,9 +119,13 @@ public class GA {
 			}
 			
 		} // End for
+
+		System.out.println("Population:");
+		System.out.println(currentPopulation);
 		
 		/* return best Individual *************************************************/
 		return currentPopulation.getBestIndividual();
+
 	}
 	
 	private boolean stop(){

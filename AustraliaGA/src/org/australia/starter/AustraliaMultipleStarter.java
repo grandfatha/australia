@@ -1,10 +1,8 @@
 package org.australia.starter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.australia.algorithm.GA;
-import org.australia.algorithm.Individual;
 import org.australia.problem.Problem;
 import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Database;

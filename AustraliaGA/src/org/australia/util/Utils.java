@@ -5,7 +5,6 @@ import java.util.SortedSet;
 
 import org.australia.algorithm.Individual;
 import org.australia.algorithm.IndividualImpl;
-import org.australia.algorithm.Population;
 
 public class Utils {
 	
@@ -14,7 +13,7 @@ public class Utils {
 		
 		boolean[] pattern = new boolean[length];
 		
-		for (int i = 0; i < pattern.length; i++) {
+		for (int i = 0; i < length; i++) {
 			pattern[i] = Math.random() < 0.5;
 		}
 		
