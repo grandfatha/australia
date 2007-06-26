@@ -15,4 +15,7 @@ public interface Individual extends Comparable<Individual> {
 	public int[] getGene();
 
 	public Individual haveSex(Individual partner);
+	
+	public boolean isValid();
+	public String getGeneString();
 }
