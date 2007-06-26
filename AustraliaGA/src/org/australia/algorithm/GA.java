@@ -3,17 +3,27 @@ package org.australia.algorithm;
 import org.australia.problem.Problem;
 
 public class GA {
-	Problem problem;
-	Population currentPopulation;
-	
-	
-	
+	// Variables
+	private Problem problem;
+	private Population currentPopulation;
+	private int populationSize;
 
+	// Variables for stop criteria
+	private Criterion criterion;
+	private int totalIterations;
+	private int currentIteration = 0;
+	private int maxTimeNoImprovements;
+	private Double currentBestFitness;
+	private long currentBestFitnessTime;
+	
+	
+	/* Constructor	*****************************************************************************************************************/
 	public GA(Problem problem) {
 		super();
 		this.problem = problem;
 	}
 
+	
 	/**
 	 * Starts the Genetic Algorithm
 	 * 
@@ -22,13 +32,36 @@ public class GA {
 	 * @return best Individual
 	 */
 	public Individual startAlgorithm(int populationSize, int iterations){
+		this.criterion = Criterion.ITERATIONS;
+		this.totalIterations = iterations;
+		this.populationSize = populationSize;
+		return startAlgorithm();
+	}
+	
+	public Individual startAlgorithm(int populationSize, Criterion criterion, int value){
+		this.populationSize = populationSize;
+		this.criterion = criterion;
+
+		if(criterion.equals(Criterion.ITERATIONS)){
+			totalIterations = value;
+		}else if(criterion.equals(Criterion.TIMENOIMPROVEMENTS)){
+			maxTimeNoImprovements = value;
+		}
+		
+		return startAlgorithm();
+	}
+
+	
+	
+	private Individual startAlgorithm(){
+
 
 		/* create start population **************************************************/
 		currentPopulation = new PopulationImpl(problem, populationSize);
 
 		/* evolve ********************************************************************/
 		
-		for(int i=0; i<iterations; i++){
+		while(!stop()){
 			Population newGeneration = new PopulationImpl(this.problem);
 
 			/* adds the best individual to new generation ****************************/
@@ -81,7 +114,7 @@ public class GA {
 			currentPopulation = newGeneration;
 			
 			/* Print best indivual every 100 times *********************************/
-			if(i%100==0){
+			if(currentIteration % 100 == 0){
 				System.out.println(currentPopulation.getBestIndividual());
 			}
 			
@@ -89,6 +122,29 @@ public class GA {
 		
 		/* return best Individual *************************************************/
 		return currentPopulation.getBestIndividual();
+	}
+	
+	private boolean stop(){
+		currentIteration++;
+		
+		
+		if(this.criterion.equals(Criterion.ITERATIONS)){		// stop after x generations
+			if(currentIteration > totalIterations){
+				return true;
+			}
+		}else if(this.criterion.equals(Criterion.TIMENOIMPROVEMENTS)){			// Stop ga after x seconds with no improvement
+			if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
+//				System.out.println("Found a new Best");
+				currentBestFitness = currentPopulation.getBestIndividual().getFitness();
+				currentBestFitnessTime = System.currentTimeMillis();
+			}else{
+				if(System.currentTimeMillis() - currentBestFitnessTime > maxTimeNoImprovements*1000){
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 }

@@ -6,7 +6,7 @@ public class Config {
 	
 	private static double percentageGreedy = 0.5;
 	
-	private static double fee = 0.5;
+	private static double fee = 10;
 	
 	
 	
