@@ -12,100 +12,13 @@ import java.io.StreamTokenizer;
  *
  */
 
-public class ProblemBoccia implements Problem{
-	private double warehouses;
-	private double customers;
-	private double[] needs;
-	private double[] cap;
-	private double[] fixcosts;	// Eröffnungskosten für warehouse
-	private double[][] costs;   // transportkosten
-	private int[][] sortedCosts;
+public class ProblemBoccia extends ProblemHB{
 	
-	private String instanceName;
-	
-
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-
-	// Getter
-	public double[] getCap() {
-		return cap;
-	}
-
-
-	public double[][] getCosts() {
-		return costs;
-	}
-
-
-	public double getCustomers() {
-		return customers;
-	}
-
-
-	public double[] getFixcosts() {
-		return fixcosts;
-	}
-
-
-	public double[] getNeeds() {
-		return needs;
-	}
-
-
-	public double getWarehouses() {
-		return warehouses;
-	}
-
-
 	public static ProblemBoccia readProblem(String s){
 		File f = new File(s);
 		return readProblem(f);
 	}
 	
-	/**
-	 * sort costs for each customer and its facilities
-	 * @param problem
-	 * @return Individual
-	 * @author benjamin
-	 */
-	public int[][] getSortedCosts(){
-		if(sortedCosts!=null){
-			return sortedCosts;
-		}
-
-		// eventeuell kann man in die Berechnung noch die Anteiligen Kosten des Bedarfs an
-		// den Fixkosten des jeweiligen Lagers hinzunehmen
-		double[][] costs = this.getCosts();
-		sortedCosts = new int[costs.length][costs[0].length];
-		double lowestCosts;
-		int position;
-
-			// create an array with customers and all warehouses, the warehouses with the lowest costs are 
-			// at a lower position in this array
-			for (int i = 0; i < costs.length; i++) {
-				double[] costsForEachCustomer = costs[i].clone();
-				lowestCosts = 0;
-				position = 0;
-				for (int j = 0; j < costsForEachCustomer.length; j++) {
-					lowestCosts = costsForEachCustomer[j];
-					position = j;
-					for (int z = 0; z < costsForEachCustomer.length; z++){
-						double currentCosts = costsForEachCustomer[z];
-						if(lowestCosts > currentCosts){
-							lowestCosts = currentCosts;
-							position = z;
-						}
-					}
-					costsForEachCustomer[position]= 999999.9;
-					sortedCosts[i][j] = position;	
-				}
-			}
-		
-		return sortedCosts;
-	}
 	/**
 	 * Factory to generate a new instance of problem from a given file
 	 * 
@@ -116,8 +29,8 @@ public class ProblemBoccia implements Problem{
 	 * @return new Problem instance
 	 */
 	public static ProblemBoccia readProblem(File f){
-		ProblemBoccia result = new ProblemBoccia();
-	
+		result = new ProblemBoccia();
+		result.instanceName = f.getName();
 		
 		// adapted from Ulrich Sperlich
 		StreamTokenizer st;
@@ -149,7 +62,7 @@ public class ProblemBoccia implements Problem{
 			    		  result.customers=st.nval;
 			    		  result.fixcosts=new double[(int)result.warehouses];
 			    		  result.cap=new double[(int)result.warehouses];
-			    		  result.costs=new double[(int)result.warehouses][(int)result.customers];
+			    		  result.costs=new double[(int)result.customers][(int)result.warehouses];
 			    		  result.needs=new double[(int)result.customers];
 			    		  break;
 						
@@ -186,31 +99,26 @@ public class ProblemBoccia implements Problem{
 			e.printStackTrace();
 		}
 		
-		return result;
+		return (ProblemBoccia) result;
 	}
-	
-	@Override
-	public String toString() {
-		return "Warehouses: " + warehouses + ", Customers: " + customers;
-	}
-	
-	/*  testing */
-	public static void main(String[] args) {
-		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
-		System.out.println(problem);
-		
-		System.out.println("Demands:");
-		for (int i=0; i< problem.getNeeds().length; i++) {
-			
-			System.out.println(i + ": " +problem.getNeeds()[i]);
-		}
-		System.out.println("Capacity:");
-		for (int i=0; i< problem.getCap().length; i++) {
-			
-			System.out.println(i + ": " +problem.getCap()[i]);
-		}
-
-	}
+//	
+//	/*  testing */
+//	public static void main(String[] args) {
+//		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
+//		System.out.println(problem);
+//		
+//		System.out.println("Demands:");
+//		for (int i=0; i< problem.getNeeds().length; i++) {
+//			
+//			System.out.println(i + ": " +problem.getNeeds()[i]);
+//		}
+//		System.out.println("Capacity:");
+//		for (int i=0; i< problem.getCap().length; i++) {
+//			
+//			System.out.println(i + ": " +problem.getCap()[i]);
+//		}
+//
+//	}
 	
 
 }
