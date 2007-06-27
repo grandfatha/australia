@@ -54,34 +54,43 @@ public class GA {
 		return startAlgorithm();
 	}
 
-	
+	public Individual startAlgorithm(Population startPopulation, Criterion criterion, int value){
+		currentPopulation = startPopulation;
+		return startAlgorithm(startPopulation.getSize(), criterion, value);
+	}
+
 	
 	private Individual startAlgorithm(){
 
 		/* create start population **************************************************/
-		currentPopulation = new PopulationImpl(problem, populationSize);
+		if(currentPopulation==null){
+			currentPopulation = new PopulationImpl(problem, populationSize);
+		}
 
 		/* evolve ********************************************************************/
 		
 		while(!stop()){
+			
 			Population newGeneration = new PopulationImpl(this.problem);
 
 			/* adds the best individual to new generation ****************************/
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
 			/* add 10% random indiduals from foreign countries to new population *****/
-			for(int j=0; j < populationSize*0.1; j++){
+			for(int j=0; j < populationSize*0.05; j++){
 				currentPopulation.remove(currentPopulation.getWorstIndividual());
 			}
-			for(int j=0; j < populationSize*0.1; j++){
+			for(int j=0; j < populationSize*0.05; j++){
 				currentPopulation.add(IndividualImpl.generateRandomIndividual(problem));
 			}
 			
 			/* create a new generation with doubled size as current ******************/
+			
 			while(newGeneration.getSize() < populationSize * Config.getNewGenerationSize()){		// size of new population
 																									// higher value results in higher selection pressure
 
 				/* selection *******************************************************/
+				
 				Individual mum = currentPopulation.getIndividualByRouletteWheel();
 				Individual dad = currentPopulation.getIndividualByRouletteWheel();
 
@@ -90,33 +99,31 @@ public class GA {
 
 
 				/* recombine *******************************************************/
+				
 				Individual baby = mum.haveSex(dad);
 				
 
 				/* mutate **********************************************************/
-				if(Math.random() < 0.2){
-					baby.mutate();
-				}
-
-				if(Math.random() < 0.7){
-					baby.mutateNearNeighbor();
-				}
 				
-				if(Math.random() < 0.2){
-					baby.mutateSwitchFacilities();
-				}
-
-				if(Math.random() < 0.2){
-					baby.mutateBanFacility();
-				}
-				
-				if(Math.random() < 0.2){
-					baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+				if(Math.random() < Config.getOddsMutation()){
+	
+					double random = Math.random();
+					
+					if(random < 0.6){
+						baby.mutateNearNeighbor();
+					}else if(random < 0.8){
+						baby.mutateSwitchFacilities();
+					}else{
+						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+					}
 				}
 				
 
 				/* add new individual to new generation ****************************/
+				
 				newGeneration.add(baby);
+				
+				
 			}
 			
 			/* finally select best of new Generation *******************************/
@@ -126,19 +133,21 @@ public class GA {
 			currentPopulation = newGeneration;
 			
 			/* Print best indivual every 300 times *********************************/
-			if(currentIteration % 300 == 0){
+			if(currentIteration % 1000 == 0){
 				System.out.println(currentPopulation.getBestIndividual());
 			}
 			
 		} // End for
 
 		System.out.println("Population:");
-		System.out.println(currentPopulation);
+		System.out.println(currentPopulation.toString());
 		
 		/* return best Individual *************************************************/
 		return currentPopulation.getBestIndividual();
 
 	}
+	
+	
 	
 	// handles the stop criterion
 	private boolean stop(){
@@ -163,5 +172,8 @@ public class GA {
 		
 		return false;
 	}
+	
+	
+	
 
 }

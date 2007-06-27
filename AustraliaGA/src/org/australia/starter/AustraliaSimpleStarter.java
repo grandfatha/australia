@@ -12,13 +12,13 @@ public class AustraliaSimpleStarter {
 
 	public static void main(String[] args) {
 		
-		Problem problem = ProblemHolmberg.readProblem("problem/p71");
+		Problem problem = ProblemHolmberg.readProblem("problem/p1");
 //		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
 		
 		GA ga = new GA(problem);
 		
 		long start = System.currentTimeMillis();
-		Individual bestIndividual = ga.startAlgorithm(200, Criterion.TIMENOIMPROVEMENTS, 60);
+		Individual bestIndividual = ga.startAlgorithm(200, Criterion.ITERATIONS, 2000);
 		long end = System.currentTimeMillis();
 		
 		

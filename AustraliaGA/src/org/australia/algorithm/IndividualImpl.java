@@ -22,12 +22,11 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	
 	
 	// Constructor		//////////////////////////////////////////////////////////////////////////
-	private IndividualImpl(Problem problem) {
+	public IndividualImpl(Problem problem) {
 		this.problem = problem;
 	}
 	
-	@Deprecated
-	private IndividualImpl(Problem problem,  int[] gene) {
+	public IndividualImpl(Problem problem,  int[] gene) {
 		this.problem = problem;
 		this.gene = gene;
 		this.changed = true;

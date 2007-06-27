@@ -2,6 +2,7 @@ package org.australia.util;
 
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 
 import org.australia.algorithm.Individual;
 import org.australia.algorithm.IndividualImpl;
@@ -29,6 +30,22 @@ public class Utils {
 		return ((int)(Math.random()*(end-begin)))+begin;
 	}
 	
+	/*
+	 * convert a gene string to a gene array
+	 */
+	public static int[] getArray(String geneString){
+		
+		StringTokenizer st = new StringTokenizer(geneString, ",");
+
+		int[] result = new int[st.countTokens()];
+		int i=0;
+		while(st.hasMoreTokens()){
+			result[i] = Integer.parseInt(st.nextToken());
+			i++;
+		}
+
+		return result;
+	}
 	
 	
 	
@@ -230,8 +247,9 @@ public class Utils {
 	
 
 	public static void main(String[] args) {
-		for(int i=0; i<10;i++){
-			rouletteWheel(3);
+		int[] array = getArray("1,4,6");
+		for (int i = 0; i < array.length; i++) {
+			System.out.println(array[i]);
 		}
 	}
 

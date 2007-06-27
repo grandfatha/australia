@@ -1,9 +1,5 @@
 package org.australia.algorithm;
 
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import javolution.util.FastTable;
 
 import org.australia.config.Config;
