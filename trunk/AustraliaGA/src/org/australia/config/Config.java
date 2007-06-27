@@ -4,8 +4,9 @@ public class Config {
 	
 	
 	private static double percentageGreedy = 0.3;
+	private static double oddsMutation = 0.7;
 	
-	private static double fee = 10;
+	private static double fee = 1;
 	private static double newGenerationSize = 2.0;
 	
 	
@@ -51,6 +52,14 @@ public class Config {
 
 	public static void setNewGenerationSize(double newGenerationSize) {
 		Config.newGenerationSize = newGenerationSize;
+	}
+
+	public static double getOddsMutation() {
+		return oddsMutation;
+	}
+
+	public static void setOddsMutation(double oddsMutation) {
+		Config.oddsMutation = oddsMutation;
 	}
 	
 	

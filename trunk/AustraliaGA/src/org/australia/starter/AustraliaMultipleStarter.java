@@ -13,7 +13,7 @@ public class AustraliaMultipleStarter {
 		
 		ArrayList<Problem> problems = new ArrayList<Problem>();
 		
-		for(int i=1; i<=71; i++){
+		for(int i=71; i<=71; i++){
 			if(i!=26&&i!=47){	// problems with these files
 				problems.add(ProblemHolmberg.readProblem("problem/p" + i));
 			}
@@ -25,7 +25,7 @@ public class AustraliaMultipleStarter {
 
 			GA ga = new GA(problem);
 			
-			Database.addIndivudual(ga.startAlgorithm(300, 6000));
+			Database.addIndivudual(ga.startAlgorithm(300, 10000));
 			System.out.println("Ende von Problem " + problem.getInstanceName() );
 			
 		}
