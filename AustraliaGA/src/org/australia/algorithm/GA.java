@@ -66,21 +66,25 @@ public class GA {
 		if(currentPopulation==null){
 			currentPopulation = new PopulationImpl(problem, populationSize);
 		}
+		
+		System.out.println(currentPopulation.getBestIndividual());
+		
 
 		/* evolve ********************************************************************/
 		
 		while(!stop()){
 			
+			/* create a new empty child-population ***********************************/
 			Population newGeneration = new PopulationImpl(this.problem);
 
 			/* adds the best individual to new generation ****************************/
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
 			/* add 10% random indiduals from foreign countries to new population *****/
-			for(int j=0; j < populationSize*0.05; j++){
+			for(int j=0; j < populationSize * Config.getPercentageForeignIndividuals(); j++){
 				currentPopulation.remove(currentPopulation.getWorstIndividual());
 			}
-			for(int j=0; j < populationSize*0.05; j++){
+			for(int j=0; j < populationSize * Config.getPercentageForeignIndividuals(); j++){
 				currentPopulation.add(IndividualImpl.generateRandomIndividual(problem));
 			}
 			
@@ -91,11 +95,15 @@ public class GA {
 
 				/* selection *******************************************************/
 				
-				Individual mum = currentPopulation.getIndividualByRouletteWheel();
-				Individual dad = currentPopulation.getIndividualByRouletteWheel();
-
-//				Individual mum = currentPopulation.getRandomIndividual();
-//				Individual dad = currentPopulation.getRandomIndividual();
+				Individual mum=null, dad=null;
+				
+				if(Config.getSelectionMethod() == 0){
+					mum = currentPopulation.getRandomIndividual();
+					dad = currentPopulation.getRandomIndividual();
+				}else if(Config.getSelectionMethod()==1){
+					mum = currentPopulation.getIndividualByRouletteWheel();
+					dad = currentPopulation.getIndividualByRouletteWheel();
+				}
 
 
 				/* recombine *******************************************************/
@@ -111,8 +119,12 @@ public class GA {
 					
 					if(random < 0.6){
 						baby.mutateNearNeighbor();
-					}else if(random < 0.8){
-						baby.mutateSwitchFacilities();
+					}else if (random < 0.7){
+						baby.mutateNearNeighbor();
+						baby.mutateNearNeighbor();
+						baby.mutateNearNeighbor();
+//					}else if(random < 0.8){
+//						baby.mutateSwitchFacilities();
 					}else{
 						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 					}

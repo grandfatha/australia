@@ -2,11 +2,14 @@ package org.australia.config;
 
 public class Config {
 	
-	
+	private static int selectionMethod = 0;	// 0=random
+											// 1= rouletteWheel
+
 	private static double percentageGreedy = 0.3;
-	private static double oddsMutation = 0.7;
+	private static double oddsMutation = 0.5;
+	private static double percentageForeignIndividuals = 0.0;
 	
-	private static double fee = 1;
+	private static double fee = 20;
 	private static double newGenerationSize = 2.0;
 	
 	
@@ -20,7 +23,8 @@ public class Config {
 	
 	
 	
-	
+	/***********************************************************************************/
+	/* Getter and Setter ***************************************************************/
 	
 	public static double getPercentageGreedy() {
 		return percentageGreedy;
@@ -60,6 +64,23 @@ public class Config {
 
 	public static void setOddsMutation(double oddsMutation) {
 		Config.oddsMutation = oddsMutation;
+	}
+
+	public static double getPercentageForeignIndividuals() {
+		return percentageForeignIndividuals;
+	}
+
+	public static void setPercentageForeignIndividuals(
+			double percentageForeignIndividuals) {
+		Config.percentageForeignIndividuals = percentageForeignIndividuals;
+	}
+
+	public static int getSelectionMethod() {
+		return selectionMethod;
+	}
+
+	public static void setSelectionMethod(int selectionMethod) {
+		Config.selectionMethod = selectionMethod;
 	}
 	
 	
