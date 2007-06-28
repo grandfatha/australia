@@ -55,11 +55,13 @@ public class ProblemBoccia extends ProblemHB{
 				if ( tval == StreamTokenizer.TT_NUMBER ){
 					switch (iteration) {
 					case 0:
-						result.warehouses = st.nval;
+//						result.warehouses = st.nval;
+						result.customers = st.nval;
 						break;
 						
 					case 1:
-			    		  result.customers=st.nval;
+						  result.warehouses = st.nval;  
+//						  result.customers=st.nval;
 			    		  result.fixcosts=new double[(int)result.warehouses];
 			    		  result.cap=new double[(int)result.warehouses];
 			    		  result.costs=new double[(int)result.customers][(int)result.warehouses];

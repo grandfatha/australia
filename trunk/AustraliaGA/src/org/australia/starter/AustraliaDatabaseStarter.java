@@ -18,7 +18,7 @@ public class AustraliaDatabaseStarter {
 	public static void main(String[] args) {
 		
 		//Define Problem
-		Problem problem = ProblemHolmberg.readProblem("problem/p71");
+		Problem problem = ProblemHolmberg.readProblem("problem/p2");
 
 		while(true){
 		
@@ -34,6 +34,10 @@ public class AustraliaDatabaseStarter {
 				population.add(individual);
 			}
 		}
+		
+		System.out.println("There are " + population.getSize() +" Individuals in the database");
+		
+		population.add(IndividualImpl.generateGreedyIndividual(problem));
 		
 		// add some random individuals to population
 		while(population.getSize() < 200){

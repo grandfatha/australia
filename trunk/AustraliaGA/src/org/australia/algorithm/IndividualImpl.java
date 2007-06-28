@@ -333,6 +333,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 		double[] assigned = new double[(int) getProblem().getWarehouses()];
 		double[] need = getProblem().getNeeds();
+		double[] cap = getProblem().getCap();
 		
 		for (int i = 0; i < gene.length; i++) {
 			// i: number of customer
@@ -345,8 +346,8 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 		// each unit in assgigned > cap
 		for(int i=0; i<assigned.length;i++){
-			if(assigned[i] > getProblem().getCap()[i]){
-				feecosts += (assigned[i] - getProblem().getCap()[i]) * fee;
+			if(assigned[i] > cap[i] ){
+				feecosts += (assigned[i] - cap[i] ) * fee;
 			}
 		}
 		
@@ -437,12 +438,12 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		int[] babyGene = new int[thisGene.length];
 		
 		// random array with true or false
-		boolean[] pattern = Utils.getRandomPattern(thisGene.length);	
+//		boolean[] pattern = Utils.getRandomPattern(thisGene.length);	
 	
 		// iterate over gene
 		for (int i = 0; i < thisGene.length; i++) {
 			
-			if(pattern[i]){	// true at posistion i
+			if(Math.random() < 0.5){	// true at posistion i
 				
 				babyGene[i] = thisGene[i];
 				

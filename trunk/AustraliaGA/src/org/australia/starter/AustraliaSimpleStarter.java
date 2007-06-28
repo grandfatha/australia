@@ -15,19 +15,25 @@ public class AustraliaSimpleStarter {
 		Problem problem = ProblemHolmberg.readProblem("problem/p1");
 //		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
 		
+		
+		Individual bestIndividual = null;
+		
 		GA ga = new GA(problem);
 		
 		long start = System.currentTimeMillis();
-		Individual bestIndividual = ga.startAlgorithm(200, Criterion.ITERATIONS, 2000);
+		bestIndividual = ga.startAlgorithm(300, Criterion.ITERATIONS, 3000);
 		long end = System.currentTimeMillis();
-		
+
 		
 		System.out.println("Bestes Individuum:");
 		System.out.println(bestIndividual);
 		
+
 		if(Config.getWriteToDatabase()){
 			Database.addIndivudual(bestIndividual);
 		}
+		
+		
 		
 		System.out.println("Ende");
 		System.out.println("Dauer: " + (end-start));
