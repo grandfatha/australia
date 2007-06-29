@@ -15,7 +15,7 @@ import java.io.StreamTokenizer;
 public class ProblemBoccia extends ProblemHB{
 	
 	public static ProblemBoccia readProblem(String s){
-		File f = new File(s);
+		File f = new File("problem/" + s);
 		return readProblem(f);
 	}
 	

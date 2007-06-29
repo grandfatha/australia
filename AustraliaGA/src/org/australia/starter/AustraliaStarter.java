@@ -17,9 +17,9 @@ public class AustraliaStarter {
 	public static void main(String[] args) {
 
 
-		Problem problem = ProblemHolmberg.readProblem("problem/p2");
+		Problem problem = ProblemHolmberg.readProblem("p2");
 //		problem.getSortedCosts();
-//		Problem problem = ProblemBoccia.readProblem("problem/i50100_1.plc");
+//		Problem problem = ProblemBoccia.readProblem("i50100_1.plc");
 		
 		Collection<Individual> ergebnisse = new ArrayList<Individual>();
 		
