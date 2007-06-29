@@ -15,7 +15,9 @@ public class GA {
 	private int currentIteration = 0;
 	private int maxTimeNoImprovements;
 	private Double currentBestFitness;
-	private long currentBestFitnessTime;
+	private Long startTime;
+	private Long stopTime;
+	private Long currentBestFitnessTime;
 	
 	
 	/* Constructor	*****************************************************************************************************************/
@@ -61,6 +63,10 @@ public class GA {
 
 	
 	private Individual startAlgorithm(){
+		
+		startTime = System.currentTimeMillis();
+		System.out.println("Start Algorithm for Problem " + problem.getInstanceName() + " (Fees: " + Config.getFee() +")");
+
 
 		/* create start population **************************************************/
 		if(currentPopulation==null){
@@ -135,7 +141,6 @@ public class GA {
 				
 				newGeneration.add(baby);
 				
-				
 			}
 			
 			/* finally select best of new Generation *******************************/
@@ -151,9 +156,12 @@ public class GA {
 			
 		} // End for
 
-		System.out.println("Population:");
-		System.out.println(currentPopulation.toString());
+//		System.out.println("Population:");
+//		System.out.println(currentPopulation.toString());
 		
+		
+		stopTime = System.currentTimeMillis();
+
 		/* return best Individual *************************************************/
 		return currentPopulation.getBestIndividual();
 
@@ -165,6 +173,12 @@ public class GA {
 	private boolean stop(){
 		currentIteration++;
 		
+		// some time info
+		if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
+			currentBestFitness = currentPopulation.getBestIndividual().getFitness();
+			currentBestFitnessTime = System.currentTimeMillis();
+		}
+		
 		
 		if(this.criterion.equals(Criterion.ITERATIONS)){		// stop after x generations
 			if(currentIteration > totalIterations){
@@ -172,9 +186,6 @@ public class GA {
 			}
 		}else if(this.criterion.equals(Criterion.TIMENOIMPROVEMENTS)){			// Stop ga after x seconds with no improvement
 			if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
-//				System.out.println("Found a new Best");
-				currentBestFitness = currentPopulation.getBestIndividual().getFitness();
-				currentBestFitnessTime = System.currentTimeMillis();
 			}else{
 				if(System.currentTimeMillis() - currentBestFitnessTime > maxTimeNoImprovements*1000){
 					return true;
@@ -184,8 +195,24 @@ public class GA {
 		
 		return false;
 	}
+	 
 	
+	public double getDuration(){
+		if(stopTime==null){
+			System.out.println("Error: Algorithm not finished yet");
+			return -1.0;
+		}
+		
+		return (stopTime - startTime) / 1000 ;
+	}
 	
+	public double getDurationUntilBestWasFound(){
+		if(currentBestFitnessTime==null){
+			throw new RuntimeException("No time");
+		}
+		
+		return (currentBestFitnessTime - startTime) / 1000 ;
+	}
 	
 
 }

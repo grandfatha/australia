@@ -8,7 +8,7 @@ package org.australia.ui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.UIManager;
+
 import javax.swing.UnsupportedLookAndFeelException;
 
 /**
@@ -92,7 +92,7 @@ public class jMole extends javax.swing.JFrame {
         BearbeitenMenu = new javax.swing.JMenu();
         UndoMenuItem = new javax.swing.JMenuItem();
         RedoMenuItem = new javax.swing.JMenuItem();
-        SepVorZurück = new javax.swing.JSeparator();
+        SepVorZurueck = new javax.swing.JSeparator();
         ZurueckSetzenMenuItem = new javax.swing.JMenuItem();
         HilfeMenu = new javax.swing.JMenu();
         AboutMenuItem = new javax.swing.JMenuItem();
@@ -586,7 +586,7 @@ public class jMole extends javax.swing.JFrame {
 
         RedoMenuItem.setText("Wiederherstellen");
         BearbeitenMenu.add(RedoMenuItem);
-        BearbeitenMenu.add(SepVorZurück);
+        BearbeitenMenu.add(SepVorZurueck);
 
         ZurueckSetzenMenuItem.setText("Einstellungen f\u00fcr GA zur\u00fccksetzen");
         BearbeitenMenu.add(ZurueckSetzenMenuItem);
@@ -675,7 +675,7 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JMenuItem RedoMenuItem;
     private javax.swing.JPanel ResultViewPanel;
     private javax.swing.JSeparator SepVorClose;
-    private javax.swing.JSeparator SepVorZurück;
+    private javax.swing.JSeparator SepVorZurueck;
     private javax.swing.JButton StartGA;
     private javax.swing.JLabel StatusLabel;
     private javax.swing.JPanel StatusPanel;

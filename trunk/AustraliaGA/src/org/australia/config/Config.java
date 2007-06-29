@@ -6,10 +6,10 @@ public class Config {
 											// 1= rouletteWheel
 
 	private static double percentageGreedy = 0.3;
-	private static double oddsMutation = 0.5;
-	private static double percentageForeignIndividuals = 0.0;
+	private static double oddsMutation = 0.8;
+	private static double percentageForeignIndividuals = 0.02;
 	
-	private static double fee = 20;
+	private static double fee = 100;
 	private static double newGenerationSize = 2.0;
 	
 	

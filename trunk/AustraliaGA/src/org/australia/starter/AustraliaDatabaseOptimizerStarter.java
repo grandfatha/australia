@@ -14,12 +14,12 @@ import org.australia.problem.ProblemBoccia;
 import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Database;
 
-public class AustraliaDatabaseStarter {
+public class AustraliaDatabaseOptimizerStarter {
 
 	public static void main(String[] args) {
 		
 		//Define Problem
-		Problem problem = ProblemBoccia.readProblem("i50100_1.plc");
+		Problem problem = ProblemBoccia.readProblem("i50100_2.plc");
 
 		while(true){
 			
@@ -27,7 +27,7 @@ public class AustraliaDatabaseStarter {
 			Population population = new PopulationImpl(problem);
 	
 			// get individuals from database for our problem
-			Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true);
+			Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true, 1);
 	
 			// add these individuals to our population
 			if(individualsFromDatabase!=null){
@@ -36,7 +36,10 @@ public class AustraliaDatabaseStarter {
 				}
 			}
 			
-			System.out.println("There are " + population.getSize() +" Individuals in the database");
+//			System.out.println("Best individual in database: ");
+//			System.out.println(population.getBestIndividual());
+			
+			System.out.println("There are " + population.getSize() +" individuals in the database");
 			
 			population.add(IndividualImpl.generateGreedyIndividual(problem));
 			
@@ -49,7 +52,6 @@ public class AustraliaDatabaseStarter {
 			System.out.println(population.getBestIndividual());
 			
 			// start the ga
-			System.out.println("Start Algorithm for Problem " + problem.getInstanceName());
 			GA ga = new GA(problem);
 			Individual bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, 10000);
 			

@@ -36,13 +36,11 @@ public class PopulationImpl implements Population{
 			individuals.add(IndividualImpl.generateGreedyIndividualWithRouletteWheel(this.getProblem()));
 		}
 		
-		System.out.println("Greedy generated: " + individuals.size());
-
 		while(getSize() < amount){
 			individuals.add(IndividualImpl.generateRandomIndividual(this.getProblem()));	
 		}
 		
-		System.out.println("Individuals created");
+//		System.out.println("Individuals created");
 	}
 	
 	public void selectBestHalf(){
