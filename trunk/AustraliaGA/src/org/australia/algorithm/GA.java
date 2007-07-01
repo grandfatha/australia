@@ -1,5 +1,7 @@
 package org.australia.algorithm;
 
+import java.util.Calendar;
+
 import org.australia.config.Config;
 import org.australia.problem.Problem;
 
@@ -8,6 +10,9 @@ public class GA {
 	private Problem problem;
 	private Population currentPopulation;
 	private int populationSize;
+	
+	// Status
+	private Status status;
 
 	// Variables for stop criteria
 	private Criterion criterion;
@@ -23,11 +28,13 @@ public class GA {
 	/* Constructor	*****************************************************************************************************************/
 	public GA(Problem problem) {
 		super();
+		status = new Status();
 		this.problem = problem;
 	}
 
 	
 	/* start algorithm methods	*****************************************************************************************************/
+
 
 	/**
 	 * Starts the Genetic Algorithm
@@ -155,9 +162,6 @@ public class GA {
 			
 		} // End for
 
-//		System.out.println("Population:");
-//		System.out.println(currentPopulation.toString());
-		
 		
 		stopTime = System.currentTimeMillis();
 
@@ -170,10 +174,14 @@ public class GA {
 	
 	// handles the stop criterion
 	private boolean stop(){
-		currentIteration++;
+		status.setCurrentIteration(currentIteration);
 		
 		// some time info
 		if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
+
+			status.setCurrentBestIndividual(currentPopulation.getBestIndividual());
+			status.setCurrentBestValidIndividual(currentPopulation.getBestValidIndividual());
+			
 			currentBestFitness = currentPopulation.getBestIndividual().getFitness();
 			currentBestFitnessTime = System.currentTimeMillis();
 		}
@@ -181,21 +189,25 @@ public class GA {
 		
 		if(this.criterion.equals(Criterion.ITERATIONS)){		// stop after x generations
 			if(currentIteration > totalIterations){
+				status.setTimeStopped(Calendar.getInstance());
 				return true;
 			}
 		}else if(this.criterion.equals(Criterion.TIMENOIMPROVEMENTS)){			// Stop ga after x seconds with no improvement
 			if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
 			}else{
 				if(System.currentTimeMillis() - currentBestFitnessTime > maxTimeNoImprovements*1000){
+					status.setTimeStopped(Calendar.getInstance());
 					return true;
 				}
 			}
 		}
+
+		currentIteration++;
 		
 		return false;
 	}
 	 
-	
+	@Deprecated
 	public double getDuration(){
 		if(stopTime==null){
 			System.out.println("Error: Algorithm not finished yet");
@@ -213,5 +225,8 @@ public class GA {
 		return (currentBestFitnessTime - startTime) / 1000 ;
 	}
 	
+	public Status getStatus() {
+		return status;
+	}
 
 }
