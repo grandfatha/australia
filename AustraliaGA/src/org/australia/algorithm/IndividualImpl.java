@@ -2,6 +2,7 @@ package org.australia.algorithm;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Random;
 
 import org.australia.config.Config;
 import org.australia.problem.*;
@@ -45,7 +46,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 */
 	public static Individual createInstance(Problem problem, int[] gene){
 		if(problem==null || gene ==null){
-			throw new RuntimeException("Problem oder gene is null");
+			throw new RuntimeException("Problem or gene is null");
 		}
 		
 		Individual individual = new IndividualImpl(problem, gene);
@@ -433,17 +434,16 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		Individual baby = null;
 		
-		int[] thisGene = this.getGene();
+		int[] thisGene = this.getGene().clone();
 
 		int[] babyGene = new int[thisGene.length];
-		
-		// random array with true or false
-//		boolean[] pattern = Utils.getRandomPattern(thisGene.length);	
-	
+
+		Random random = new Random();
+
 		// iterate over gene
 		for (int i = 0; i < thisGene.length; i++) {
 			
-			if(Math.random() < 0.5){	// true at posistion i
+			if(random.nextBoolean()){
 				
 				babyGene[i] = thisGene[i];
 				
