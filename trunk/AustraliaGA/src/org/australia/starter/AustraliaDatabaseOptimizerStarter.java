@@ -28,7 +28,7 @@ public class AustraliaDatabaseOptimizerStarter {
 		
 		//Define Problem
 //		Problem problem = ProblemBoccia.readProblem("i50100_2.plc");
-		Problem problem = ProblemHolmberg.readProblem("p45");
+		Problem problem = ProblemHolmberg.readProblem("p17");
 
 		
 		Population population = null;
