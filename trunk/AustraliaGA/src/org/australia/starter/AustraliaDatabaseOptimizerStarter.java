@@ -2,6 +2,9 @@ package org.australia.starter;
 
 import java.util.Collection;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.australia.algorithm.Criterion;
 import org.australia.algorithm.GA;
 import org.australia.algorithm.Individual;
@@ -13,31 +16,40 @@ import org.australia.problem.Problem;
 import org.australia.problem.ProblemBoccia;
 import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Database;
+import org.australia.util.HolmbergOptimal;
 
 public class AustraliaDatabaseOptimizerStarter {
 
+	private static Logger logger = Logger.getRootLogger();
+
 	public static void main(String[] args) {
+
+		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
 		//Define Problem
-		Problem problem = ProblemBoccia.readProblem("i50100_2.plc");
+//		Problem problem = ProblemBoccia.readProblem("i50100_2.plc");
+		Problem problem = ProblemHolmberg.readProblem("p45");
 
-		while(true){
+		
+		Population population = null;
+		
+		do{
 			
 			// Create an empty population
-			Population population = new PopulationImpl(problem);
+			population = new PopulationImpl(problem);
+			
+			if(Math.random() < 0.5){
 	
-			// get individuals from database for our problem
-			Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true, 1);
+				// get individuals from database for our problem
+				Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true, 20);
 	
-			// add these individuals to our population
-			if(individualsFromDatabase!=null){
-				for (Individual individual : individualsFromDatabase) {
-					population.add(individual);
+				// add these individuals to our population
+				if(individualsFromDatabase!=null){
+					for (Individual individual : individualsFromDatabase) {
+						population.add(individual);
+					}
 				}
 			}
-			
-//			System.out.println("Best individual in database: ");
-//			System.out.println(population.getBestIndividual());
 			
 			System.out.println("There are " + population.getSize() +" individuals in the database");
 			
@@ -64,9 +76,9 @@ public class AustraliaDatabaseOptimizerStarter {
 				Database.addIndivudual(bestIndividual);
 			}
 		
-		}
+		}while(!HolmbergOptimal.isOptimal(population.getBestIndividual()));
 
-//		System.out.println("Ende");
+		logger.info("Optimal Individual was found");
 
 	}
 

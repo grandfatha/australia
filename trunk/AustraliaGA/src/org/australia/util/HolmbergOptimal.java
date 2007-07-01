@@ -9,89 +9,120 @@
 
 package org.australia.util;
 
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.australia.algorithm.Individual;
+import org.australia.problem.Problem;
+import org.australia.problem.ProblemHolmberg;
+
 /**
  *
  * @author Daniel_h4x
  */
 public class HolmbergOptimal {
+	
+	private static Map<String, Double> optimals = new TreeMap<String, Double>();
+	
+	private static Map<String, Double> getOptimals(){
+		
+		if(optimals.size() < 1){
+		
 
-    public static final String P1 = "8848";
-    public static final String P2 = "7913";
-    public static final String P3 = "9314";
-    public static final String P4 = "10714";
-    public static final String P5 = "8838";
-    public static final String P6 = "7777";
-    public static final String P7 = "9488";
-    public static final String P8 = "11088";
-    public static final String P9 = "8462";
+		    optimals.put("p1", 8848.0);
+		    optimals.put("p2", 7913.0);
+		    optimals.put("p3", 9314.0);
+		    optimals.put("p4", 10714.0);
+		    optimals.put("p5", 8838.0);
+		    optimals.put("p6", 7777.0);
+		    optimals.put("p7", 9488.0);
+		    optimals.put("p8", 11088.0);
+		    optimals.put("p9", 8462.0);
+		    
+		    optimals.put("p10", 7617.0);
+		    optimals.put("p11", 8932.0);
+		    optimals.put("p12", 10132.0);
+		    optimals.put("p13", 8252.0);
+		    optimals.put("p14", 7137.0);
+		    optimals.put("p15", 8808.0);
+		    optimals.put("p16", 10408.0);
+		    optimals.put("p17", 8227.0);
+		    optimals.put("p18", 7125.0);
+		    optimals.put("p19", 8886.0);
+		    
+		    optimals.put("p20", 10486.0);
+		    optimals.put("p21", 8068.0);
+		    optimals.put("p22", 7092.0);
+		    optimals.put("p23", 8746.0);
+		    optimals.put("p24", 10273.0);
+		    optimals.put("p25", 11630.0);
+		    optimals.put("p26", 10771.0);
+		    optimals.put("p27", 12322.0);
+		    optimals.put("p28", 13722.0);
+		    optimals.put("p29", 12371.0);
+		    
+		    optimals.put("p30", 11331.0);
+		    optimals.put("p31", 13331.0);
+		    optimals.put("p32", 15331.0);
+		    optimals.put("p33", 11629.0);
+		    optimals.put("p34", 10632.0);
+		    optimals.put("p35", 12232.0);
+		    optimals.put("p36", 13832.0);
+		    optimals.put("p37", 11258.0);
+		    optimals.put("p38", 10551.0);
+		    optimals.put("p39", 11824.0);
+		    
+		    optimals.put("p40", 13024.0);
+		    optimals.put("p41", 6589.0);
+		    optimals.put("p42", 5663.0);
+		    optimals.put("p43", 5214.0);
+		    optimals.put("p44", 7028.0);
+		    optimals.put("p45", 6251.0);
+		    optimals.put("p46", 5651.0);
+		    optimals.put("p47", 6228.0);
+		    optimals.put("p48", 5596.0);
+		    optimals.put("p49", 5302.0);
+		    
+		    optimals.put("p50", 8741.0);
+		    optimals.put("p51", 7414.0);
+		    optimals.put("p52", 9178.0);
+		    optimals.put("p53", 8531.0);
+		    optimals.put("p54", 8777.0);
+		    optimals.put("p55", 7654.0);
+		    optimals.put("p56", 21103.0);
+		    optimals.put("p57", 26039.0);
+		    optimals.put("p58", 37239.0);
+		    optimals.put("p59", 27282.0);
+		    
+		    optimals.put("p60", 20534.0);
+		    optimals.put("p61", 24454.0);
+		    optimals.put("p62", 32643.0);
+		    optimals.put("p63", 25105.0);
+		    optimals.put("p64", 20530.0);
+		    optimals.put("p65", 24445.0);
+		    optimals.put("p66", 31415.0);
+		    optimals.put("p67", 24848.0);
+		    optimals.put("p68", 20538.0);
+		    optimals.put("p69", 24532.0);
+		    
+		    optimals.put("p70", 32321.0);
+		    optimals.put("p71", 25540.0);
     
-    public static final String P10 = "7617";
-    public static final String P11 = "8932";
-    public static final String P12 = "10132";
-    public static final String P13 = "8252";
-    public static final String P14 = "7137";
-    public static final String P15 = "8808";
-    public static final String P16 = "10408";
-    public static final String P17 = "8227";
-    public static final String P18 = "7125";
-    public static final String P19 = "8886";
+		}
     
-    public static final String P20 = "10486";
-    public static final String P21 = "8068";
-    public static final String P22 = "7092";
-    public static final String P23 = "8746";
-    public static final String P24 = "10273";
-    public static final String P25 = "11630";
-    public static final String P26 = "10771";
-    public static final String P27 = "12322";
-    public static final String P28 = "13722";
-    public static final String P29 = "12371";
+	return optimals;
+	}
+
     
-    public static final String P30 = "12371";
-    public static final String P31 = "13331";
-    public static final String P32 = "15331";
-    public static final String P33 = "11629";
-    public static final String P34 = "10632";
-    public static final String P35 = "12232";
-    public static final String P36 = "13832";
-    public static final String P37 = "11258";
-    public static final String P38 = "10551";
-    public static final String P39 = "11824";
     
-    public static final String P40 = "13024";
-    public static final String P41 = "6589";
-    public static final String P42 = "5663";
-    public static final String P43 = "5214";
-    public static final String P44 = "7028";
-    public static final String P45 = "6251";
-    public static final String P46 = "5651";
-    public static final String P47 = "6228";
-    public static final String P48 = "5596";
-    public static final String P49 = "5302";
+    public static double getOptimal(Problem problem){
+    	return getOptimals().get(problem.getInstanceName());
+    }
     
-    public static final String P50 = "8741";
-    public static final String P51 = "7414";
-    public static final String P52 = "9178";
-    public static final String P53 = "8531";
-    public static final String P54 = "8777";
-    public static final String P55 = "7654";
-    public static final String P56 = "21103";
-    public static final String P57 = "26039";
-    public static final String P58 = "37239";
-    public static final String P59 = "27282";
+    public static boolean isOptimal(Individual individual){    	
+    	return getOptimal(individual.getProblem()) == (double)individual.getFitness();
+    }
     
-    public static final String P60 = "20534";
-    public static final String P61 = "24454";
-    public static final String P62 = "32643";
-    public static final String P63 = "25105";
-    public static final String P64 = "20530";
-    public static final String P65 = "24445";
-    public static final String P66 = "31415";
-    public static final String P67 = "24848";
-    public static final String P68 = "20538";
-    public static final String P69 = "24532";
     
-    public static final String P70 = "32321";
-    public static final String P71 = "25540";
 
 }

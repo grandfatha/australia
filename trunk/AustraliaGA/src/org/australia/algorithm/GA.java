@@ -103,10 +103,10 @@ public class GA {
 				
 				Individual mum=null, dad=null;
 				
-				if(Config.getSelectionMethod() == 0){
+				if(Config.getSelectionMethod() == 0){		// random
 					mum = currentPopulation.getRandomIndividual();
 					dad = currentPopulation.getRandomIndividual();
-				}else if(Config.getSelectionMethod()==1){
+				}else if(Config.getSelectionMethod()==1){	// roulette wheel
 					mum = currentPopulation.getIndividualByRouletteWheel();
 					dad = currentPopulation.getIndividualByRouletteWheel();
 				}
@@ -138,7 +138,6 @@ public class GA {
 				
 
 				/* add new individual to new generation ****************************/
-				
 				newGeneration.add(baby);
 				
 			}

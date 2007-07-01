@@ -9,7 +9,7 @@ public class Config {
 	private static double oddsMutation = 0.8;
 	private static double percentageForeignIndividuals = 0.02;
 	
-	private static double fee = 100;
+	private static double fee = 10;
 	private static double newGenerationSize = 2.0;
 	
 	
