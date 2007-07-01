@@ -1,5 +1,8 @@
 package org.australia.starter;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.australia.algorithm.Criterion;
 import org.australia.algorithm.GA;
 import org.australia.algorithm.Individual;
@@ -9,10 +12,14 @@ import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Database;
 
 public class AustraliaSimpleStarter {
+	
+	private static Logger logger = Logger.getRootLogger();
 
 	public static void main(String[] args) {
+
+		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
-		Problem problem = ProblemHolmberg.readProblem("p3");
+		Problem problem = ProblemHolmberg.readProblem("p9");
 //		Problem problem = ProblemBoccia.readProblem("i50100_1.plc");
 		
 		
@@ -21,12 +28,12 @@ public class AustraliaSimpleStarter {
 		GA ga = new GA(problem);
 		
 		long start = System.currentTimeMillis();
-		bestIndividual = ga.startAlgorithm(300, Criterion.ITERATIONS, 3000);
+		bestIndividual = ga.startAlgorithm(100, Criterion.ITERATIONS, 3000);
 		long end = System.currentTimeMillis();
 
 		
-		System.out.println("Bestes Individuum:");
-		System.out.println(bestIndividual);
+		logger.info("Bestes Individuum:");
+		logger.info(bestIndividual);
 		
 
 		if(Config.getWriteToDatabase()){
@@ -34,9 +41,8 @@ public class AustraliaSimpleStarter {
 		}
 		
 		
-		
-		System.out.println("Ende");
-		System.out.println("Dauer: " + (end-start));
+		logger.debug("Ende");
+		logger.debug("Dauer: " + (end-start));
 
 
 		

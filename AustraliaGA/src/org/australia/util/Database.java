@@ -1,7 +1,6 @@
 package org.australia.util;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.australia.algorithm.Individual;
 import org.australia.algorithm.IndividualImpl;
 import org.australia.config.Config;
@@ -19,6 +19,7 @@ import org.australia.problem.ProblemHolmberg;
 
 public class Database {
 	
+	public static Logger logger = Logger.getLogger(Database.class);
 	
 	public static void addIndivudualBenchmark(Individual individual, String benchmark, double duration , double durationForBest, int iterations, int populationSize){
 		
@@ -44,9 +45,6 @@ public class Database {
 			Config.getSelectionMethod()  + ", " +
 			"NOW()" + 
 			")";
-		
-		System.out.println(query);
-
 		insert(query);
 		
 	}
@@ -61,18 +59,19 @@ public class Database {
 		
 		try {
 		 	Statement statement = connection.createStatement();
+
+		 	logger.debug(query);
 		 	
 		 	statement.execute(query);
 		
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}finally{
 			try {
 				connection.close();
-				System.out.println("Insert successful");
+				logger.info("Insert successful");
 			} catch (SQLException e) {
-				System.out.println("Could not close connection to database.");
+				logger.error("Could not close connection to database.", e);
 			}
 		}
 	}
@@ -105,9 +104,9 @@ public class Database {
 		}finally{
 			try {
 				connection.close();
-				System.out.println("Individual successfully added to database");
+				logger.info("Individual successfully added to database");
 			} catch (SQLException e) {
-				System.out.println("Could not close connection to database.");
+				logger.error("Could not close connection to database.", e);
 			}
 		}
 	}
@@ -138,16 +137,16 @@ public class Database {
 		if(connection==null){
 			return null;
 		}
-
-		System.out.println("Connection established");
+		logger.debug("Connection established");
 		
 		try {
 			Statement statement = connection.createStatement();
 			
-			String query = "SELECT gene FROM individuals WHERE "+ (onlyValid ? "valid=0 AND " : "" )  +"instance = '" + problem.getInstanceName() +"' " + (limit >0 ? " ORDER BY fitness ASC LIMIT 0, "+limit : "" );
+			String query = "SELECT DISTINCT gene FROM individuals WHERE "+ (onlyValid ? "valid=0 AND " : "" )  +"instance = '" + problem.getInstanceName() +"' " + (limit >0 ? " ORDER BY fitness ASC LIMIT 0, "+limit : "" );
 			ResultSet resultSet = statement.executeQuery(query);
 			
-			System.out.println(query);
+			
+			logger.debug(query);
 
 			while(resultSet.next()){
 				String gene = resultSet.getString(1);
@@ -155,7 +154,7 @@ public class Database {
 				result.add(individual);
 			}
 			
-			System.out.println("Found " + result.size() + " Individuals in Database");
+			logger.debug("Found " + result.size() + " Individuals in Database");
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -179,7 +178,7 @@ public class Database {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			System.out.println("Could not find drivers for MySql-Database -> check classpath");
+			logger.fatal("Could not find drivers for MySql-Database -> check classpath");
 			Config.setWriteToDatabase(false);
 			return null;
 		}
@@ -192,7 +191,7 @@ public class Database {
 		    conn = DriverManager.getConnection("jdbc:mysql://"+ Config.MYSQL_HOST + "/"+ Config.MYSQL_DATABASE, Config.MYSQL_USER, Config.MYSQL_PASS);
 
 		} catch (SQLException ex) {
-		    System.out.println("Could not establish connection to database -> check your network connection");
+			logger.error("Could not establish connection to database -> check your network connection");
 //			Config.setWriteToDatabase(false);
 			return null;
 		}

@@ -17,14 +17,23 @@ public class AustraliaMultipleStarter {
 		
 		ArrayList<Problem> problems = new ArrayList<Problem>();
 		
-		if(false){
-			for(int i=10; i<=71; i++){
+		if(true){
+			for(int i=23; i<=71; i++){
 				if(i!=26&&i!=47){	// problems with these files
 					problems.add(ProblemHolmberg.readProblem("p" + i));
 				}
 			}
 		}else{
-			problems.add(ProblemBoccia.readProblem("i50100_1.plc"));
+			for(int i=1; i<=15; i++)
+				problems.add(ProblemBoccia.readProblem("i5050_"+i+".plc"));
+			for(int i=1; i<=15; i++)
+				problems.add(ProblemBoccia.readProblem("i5075_"+i+".plc"));
+			for(int i=1; i<=15; i++)
+				problems.add(ProblemBoccia.readProblem("i50100_"+i+".plc"));
+			for(int i=1; i<=15; i++)
+				problems.add(ProblemBoccia.readProblem("i75100_"+i+".plc"));
+			for(int i=1; i<=15; i++)
+				problems.add(ProblemBoccia.readProblem("i7575_"+i+".plc"));
 			
 		}
 		double standardFee = Config.getFee();
@@ -42,7 +51,7 @@ public class AustraliaMultipleStarter {
 				GA ga = new GA(problem);
 				
 				
-				individual = ga.startAlgorithm(200, Criterion.TIMENOIMPROVEMENTS, 180);
+				individual = ga.startAlgorithm(100, Criterion.ITERATIONS, 10000);
 				
 				if(!individual.isValid()){
 					if(Config.getWriteToDatabase()){
