@@ -3,6 +3,12 @@ package org.australia.algorithm;
 import java.util.Calendar;
 import java.util.Observable;
 
+
+/**
+ * Status is used to collect status-messages and information about the current ga
+ * @author jochen
+ * @see GA
+ */
 public class Status extends Observable{
 
 	private Calendar timeStarted;

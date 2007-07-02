@@ -12,9 +12,10 @@ public class Config {
 	private static double fee = 10;
 	private static double newGenerationSize = 2.0;
 	
-	
+	private static int printEachTimes = 1000;
 	private static boolean writeToDatabase = true;
 	
+	// Database Settings
 	public static final String MYSQL_HOST = "jegga.de";
 	public static final String MYSQL_DATABASE = "australia";
 	public static final String MYSQL_USER = "australia";
@@ -81,6 +82,14 @@ public class Config {
 
 	public static void setSelectionMethod(int selectionMethod) {
 		Config.selectionMethod = selectionMethod;
+	}
+
+	public static int getPrintEachTimes() {
+		return printEachTimes;
+	}
+
+	public static void setPrintEachTimes(int printEachTimes) {
+		Config.printEachTimes = printEachTimes;
 	}
 	
 	

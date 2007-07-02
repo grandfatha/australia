@@ -1,10 +1,10 @@
 package org.australia.algorithm;
 
 import javolution.util.FastTable;
-
 import org.australia.config.Config;
 import org.australia.problem.Problem;
 import org.australia.util.Utils;
+
 @Deprecated
 public class PopulationFastTableImpl implements Population{
 

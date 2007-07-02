@@ -2,6 +2,7 @@ package org.australia.algorithm;
 
 import javolution.util.FastComparator;
 
+@Deprecated
 public class IndividualComparator extends
 		FastComparator<Individual> {
 
