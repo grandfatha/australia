@@ -37,12 +37,15 @@ public class GA {
 
 
 	/**
-	 * Starts the Genetic Algorithm
+	 * create a new startpopulation and run the Genetic Algorithm.
+	 * 
+	 * @deprecated use 	public Individual startAlgorithm(int populationSize, Criterion criterion, int value) instead
 	 * 
 	 * @param populationSize
 	 * @param iterations
 	 * @return best Individual
 	 */
+	@Deprecated
 	public Individual startAlgorithm(int populationSize, int iterations){
 		this.criterion = Criterion.ITERATIONS;
 		this.totalIterations = iterations;
@@ -50,6 +53,15 @@ public class GA {
 		return startAlgorithm();
 	}
 	
+	/**
+	 * create a new startpopulation and run GA.
+	 * 
+	 * @param populationSize
+	 * @param criterion
+	 * @param value
+	 * @return Individual
+	 * @author jochen
+	 */
 	public Individual startAlgorithm(int populationSize, Criterion criterion, int value){
 		this.populationSize = populationSize;
 		this.criterion = criterion;
@@ -62,13 +74,33 @@ public class GA {
 		
 		return startAlgorithm();
 	}
+	
 
+	/**
+	 * 
+	 * start algotihm with a given startpopulation
+	 * 
+	 * @param startPopulation
+	 * @param criterion
+	 * @param value
+	 * @return best Individual that was found by the GA.
+	 * @author jochen
+	 */
 	public Individual startAlgorithm(Population startPopulation, Criterion criterion, int value){
 		currentPopulation = startPopulation;
 		return startAlgorithm(startPopulation.getSize(), criterion, value);
 	}
 
 	
+	
+	
+	/**
+	 * this implements the core of the algorithm
+	 * use a starter method to define the abort criteria, eg # iterations or duration
+	 * 
+	 * @return best Individual that was found (valid and invalid)
+	 * @author jochen
+	 */
 	private Individual startAlgorithm(){
 		
 		startTime = System.currentTimeMillis();
@@ -93,7 +125,7 @@ public class GA {
 			/* adds the best individual to new generation ****************************/
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
-			/* add 10% random indiduals from foreign countries to new population *****/
+			/* add some random indiduals from foreign countries to new population *****/
 			for(int j=0; j < populationSize * Config.getPercentageForeignIndividuals(); j++){
 				currentPopulation.remove(currentPopulation.getWorstIndividual());
 			}
@@ -155,14 +187,14 @@ public class GA {
 			/* replace current population with the new population ************************/
 			currentPopulation = newGeneration;
 			
-			/* Print best indivual every 300 times *********************************/
-			if(currentIteration % 1000 == 0){
+			/* Print best indivual every n times *********************************/
+			if(currentIteration % Config.getPrintEachTimes() == 0){
 				System.out.println(currentPopulation.getBestIndividual());
 			}
 			
 		} // End for
 
-		
+		status.setTimeStopped(Calendar.getInstance());
 		stopTime = System.currentTimeMillis();
 
 		/* return best Individual *************************************************/
@@ -189,14 +221,12 @@ public class GA {
 		
 		if(this.criterion.equals(Criterion.ITERATIONS)){		// stop after x generations
 			if(currentIteration > totalIterations){
-				status.setTimeStopped(Calendar.getInstance());
 				return true;
 			}
 		}else if(this.criterion.equals(Criterion.TIMENOIMPROVEMENTS)){			// Stop ga after x seconds with no improvement
 			if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
 			}else{
 				if(System.currentTimeMillis() - currentBestFitnessTime > maxTimeNoImprovements*1000){
-					status.setTimeStopped(Calendar.getInstance());
 					return true;
 				}
 			}

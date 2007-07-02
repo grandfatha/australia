@@ -19,7 +19,7 @@ public class AustraliaSimpleStarter {
 
 		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
-		Problem problem = ProblemHolmberg.readProblem("p9");
+		Problem problem = ProblemHolmberg.readProblem("p31");
 //		Problem problem = ProblemBoccia.readProblem("i50100_1.plc");
 		
 		
@@ -28,7 +28,7 @@ public class AustraliaSimpleStarter {
 		GA ga = new GA(problem);
 		
 		long start = System.currentTimeMillis();
-		bestIndividual = ga.startAlgorithm(100, Criterion.ITERATIONS, 3000);
+		bestIndividual = ga.startAlgorithm(200, Criterion.ITERATIONS, 3000);
 		long end = System.currentTimeMillis();
 
 		

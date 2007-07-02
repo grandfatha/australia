@@ -1,5 +1,6 @@
 package org.australia.starter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.ConsoleAppender;
@@ -25,60 +26,78 @@ public class AustraliaDatabaseOptimizerStarter {
 	public static void main(String[] args) {
 
 		logger.addAppender(new ConsoleAppender(new PatternLayout()));
-		
-		//Define Problem
-//		Problem problem = ProblemBoccia.readProblem("i50100_2.plc");
-		Problem problem = ProblemHolmberg.readProblem("p17");
 
 		
+		ArrayList<Problem> problems = new ArrayList<Problem>();
 		Population population = null;
+
+		//Define Problem
+		problems.add(ProblemHolmberg.readProblem("p19"));
+		problems.add(ProblemHolmberg.readProblem("p23"));
+		problems.add(ProblemHolmberg.readProblem("p24"));
+		problems.add(ProblemHolmberg.readProblem("p25"));
+		problems.add(ProblemHolmberg.readProblem("p27"));
+		problems.add(ProblemHolmberg.readProblem("p28"));
+		problems.add(ProblemHolmberg.readProblem("p29"));
+		problems.add(ProblemHolmberg.readProblem("p66"));
 		
-		do{
-			
-			// Create an empty population
-			population = new PopulationImpl(problem);
-			
-			if(Math.random() < 0.5){
-	
-				// get individuals from database for our problem
-				Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true, 20);
-	
-				// add these individuals to our population
-				if(individualsFromDatabase!=null){
-					for (Individual individual : individualsFromDatabase) {
-						population.add(individual);
+		
+		for (Problem problem : problems) {
+			int count = 1;
+						
+			do{
+				if(++count > 20){
+					break;
+				}
+				
+				// Create an empty population
+				population = new PopulationImpl(problem);
+				
+				if(Math.random() < 0.5){
+		
+					// get individuals from database for our problem
+					Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true, 20);
+		
+					// add these individuals to our population
+					if(individualsFromDatabase!=null){
+						for (Individual individual : individualsFromDatabase) {
+							population.add(individual);
+						}
 					}
 				}
-			}
+				
+				System.out.println("There are " + population.getSize() +" individuals in the database");
+				
+				population.add(IndividualImpl.generateGreedyIndividual(problem));
+				
+				// add some random individuals to population
+				while(population.getSize() < 150){
+					population.add(IndividualImpl.generateRandomIndividual(problem));
+				}
+				
+				//What is currently the best Individual
+				System.out.println(population.getBestIndividual());
+				
+				// start the ga
+				GA ga = new GA(problem);
+				Individual bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, 20000);
+				
+				// Output
+				System.out.println("Bestes Individuum:");
+				System.out.println(bestIndividual);
+				
+				// Write new Individual to database
+				if(Config.getWriteToDatabase()){
+					Database.addIndivudual(bestIndividual);
+				}
 			
-			System.out.println("There are " + population.getSize() +" individuals in the database");
+			}while(!HolmbergOptimal.isOptimal(population.getBestIndividual()));
+	
+			logger.info("Optimal Individual was found");
 			
-			population.add(IndividualImpl.generateGreedyIndividual(problem));
-			
-			// add some random individuals to population
-			while(population.getSize() < 200){
-				population.add(IndividualImpl.generateRandomIndividual(problem));
-			}
-			
-			//What is currently the best Individual
-			System.out.println(population.getBestIndividual());
-			
-			// start the ga
-			GA ga = new GA(problem);
-			Individual bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, 10000);
-			
-			// Output
-			System.out.println("Bestes Individuum:");
-			System.out.println(bestIndividual);
-			
-			// Write new Individual to database
-			if(Config.getWriteToDatabase()){
-				Database.addIndivudual(bestIndividual);
-			}
+		}
 		
-		}while(!HolmbergOptimal.isOptimal(population.getBestIndividual()));
-
-		logger.info("Optimal Individual was found");
+		logger.info("End");
 
 	}
 
