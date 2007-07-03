@@ -6,10 +6,30 @@
 
 package org.australia.ui;
 
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingWorker;
+import org.australia.algorithm.Criterion;
 
-import javax.swing.UnsupportedLookAndFeelException;
+import org.australia.algorithm.GA;
+import org.australia.algorithm.Individual;
+import org.australia.algorithm.Status;
+import org.australia.config.Config;
+import org.australia.problem.Problem;
+import org.australia.problem.ProblemHolmberg;
 
 /**
  *
@@ -17,10 +37,13 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class jMole extends javax.swing.JFrame {
     
+    
     /** Creates new form jMole */
     public jMole() {
+        
         initComponents();
     }
+    
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -36,43 +59,43 @@ public class jMole extends javax.swing.JFrame {
         MainTabPane = new javax.swing.JTabbedPane();
         GASettingPanel = new javax.swing.JPanel();
         BasicSettingPanel = new javax.swing.JPanel();
-        ChosenProblemLabel = new javax.swing.JTextField();
+        ChosenProblemField = new javax.swing.JTextField();
         ProblemChooserButton = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        PopSizeField = new javax.swing.JTextField();
+        GenSizeField = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
+        QuitStagnation = new javax.swing.JRadioButton();
+        ContinueStagnation = new javax.swing.JRadioButton();
         ExtendedSettingPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jSpinner1 = new javax.swing.JSpinner();
-        jSpinner2 = new javax.swing.JSpinner();
-        jSpinner3 = new javax.swing.JSpinner();
+        RandomSelect = new javax.swing.JRadioButton();
+        RouletteSelect = new javax.swing.JRadioButton();
+        GreedySpinner = new javax.swing.JSpinner();
+        ChildrenSpinner = new javax.swing.JSpinner();
+        FeeSpinner = new javax.swing.JSpinner();
         jPanel3 = new javax.swing.JPanel();
-        jSpinner4 = new javax.swing.JSpinner();
+        TimeoutDateSpinner = new javax.swing.JSpinner();
         UpperTextLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        LaufzeitInfoPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        BestIndiGeneField = new javax.swing.JTextField();
+        BestIndiWareHousesField = new javax.swing.JTextField();
+        BestIndiFitnessField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        GAProgressBar = new javax.swing.JProgressBar();
         jLabel4 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        ExecutionTimeLabel = new javax.swing.JLabel();
         StartGA = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jLabel12 = new javax.swing.JLabel();
+        CancelGAButton = new javax.swing.JButton();
+        SetDefaultsButton = new javax.swing.JButton();
+        SettingIconLabel = new javax.swing.JLabel();
         ResultViewPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -92,7 +115,7 @@ public class jMole extends javax.swing.JFrame {
         BearbeitenMenu = new javax.swing.JMenu();
         UndoMenuItem = new javax.swing.JMenuItem();
         RedoMenuItem = new javax.swing.JMenuItem();
-        SepVorZurueck = new javax.swing.JSeparator();
+        SepVorZurück = new javax.swing.JSeparator();
         ZurueckSetzenMenuItem = new javax.swing.JMenuItem();
         HilfeMenu = new javax.swing.JMenu();
         AboutMenuItem = new javax.swing.JMenuItem();
@@ -103,30 +126,36 @@ public class jMole extends javax.swing.JFrame {
 
         BasicSettingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Allgemeine Einstellungen"));
 
-        ChosenProblemLabel.setEditable(false);
-        ChosenProblemLabel.setText("Probleminstanz...");
+        ChosenProblemField.setEditable(false);
+        ChosenProblemField.setText("Probleminstanz...");
 
         ProblemChooserButton.setText("Ausw\u00e4hlen");
+        ProblemChooserButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ProblemChooserButtonActionPerformed(evt);
+            }
+        });
 
         jLabel10.setText("Gr\u00f6\u00dfe der Startpopulation");
 
         jLabel11.setText("Anzahl der Generationen");
 
-        jTextField4.setText("100");
+        PopSizeField.setText("100");
 
-        jTextField5.setText("100");
+        GenSizeField.setText("100");
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Verhalten bei Stagnation"));
 
-        buttonGroup2.add(jRadioButton3);
-        jRadioButton3.setText("GA stoppen");
-        jRadioButton3.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jRadioButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        buttonGroup2.add(QuitStagnation);
+        QuitStagnation.setText("GA stoppen");
+        QuitStagnation.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        QuitStagnation.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        buttonGroup2.add(jRadioButton4);
-        jRadioButton4.setText("GA fortsetzen");
-        jRadioButton4.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jRadioButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        buttonGroup2.add(ContinueStagnation);
+        ContinueStagnation.setSelected(true);
+        ContinueStagnation.setText("GA fortsetzen");
+        ContinueStagnation.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        ContinueStagnation.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -135,16 +164,16 @@ public class jMole extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jRadioButton4))
+                    .addComponent(QuitStagnation)
+                    .addComponent(ContinueStagnation))
                 .addContainerGap(47, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jRadioButton3)
+                .addComponent(QuitStagnation)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton4)
+                .addComponent(ContinueStagnation)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -159,12 +188,12 @@ public class jMole extends javax.swing.JFrame {
                     .addComponent(jLabel11))
                 .addGap(22, 22, 22)
                 .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE))
+                    .addComponent(GenSizeField)
+                    .addComponent(PopSizeField, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(ProblemChooserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ChosenProblemLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
+                    .addComponent(ChosenProblemField, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -175,8 +204,8 @@ public class jMole extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ChosenProblemLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PopSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ChosenProblemField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(BasicSettingPanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -184,7 +213,7 @@ public class jMole extends javax.swing.JFrame {
                     .addGroup(BasicSettingPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(GenSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(ProblemChooserButton))))
                 .addContainerGap())
             .addGroup(BasicSettingPanelLayout.createSequentialGroup()
@@ -202,15 +231,16 @@ public class jMole extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Selektion der Eltern"));
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("Zufall");
-        jRadioButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jRadioButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        buttonGroup1.add(RandomSelect);
+        RandomSelect.setSelected(true);
+        RandomSelect.setText("Zufall");
+        RandomSelect.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        RandomSelect.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Roulette");
-        jRadioButton2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jRadioButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        buttonGroup1.add(RouletteSelect);
+        RouletteSelect.setText("Roulette");
+        RouletteSelect.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        RouletteSelect.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -219,28 +249,28 @@ public class jMole extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2))
+                    .addComponent(RandomSelect)
+                    .addComponent(RouletteSelect))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jRadioButton2)
+                .addComponent(RouletteSelect)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton1)
+                .addComponent(RandomSelect)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jSpinner1.setModel(new javax.swing.SpinnerListModel(new String[] {"0 % ", "25 %", "50 %", "75 %", "100 %"}));
+        GreedySpinner.setModel(new javax.swing.SpinnerListModel(new String[] {"0% ", "25%", "50%", "75%", "100%"}));
 
-        jSpinner2.setModel(new javax.swing.SpinnerListModel(new String[] {"1", "2", "3", "4", "5"}));
+        ChildrenSpinner.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 5.0d, 1.0d));
 
-        jSpinner3.setModel(new javax.swing.SpinnerNumberModel(0.1d, 0.1d, 100.0d, 0.5d));
+        FeeSpinner.setModel(new javax.swing.SpinnerNumberModel(10.5d, 0.1d, 100.0d, 0.5d));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Zeitliche Begrenzung"));
 
-        jSpinner4.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        TimeoutDateSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -248,14 +278,14 @@ public class jMole extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSpinner4, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addComponent(TimeoutDateSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(TimeoutDateSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -271,9 +301,9 @@ public class jMole extends javax.swing.JFrame {
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jSpinner3)
-                    .addComponent(jSpinner2)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(FeeSpinner)
+                    .addComponent(ChildrenSpinner)
+                    .addComponent(GreedySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -285,15 +315,15 @@ public class jMole extends javax.swing.JFrame {
             .addGroup(ExtendedSettingPanelLayout.createSequentialGroup()
                 .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(GreedySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ChildrenSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(FeeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(ExtendedSettingPanelLayout.createSequentialGroup()
                 .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -303,7 +333,7 @@ public class jMole extends javax.swing.JFrame {
 
         UpperTextLabel.setText("Hier k\u00f6nnen Sie Parameter f\u00fcr den genetischen Algorithmus einstellen!");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Laufzeit-Informationen"));
+        LaufzeitInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Laufzeit-Informationen"));
 
         jLabel1.setText("Bestes Individuum");
 
@@ -311,80 +341,21 @@ public class jMole extends javax.swing.JFrame {
 
         jLabel3.setText("Fitness");
 
-        jTextField1.setEditable(false);
-        jTextField1.setText("14,12,3,4,17,13");
+        BestIndiGeneField.setEditable(false);
 
-        jTextField2.setEditable(false);
-        jTextField2.setText("6");
+        BestIndiWareHousesField.setEditable(false);
+        BestIndiWareHousesField.setToolTipText("Anzahl der verwendeten Lager des besten Individuums.");
 
-        jTextField3.setEditable(false);
-        jTextField3.setText("8,428");
+        BestIndiFitnessField.setEditable(false);
+        BestIndiFitnessField.setToolTipText("Fitness des derzeit besten Individuums.");
 
         jLabel5.setText("Fortschritt");
 
+        GAProgressBar.setToolTipText("Fortschritt des GA...");
+
         jLabel4.setText("Dauer");
 
-        jLabel6.setText("2min 37 sec");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)))
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jTextField2, jTextField3});
-
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel6)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(11, 11, 11)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-
+        StartGA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/forward16.png"))); // NOI18N
         StartGA.setText("GA starten");
         StartGA.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -392,11 +363,88 @@ public class jMole extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("GA abbrechen");
+        CancelGAButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/stop16.png"))); // NOI18N
+        CancelGAButton.setText("GA abbrechen");
 
-        jButton3.setText("Standard wiederherstellen");
+        SetDefaultsButton.setText("Standard wiederherstellen");
 
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/configure.png"))); // NOI18N
+        javax.swing.GroupLayout LaufzeitInfoPanelLayout = new javax.swing.GroupLayout(LaufzeitInfoPanel);
+        LaufzeitInfoPanel.setLayout(LaufzeitInfoPanelLayout);
+        LaufzeitInfoPanelLayout.setHorizontalGroup(
+            LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(BestIndiWareHousesField)
+                                    .addComponent(BestIndiFitnessField, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ExecutionTimeLabel)
+                                    .addComponent(GAProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)))
+                            .addComponent(BestIndiGeneField, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LaufzeitInfoPanelLayout.createSequentialGroup()
+                        .addComponent(SetDefaultsButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(CancelGAButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(StartGA))))
+        );
+
+        LaufzeitInfoPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BestIndiFitnessField, BestIndiWareHousesField});
+
+        LaufzeitInfoPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {CancelGAButton, StartGA});
+
+        LaufzeitInfoPanelLayout.setVerticalGroup(
+            LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(BestIndiWareHousesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(BestIndiFitnessField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(ExecutionTimeLabel)))
+                            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(GAProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(BestIndiGeneField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(11, 11, 11)
+                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(StartGA)
+                    .addComponent(CancelGAButton)
+                    .addComponent(SetDefaultsButton))
+                .addContainerGap())
+        );
+
+        LaufzeitInfoPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {CancelGAButton, SetDefaultsButton});
+
+        SettingIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/configure.png"))); // NOI18N
 
         javax.swing.GroupLayout GASettingPanelLayout = new javax.swing.GroupLayout(GASettingPanel);
         GASettingPanel.setLayout(GASettingPanelLayout);
@@ -406,52 +454,39 @@ public class jMole extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(GASettingPanelLayout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(SettingIconLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                        .addComponent(UpperTextLabel)
+                        .addGap(58, 58, 58))
+                    .addGroup(GASettingPanelLayout.createSequentialGroup()
+                        .addComponent(LaufzeitInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(9, 9, 9))
+                    .addGroup(GASettingPanelLayout.createSequentialGroup()
                         .addComponent(ExtendedSettingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(GASettingPanelLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(jLabel12)
-                        .addGap(54, 54, 54)
-                        .addComponent(UpperTextLabel)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, GASettingPanelLayout.createSequentialGroup()
-                        .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(BasicSettingPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(GASettingPanelLayout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(StartGA)))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, GASettingPanelLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BasicSettingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
         );
-
-        GASettingPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {StartGA, jButton2});
-
         GASettingPanelLayout.setVerticalGroup(
             GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(GASettingPanelLayout.createSequentialGroup()
-                .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(GASettingPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel12))
-                    .addGroup(GASettingPanelLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(UpperTextLabel)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(20, 20, 20)
+                        .addComponent(SettingIconLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, GASettingPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(UpperTextLabel)
+                        .addGap(26, 26, 26)))
                 .addComponent(BasicSettingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(ExtendedSettingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2)
-                    .addComponent(StartGA)))
+                .addComponent(LaufzeitInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         MainTabPane.addTab("Genetischer Algorithmus", GASettingPanel);
@@ -492,7 +527,7 @@ public class jMole extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(122, 122, 122)
                 .addComponent(jLabel14)
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
 
         MainTabPane.addTab("Resultat", ResultViewPanel);
@@ -513,10 +548,23 @@ public class jMole extends javax.swing.JFrame {
             .addGroup(VisualPanelLayout.createSequentialGroup()
                 .addGap(203, 203, 203)
                 .addComponent(jLabel13)
-                .addContainerGap(252, Short.MAX_VALUE))
+                .addContainerGap(265, Short.MAX_VALUE))
         );
 
         MainTabPane.addTab("Visualisierung", VisualPanel);
+
+        javax.swing.GroupLayout TabbedPanelLayout = new javax.swing.GroupLayout(TabbedPanel);
+        TabbedPanel.setLayout(TabbedPanelLayout);
+        TabbedPanelLayout.setHorizontalGroup(
+            TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TabbedPanelLayout.createSequentialGroup()
+                .addComponent(MainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        TabbedPanelLayout.setVerticalGroup(
+            TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(MainTabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+        );
 
         StatusPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -533,31 +581,13 @@ public class jMole extends javax.swing.JFrame {
                 .addComponent(StatusLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(StatusTextLabel)
-                .addContainerGap(478, Short.MAX_VALUE))
+                .addContainerGap(477, Short.MAX_VALUE))
         );
         StatusPanelLayout.setVerticalGroup(
             StatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(StatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(StatusLabel)
                 .addComponent(StatusTextLabel))
-        );
-
-        javax.swing.GroupLayout TabbedPanelLayout = new javax.swing.GroupLayout(TabbedPanel);
-        TabbedPanel.setLayout(TabbedPanelLayout);
-        TabbedPanelLayout.setHorizontalGroup(
-            TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TabbedPanelLayout.createSequentialGroup()
-                .addGroup(TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(StatusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(MainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        TabbedPanelLayout.setVerticalGroup(
-            TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TabbedPanelLayout.createSequentialGroup()
-                .addComponent(MainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(StatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         DateiMenuItem.setMnemonic('D');
@@ -575,6 +605,11 @@ public class jMole extends javax.swing.JFrame {
         DateiMenuItem.add(SepVorClose);
 
         QuitMenuItem.setText("jMole beenden");
+        QuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                QuitMenuItemActionPerformed(evt);
+            }
+        });
         DateiMenuItem.add(QuitMenuItem);
 
         TopMenu.add(DateiMenuItem);
@@ -586,7 +621,7 @@ public class jMole extends javax.swing.JFrame {
 
         RedoMenuItem.setText("Wiederherstellen");
         BearbeitenMenu.add(RedoMenuItem);
-        BearbeitenMenu.add(SepVorZurueck);
+        BearbeitenMenu.add(SepVorZurück);
 
         ZurueckSetzenMenuItem.setText("Einstellungen f\u00fcr GA zur\u00fccksetzen");
         BearbeitenMenu.add(ZurueckSetzenMenuItem);
@@ -612,75 +647,393 @@ public class jMole extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(TabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(StatusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(TabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(TabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(StatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+private void ProblemChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProblemChooserButtonActionPerformed
+    
+    new ProblemChooserDialog(this, true, ChosenProblemField).setVisible(true);
+    
+}//GEN-LAST:event_ProblemChooserButtonActionPerformed
+
+private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitMenuItemActionPerformed
+    
+    int n = JOptionPane.showOptionDialog(this, "Sind Sie sicher, dass Sie jMole beenden wollen?","Bitte bestätigen!",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null );
+    
+    if(n==JOptionPane.YES_OPTION){
+        this.dispose();
+        System.exit(0);
+    }
+    
+}//GEN-LAST:event_QuitMenuItemActionPerformed
 
     private void StartGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartGAActionPerformed
-    // TODO add your handling code here:
+        
+        
+        // ALLGEMEINE EINSTELLUNGEN einlesen
+        
+        // get start pop size and amount of generations
+        int startPopSize = Integer.parseInt(this.PopSizeField.getText());
+        int generations = Integer.parseInt(this.GenSizeField.getText());
+        
+        // get chosen instance and chosen behaviour to handle fitness stagnation (->stop GA?)
+        String instance = "P1";                                                                      //TODO
+        boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
+        
+        // ERWEITERTE EINSTELLUNGEN einlesen
+        
+        // get greedy chance
+        SpinnerModel greedyModel = this.GreedySpinner.getModel();
+        double greedyChance = this.ConvertGreedyPercentage(greedyModel.getValue());
+        
+        // get amount of children to be reproduced
+        SpinnerNumberModel childrenModel = (SpinnerNumberModel) this.ChildrenSpinner.getModel();
+        double forcedChildren = childrenModel.getNumber().doubleValue();
+        
+        // get the value for fees
+        SpinnerNumberModel feeModel = (SpinnerNumberModel) this.FeeSpinner.getModel();
+        double fees = feeModel.getNumber().doubleValue();
+        
+        // get selection method
+        boolean  rouletteSelected = this.RouletteSelect.isSelected() ? true : false;
+        int rouletteSelection = rouletteSelected ? 1 : 0;
+        
+        // Test Ouput of Values  DEV ONLY
+        
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("Input-Values: \n");
+        sb.append(" startPopSize " + startPopSize);
+        sb.append(" generations " +  generations);
+        sb.append(" instance " + instance);
+        sb.append(" mindStagnation " + mindStagnation);
+        sb.append(" greedyChance " + greedyChance);
+        sb.append(" forcedChildren " + forcedChildren);
+        sb.append(" fees " + fees);
+        sb.append(" rouletteSelection " + rouletteSelection);
+        
+        System.out.println(sb.toString());
+        
+        // Input Werte in Config Klasse schreiben
+        
+        Config.setNewGenerationSize(forcedChildren);
+        Config.setFee(fees);
+        Config.setPercentageGreedy(greedyChance);
+        Config.setSelectionMethod(rouletteSelection);
+        Config.setPercentageForeignIndividuals(forcedChildren);
+        
+        
+        // SwingWorker ab hier!
+        
+        Problem problem = ProblemHolmberg.readProblem(instance);                       // TODO  Boccia Selection !
+        
+        GAExecutorTask task = new GAExecutorTask(problem, startPopSize, generations);
+        
+        GAProgressBar.setValue(0);
+        BestIndiFitnessField.setText("");
+        BestIndiGeneField.setText("");
+        BestIndiWareHousesField.setText("");
+        StartGA.setEnabled(false);
+        CancelGAButton.setEnabled(true);
+        
+        task.execute();
+        
 }//GEN-LAST:event_StartGAActionPerformed
-
+    
     private void AboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutMenuItemActionPerformed
-    // TODO add your handling code here:
+        new AboutDialog(this, false).setVisible(true);
 }//GEN-LAST:event_AboutMenuItemActionPerformed
-
+    
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-    // TODO add your handling code here:
-}//GEN-LAST:event_jMenuItem1ActionPerformed
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-            java.awt.EventQueue.invokeLater(new java.lang.Runnable() {
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-                public void run() {
-                    new org.australia.ui.jMole().setVisible(true);
-                }
-            });
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger("global").log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger("global").log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger("global").log(Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger("global").log(Level.SEVERE, null, ex);
-        }
+/**
+ * @param args the command line arguments
+ */
+public static void main(String args[]) {
+    try {
+        javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+        java.awt.EventQueue.invokeLater(new java.lang.Runnable() {
+            
+            public void run() {
+                jMole jm = new org.australia.ui.jMole();
+                jm.setLocationByPlatform(true);
+                jm.setVisible(true);
+                
+            }
+        });
+    } catch (Exception ex) {
+        Logger.getLogger("global").log(Level.SEVERE, null, ex);
     }
-     
+}
+
+
+class GAExecutorTask extends SwingWorker<Individual, Status>{
     
+    Problem problem;
+    GA ga;
+    GAStateObserver gaso;
+    int startPopSize;
+    int generations;
+    
+    
+    
+    
+    public GAExecutorTask(Problem problem, int startPopSize, int generations){
+        
+        this.problem = problem;
+        this.startPopSize = startPopSize;
+        this.generations = generations;
+        this.gaso = new GAStateObserver(this.generations);
+        this.ga = new GA(problem);
+        this.ga.getStatus().addObserver(gaso);
+    }
+    
+    
+    protected Individual doInBackground() throws Exception {
+        
+        StatusTextLabel.setText("GA läuft...");
+        
+        System.out.println("Starting GA");
+        Individual bestfound = ga.startAlgorithm(startPopSize, Criterion.ITERATIONS, generations);
+        System.out.println("Finished GA with " + bestfound.toString());
+        
+        return bestfound;
+    }
+    
+    @Override
+    protected void done() {
+        
+        StatusTextLabel.setText("GA abgeschlossen!");
+        StartGA.setEnabled(true);
+        CancelGAButton.setEnabled(false);
+        
+        // print final duration
+        // re-enable buttons
+        // update the status bar text label
+        // disable the abort GA button
+        // reprint the best Indi returned by doInBackground() on the runtime info panel
+        // update database (?) / update table on tab 2 (?)
+        
+        
+    }
+    
+    
+    
+    
+}
+
+
+class GAStateObserver implements Observer{
+    
+    int generations;
+    
+    public GAStateObserver(int generations){
+        
+        this.generations = generations;
+        
+    }
+    
+    //update UI
+    public void update(Observable o, Object arg) {
+        
+        //        System.out.println("update called");
+        //
+        //        long start = 0;
+        //        Calendar started;
+        //        int iteration = 0;
+        //        Individual bestIndi = null;
+        //        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
+        //
+                Status stat = (Status)o;
+        //
+        //        started = stat.getTimeStarted();
+        //
+        //        if(started != null)
+        //            start = started.getTimeInMillis();
+        //
+        //
+        //        iteration = stat.getCurrentIteration();
+        //        bestIndi = stat.getCurrentBestIndividual();
+        //
+        //        // update UI according to these values
+        //
+        //        System.out.println("before progress");
+        //        //progressbar
+        //        int progress = 100 * (iteration/generations);
+        //        GAProgressBar.setValue(progress);
+        //
+        //        System.out.println("before indi fields");
+        //        //bestIndi Fields
+        //
+        //        if(bestIndi != null){
+        //            BestIndiGeneField.setText(bestIndi.getGeneString());
+        //            BestIndiFitnessField.setText(bestIndi.getFitness().toString());
+        //
+        //            int[] genes = bestIndi.getGene();
+        //            TreeSet set = new TreeSet();
+        //
+        //            for (int i = 0; i < genes.length; i++) {
+        //                set.add(genes[i]);
+        //            }
+        //
+        //            BestIndiWareHousesField.setText("" + set.size());
+        //
+        //        }
+        //
+        //        //duration
+        //        //        long duration = stop-start;
+        //        //        ExecutionTimeLabel.setText( sdf.format(new Date(duration) ) );
+        //
+        //        System.out.println("update finished");
+        
+        
+        System.out.println("update called");
+        System.out.println(Thread.currentThread().getName());
+
+        
+        final Calendar started = stat.getTimeStarted();
+        final int iteration = stat.getCurrentIteration();
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
+        final Individual bestIndi = stat.getCurrentBestIndividual();
+        
+        try{
+        java.awt.EventQueue.invokeAndWait(new java.lang.Runnable() {
+            
+            public void run() {
+                
+                System.out.println("inside invokelater runnable inside update");
+                System.out.println(Thread.currentThread().getName());
+
+
+                if(started != null){
+                    long start = started.getTimeInMillis();
+                }
+                
+                // update UI according to these values
+                
+                System.out.println("before progress inside invokelater runnable");
+                //progressbar
+                int progress = 100 * (iteration/generations);
+                GAProgressBar.setValue(progress);
+                GAProgressBar.repaint();
+                
+                System.out.println("before indi fields inside invokelater runnable");
+                //bestIndi Fields
+                
+                if(bestIndi != null){
+                    BestIndiGeneField.setText(bestIndi.getGeneString());
+                    BestIndiFitnessField.setText(bestIndi.getFitness().toString());
+                    
+                    int[] genes = bestIndi.getGene();
+                    TreeSet set = new TreeSet();
+                    
+                    for (int i = 0; i < genes.length; i++) {
+                        set.add(genes[i]);
+                    }
+                    
+                    BestIndiWareHousesField.setText("" + set.size());
+                    
+                }
+                
+                //duration
+                //        long duration = stop-start;
+                //        ExecutionTimeLabel.setText( sdf.format(new Date(duration) ) );
+                
+                System.out.println("update finished inside invokelater runnable");
+                
+            }
+        });
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            
+        }
+        
+    }
+    
+    
+}
+
+/**
+ * BAAAAAD practice.....
+ *
+ * it feels so wrong... at least it works
+ *
+ */
+private double ConvertGreedyPercentage(Object spinnerValue){
+    
+    String inputPercentage = (String)spinnerValue;
+    double actualPercentage = -1;
+    
+    if(inputPercentage.startsWith("0")){
+        actualPercentage = 0;
+    } else if(inputPercentage.startsWith("25")){
+        actualPercentage = 0.25;
+    } else if(inputPercentage.startsWith("50")){
+        actualPercentage = 0.5;
+    } else if(inputPercentage.startsWith("75")){
+        actualPercentage = 0.75;
+    } else if(inputPercentage.startsWith("100"))
+        actualPercentage = 1;
+    
+    return actualPercentage;
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem AboutMenuItem;
     private javax.swing.JPanel BasicSettingPanel;
     private javax.swing.JMenu BearbeitenMenu;
+    private javax.swing.JTextField BestIndiFitnessField;
+    private javax.swing.JTextField BestIndiGeneField;
+    private javax.swing.JTextField BestIndiWareHousesField;
     private javax.swing.JMenuItem CSVMenuItem;
-    private javax.swing.JTextField ChosenProblemLabel;
+    private javax.swing.JButton CancelGAButton;
+    private javax.swing.JSpinner ChildrenSpinner;
+    private javax.swing.JTextField ChosenProblemField;
+    private javax.swing.JRadioButton ContinueStagnation;
     private javax.swing.JMenu DateiMenuItem;
     private javax.swing.JMenuItem ExcelMenuItem;
+    private javax.swing.JLabel ExecutionTimeLabel;
     private javax.swing.JMenu ExportMenu;
     private javax.swing.JPanel ExtendedSettingPanel;
+    private javax.swing.JSpinner FeeSpinner;
+    private javax.swing.JProgressBar GAProgressBar;
     private javax.swing.JPanel GASettingPanel;
+    private javax.swing.JTextField GenSizeField;
+    private javax.swing.JSpinner GreedySpinner;
     private javax.swing.JMenu HilfeMenu;
+    private javax.swing.JPanel LaufzeitInfoPanel;
     private javax.swing.JTabbedPane MainTabPane;
+    private javax.swing.JTextField PopSizeField;
     private javax.swing.JButton ProblemChooserButton;
     private javax.swing.JMenuItem QuitMenuItem;
+    private javax.swing.JRadioButton QuitStagnation;
+    private javax.swing.JRadioButton RandomSelect;
     private javax.swing.JMenuItem RedoMenuItem;
     private javax.swing.JPanel ResultViewPanel;
+    private javax.swing.JRadioButton RouletteSelect;
     private javax.swing.JSeparator SepVorClose;
-    private javax.swing.JSeparator SepVorZurueck;
+    private javax.swing.JSeparator SepVorZurück;
+    private javax.swing.JButton SetDefaultsButton;
+    private javax.swing.JLabel SettingIconLabel;
     private javax.swing.JButton StartGA;
     private javax.swing.JLabel StatusLabel;
     private javax.swing.JPanel StatusPanel;
     private javax.swing.JLabel StatusTextLabel;
     private javax.swing.JPanel TabbedPanel;
+    private javax.swing.JSpinner TimeoutDateSpinner;
     private javax.swing.JMenuBar TopMenu;
     private javax.swing.JMenuItem UndoMenuItem;
     private javax.swing.JLabel UpperTextLabel;
@@ -688,42 +1041,23 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JMenuItem ZurueckSetzenMenuItem;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
-    private javax.swing.JSpinner jSpinner3;
-    private javax.swing.JSpinner jSpinner4;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
     
 }
