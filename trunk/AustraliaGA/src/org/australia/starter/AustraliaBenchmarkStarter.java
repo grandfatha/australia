@@ -32,64 +32,93 @@ public class AustraliaBenchmarkStarter {
 
 		ArrayList<Problem> problemList = new ArrayList<Problem>();
 //		problemList.add(ProblemHolmberg.readProblem("p1"));
-		problemList.add(ProblemHolmberg.readProblem("p11"));
+//		problemList.add(ProblemHolmberg.readProblem("p11"));
 //		problemList.add(ProblemHolmberg.readProblem("p21"));
 //		problemList.add(ProblemHolmberg.readProblem("p31"));
 //		problemList.add(ProblemHolmberg.readProblem("p41"));
 //		problemList.add(ProblemHolmberg.readProblem("p51"));
-//		problemList.add(ProblemHolmberg.readProblem("p61"));
+		problemList.add(ProblemHolmberg.readProblem("p61"));
 
 		ArrayList<Double> feeList = new ArrayList<Double>();
-		feeList.add(1.0);
-		feeList.add(5.0);
+//		feeList.add(1.0);
+//		feeList.add(5.0);
 		feeList.add(10.0);
-		feeList.add(20.0);
-		feeList.add(50.0);
+//		feeList.add(20.0);
+//		feeList.add(50.0);
 
 		ArrayList<Integer> populationList = new ArrayList<Integer>();
+//		populationList.add(10);
+//		populationList.add(30);
+//		populationList.add(50);
 		populationList.add(100);
-		populationList.add(200);
-		populationList.add(300);
-		populationList.add(500);
+//		populationList.add(200);
+//		populationList.add(300);
+//		populationList.add(500);
 
 		ArrayList<Integer> iterationsList = new ArrayList<Integer>();
+		iterationsList.add(500);
+		iterationsList.add(1000);
 		iterationsList.add(2000);
 		iterationsList.add(5000);
 		iterationsList.add(10000);
+		iterationsList.add(20000);
+		iterationsList.add(50000);
 
 		int rounds = 10;
+		
 
 		// iterate over problems
 		for (Problem problem : problemList) {
 
-			for (int i = 1; i <= rounds; i++) {
+			for (Integer population : populationList) {
 
-				for (Integer population : populationList) {
+				for (Integer iterations : iterationsList) {
 
-					for (Integer iterations : iterationsList) {
+					for (Double fee : feeList) {
+						Config.setFee(fee);
 
-						for (Double fee : feeList) {
-							Config.setFee(fee);
+						double cumulatedFitness=0.0;
+						long timeStarted = System.currentTimeMillis();
+						int currentIteration = 0;
+						long cumulatedDurationUntilBestWasFound=0;
 
+						System.out.println("Problem: " + problem.getInstanceName() +", Population Size: " + population +", Iterations: "+iterations+", Fees: "+fee);
+
+						
+						for (int i = 1; i <= rounds; i++) {
+
+							currentIteration++;
 
 							GA ga = new GA(problem);
 							Individual bestIndividual = null;
 							bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, iterations);
 
-							System.out.println("Bestes Individuum:");
-							System.out.println(bestIndividual);
+//							System.out.println("Bestes Individuum:");
+//							System.out.println(bestIndividual);
+							
+							cumulatedFitness+=bestIndividual.getFitness();
+							cumulatedDurationUntilBestWasFound+=ga.getDurationUntilBestWasFound()*1000;
+							
+							if(Config.getWriteToDatabase()){
+								Database.addIndivudualBenchmark(bestIndividual, benchmark, ga.getDuration(), ga.getDurationUntilBestWasFound(), iterations, population);
+							}
 
-							Database.addIndivudualBenchmark(bestIndividual, benchmark, ga.getDuration(), ga.getDurationUntilBestWasFound(), iterations, population);
+						} // iterations
+						
+						System.out.println("Durchschnittliche Fitness:\t" + (cumulatedFitness/currentIteration));
+						System.out.println("Durchschnittliche Dauer:\t" + ((System.currentTimeMillis()-timeStarted)/currentIteration));
+						System.out.println("Durchschnittliche Dauer best:\t" + (cumulatedDurationUntilBestWasFound/currentIteration));
+						System.out.println();
+						
 
-						} //fee
-
-					} // iterations
+					} //fee
 
 				} // population
 
 			} //rounds
 
 		} // Problem
+		
 
 		System.out.println("Ende");
 	}

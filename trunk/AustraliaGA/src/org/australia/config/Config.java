@@ -9,11 +9,11 @@ public class Config {
 	private static double oddsMutation = 0.8;
 	private static double percentageForeignIndividuals = 0.02;
 	
-	private static double fee = 10;
+	private static double fee = 100;
 	private static double newGenerationSize = 2.0;
 	
-	private static int printEachTimes = 1000;
-	private static boolean writeToDatabase = true;
+	private static int printEachTimes = 0;
+	private static boolean writeToDatabase = false;
 	
 	// Database Settings
 	public static final String MYSQL_HOST = "jegga.de";

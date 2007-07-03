@@ -104,7 +104,7 @@ public class GA {
 	private Individual startAlgorithm(){
 		
 		startTime = System.currentTimeMillis();
-		System.out.println("Start Algorithm for Problem " + problem.getInstanceName() + " (Fees: " + Config.getFee() +")");
+//		System.out.println("Start Algorithm for Problem " + problem.getInstanceName() + " (Fees: " + Config.getFee() +")");
 
 
 		/* create start population **************************************************/
@@ -112,7 +112,7 @@ public class GA {
 			currentPopulation = new PopulationImpl(problem, populationSize);
 		}
 		
-		System.out.println(currentPopulation.getBestIndividual());
+//		System.out.println(currentPopulation.getBestIndividual());
 		
 
 		/* evolve ********************************************************************/
@@ -188,7 +188,7 @@ public class GA {
 			currentPopulation = newGeneration;
 			
 			/* Print best indivual every n times *********************************/
-			if(currentIteration % Config.getPrintEachTimes() == 0){
+			if(Config.getPrintEachTimes()!=0 && currentIteration % Config.getPrintEachTimes() == 0){
 				System.out.println(currentPopulation.getBestIndividual());
 			}
 			
