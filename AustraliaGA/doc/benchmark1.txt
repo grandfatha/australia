@@ -1,0 +1,36 @@
+Problem: p61, Population Size: 100, Iterations: 500, Fees: 10.0
+Durchschnittliche Fitness:	30972.3
+Durchschnittliche Dauer:	3198
+Durchschnittliche Dauer best:	2500
+
+Problem: p61, Population Size: 100, Iterations: 1000, Fees: 10.0
+Durchschnittliche Fitness:	29839.3
+Durchschnittliche Dauer:	6309
+Durchschnittliche Dauer best:	5800
+
+Problem: p61, Population Size: 100, Iterations: 2000, Fees: 10.0
+Durchschnittliche Fitness:	29274.5
+Durchschnittliche Dauer:	12592
+Durchschnittliche Dauer best:	11300
+
+Problem: p61, Population Size: 100, Iterations: 5000, Fees: 10.0
+Durchschnittliche Fitness:	27759.6
+Durchschnittliche Dauer:	31378
+Durchschnittliche Dauer best:	29200
+
+Problem: p61, Population Size: 100, Iterations: 10000, Fees: 10.0
+Durchschnittliche Fitness:	27137.6
+Durchschnittliche Dauer:	62638
+Durchschnittliche Dauer best:	52100
+
+Problem: p61, Population Size: 100, Iterations: 20000, Fees: 10.0
+Durchschnittliche Fitness:	26624.9
+Durchschnittliche Dauer:	125562
+Durchschnittliche Dauer best:	74200
+
+Problem: p61, Population Size: 100, Iterations: 50000, Fees: 10.0
+Durchschnittliche Fitness:	26061.3
+Durchschnittliche Dauer:	318561
+Durchschnittliche Dauer best:	205800
+
+Ende

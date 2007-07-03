@@ -2,6 +2,9 @@ package org.australia.starter;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.australia.algorithm.Criterion;
 import org.australia.algorithm.GA;
 import org.australia.algorithm.Individual;
@@ -13,7 +16,11 @@ import org.australia.util.Database;
 
 public class AustraliaMultipleStarter {
 
+	private static Logger logger = Logger.getRootLogger();
+
 	public static void main(String[] args) {
+
+		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
 		ArrayList<Problem> problems = new ArrayList<Problem>();
 		
@@ -23,7 +30,7 @@ public class AustraliaMultipleStarter {
 					problems.add(ProblemHolmberg.readProblem("p" + i));
 				}
 			}
-		}else{
+//		}else{
 			for(int i=1; i<=15; i++)
 				problems.add(ProblemBoccia.readProblem("i5050_"+i+".plc"));
 			for(int i=1; i<=15; i++)
