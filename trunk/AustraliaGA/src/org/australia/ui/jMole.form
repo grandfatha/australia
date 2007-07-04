@@ -765,7 +765,11 @@
                           <Image iconType="3" name="/org/australia/ui/img/stop16.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="GA abbrechen"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelGAButtonActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="SetDefaultsButton">
                       <Properties>
