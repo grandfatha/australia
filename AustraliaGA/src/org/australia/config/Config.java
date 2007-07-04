@@ -9,10 +9,10 @@ public class Config {
 	private static double oddsMutation = 0.8;
 	private static double percentageForeignIndividuals = 0.02;
 	
-	private static double fee = 100;
+	private static double fee = 200;
 	private static double newGenerationSize = 2.0;
 	
-	private static int printEachTimes = 0;
+	private static int printEachTimes = 500;
 	private static boolean writeToDatabase = false;
 	
 	// Database Settings
