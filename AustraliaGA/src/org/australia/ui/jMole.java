@@ -6,22 +6,17 @@
 
 package org.australia.ui;
 
-import java.awt.AWTEvent;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.australia.algorithm.Criterion;
 
 import org.australia.algorithm.GA;
@@ -37,6 +32,9 @@ import org.australia.problem.ProblemHolmberg;
  */
 public class jMole extends javax.swing.JFrame {
     
+    private GAExecutorTask task;
+    private Logger logger = Logger.getRootLogger();
+            
     
     /** Creates new form jMole */
     public jMole() {
@@ -365,6 +363,12 @@ public class jMole extends javax.swing.JFrame {
 
         CancelGAButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/stop16.png"))); // NOI18N
         CancelGAButton.setText("GA abbrechen");
+        CancelGAButton.setEnabled(false);
+        CancelGAButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CancelGAButtonActionPerformed(evt);
+            }
+        });
 
         SetDefaultsButton.setText("Standard wiederherstellen");
 
@@ -659,6 +663,19 @@ public class jMole extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+private void CancelGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelGAButtonActionPerformed
+    
+    task.cancel(true);
+    
+    StartGA.setEnabled(true);
+    CancelGAButton.setEnabled(false);
+    BestIndiFitnessField.setText("");
+    BestIndiGeneField.setText("");
+    BestIndiWareHousesField.setText("");
+    GAProgressBar.setValue(0);
+    
+}//GEN-LAST:event_CancelGAButtonActionPerformed
     
 private void ProblemChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProblemChooserButtonActionPerformed
     
@@ -723,7 +740,7 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         sb.append(" fees " + fees);
         sb.append(" rouletteSelection " + rouletteSelection);
         
-        System.out.println(sb.toString());
+        logger.log(Level.INFO, sb.toString());
         
         // Input Werte in Config Klasse schreiben
         
@@ -738,7 +755,7 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         
         Problem problem = ProblemHolmberg.readProblem(instance);                       // TODO  Boccia Selection !
         
-        GAExecutorTask task = new GAExecutorTask(problem, startPopSize, generations);
+        task = new GAExecutorTask(problem, startPopSize, generations);
         
         GAProgressBar.setValue(0);
         BestIndiFitnessField.setText("");
@@ -774,7 +791,7 @@ public static void main(String args[]) {
             }
         });
     } catch (Exception ex) {
-        Logger.getLogger("global").log(Level.SEVERE, null, ex);
+        ex.printStackTrace();
     }
 }
 
@@ -786,9 +803,6 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     GAStateObserver gaso;
     int startPopSize;
     int generations;
-    
-    
-    
     
     public GAExecutorTask(Problem problem, int startPopSize, int generations){
         
@@ -805,9 +819,11 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
         
         StatusTextLabel.setText("GA läuft...");
         
-        System.out.println("Starting GA");
+        logger.log(Level.INFO, "Starting GA as background task");
+        
         Individual bestfound = ga.startAlgorithm(startPopSize, Criterion.ITERATIONS, generations);
-        System.out.println("Finished GA with " + bestfound.toString());
+               
+        logger.log(Level.INFO, "Finished GA as background task");
         
         return bestfound;
     }
@@ -815,29 +831,27 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     @Override
     protected void done() {
         
-        StatusTextLabel.setText("GA abgeschlossen!");
+        if(isCancelled()){
+              StatusTextLabel.setText("GA abgebrochen!");
+        }
+        else{
+             StatusTextLabel.setText("GA abgeschlossen!");            
+        }
         StartGA.setEnabled(true);
         CancelGAButton.setEnabled(false);
-        
+                
         // print final duration
-        // re-enable buttons
-        // update the status bar text label
-        // disable the abort GA button
-        // reprint the best Indi returned by doInBackground() on the runtime info panel
         // update database (?) / update table on tab 2 (?)
         
         
     }
-    
-    
-    
     
 }
 
 
 class GAStateObserver implements Observer{
     
-    int generations;
+    protected int generations;
     
     public GAStateObserver(int generations){
         
@@ -847,89 +861,60 @@ class GAStateObserver implements Observer{
     
     //update UI
     public void update(Observable o, Object arg) {
-        
-        //        System.out.println("update called");
-        //
-        //        long start = 0;
-        //        Calendar started;
-        //        int iteration = 0;
-        //        Individual bestIndi = null;
-        //        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
-        //
-                Status stat = (Status)o;
-        //
-        //        started = stat.getTimeStarted();
-        //
-        //        if(started != null)
-        //            start = started.getTimeInMillis();
-        //
-        //
-        //        iteration = stat.getCurrentIteration();
-        //        bestIndi = stat.getCurrentBestIndividual();
-        //
-        //        // update UI according to these values
-        //
-        //        System.out.println("before progress");
-        //        //progressbar
-        //        int progress = 100 * (iteration/generations);
-        //        GAProgressBar.setValue(progress);
-        //
-        //        System.out.println("before indi fields");
-        //        //bestIndi Fields
-        //
-        //        if(bestIndi != null){
-        //            BestIndiGeneField.setText(bestIndi.getGeneString());
-        //            BestIndiFitnessField.setText(bestIndi.getFitness().toString());
-        //
-        //            int[] genes = bestIndi.getGene();
-        //            TreeSet set = new TreeSet();
-        //
-        //            for (int i = 0; i < genes.length; i++) {
-        //                set.add(genes[i]);
-        //            }
-        //
-        //            BestIndiWareHousesField.setText("" + set.size());
-        //
-        //        }
-        //
-        //        //duration
-        //        //        long duration = stop-start;
-        //        //        ExecutionTimeLabel.setText( sdf.format(new Date(duration) ) );
-        //
-        //        System.out.println("update finished");
-        
-        
-        System.out.println("update called");
-        System.out.println(Thread.currentThread().getName());
+           
+//        logger.log(Level.INFO, "update called");
+//        System.out.println(Thread.currentThread().getName());
 
-        
-        final Calendar started = stat.getTimeStarted();
-        final int iteration = stat.getCurrentIteration();
-        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
-        final Individual bestIndi = stat.getCurrentBestIndividual();
+        Status stat = (Status) o; 
         
         try{
-        java.awt.EventQueue.invokeAndWait(new java.lang.Runnable() {
+        java.awt.EventQueue.invokeAndWait( new GAProgressRunnable(stat, generations));
+        }
+        catch(Exception e){
+            e.printStackTrace();
             
-            public void run() {
-                
-                System.out.println("inside invokelater runnable inside update");
-                System.out.println(Thread.currentThread().getName());
+        }
+        
+    }
+    
+    
+}
 
+class GAProgressRunnable implements Runnable{
+    
+    
+    Status stat;
+    int generations;
+
+        public GAProgressRunnable(Status stat, int generations) {
+            this.stat = stat;
+            this.generations = generations;
+        }
+    
+        public void run() {
+             
+                
+                Calendar started = stat.getTimeStarted();
+                int iteration = stat.getCurrentIteration();
+                Individual bestIndi = stat.getCurrentBestIndividual();
+        
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
+
+//                logger.log(Level.INFO, "Inside GAProgressRunnable");
+//                logger.log(Level.INFO, Thread.currentThread().getName();
 
                 if(started != null){
                     long start = started.getTimeInMillis();
                 }
                 
                 // update UI according to these values
-                
-                System.out.println("before progress inside invokelater runnable");
+
                 //progressbar
-                int progress = 100 * (iteration/generations);
+                
+                int progress = (int)((iteration / (double)generations) * 100);
                 GAProgressBar.setValue(progress);
                 GAProgressBar.repaint();
                 
-                System.out.println("before indi fields inside invokelater runnable");
                 //bestIndi Fields
                 
                 if(bestIndi != null){
@@ -946,25 +931,11 @@ class GAStateObserver implements Observer{
                     BestIndiWareHousesField.setText("" + set.size());
                     
                 }
-                
-                //duration
-                //        long duration = stop-start;
-                //        ExecutionTimeLabel.setText( sdf.format(new Date(duration) ) );
-                
-                System.out.println("update finished inside invokelater runnable");
-                
-            }
-        });
+
         }
-        catch(Exception e){
-            e.printStackTrace();
-            
-        }
-        
-    }
-    
     
 }
+
 
 /**
  * BAAAAAD practice.....
@@ -978,7 +949,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     double actualPercentage = -1;
     
     if(inputPercentage.startsWith("0")){
-        actualPercentage = 0;
+        actualPercentage = 0.0;
     } else if(inputPercentage.startsWith("25")){
         actualPercentage = 0.25;
     } else if(inputPercentage.startsWith("50")){
@@ -986,7 +957,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     } else if(inputPercentage.startsWith("75")){
         actualPercentage = 0.75;
     } else if(inputPercentage.startsWith("100"))
-        actualPercentage = 1;
+        actualPercentage = 1.0;
     
     return actualPercentage;
 }
