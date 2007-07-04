@@ -32,14 +32,15 @@ public class AustraliaDatabaseOptimizerStarter {
 		Population population = null;
 
 		//Define Problem
-		problems.add(ProblemHolmberg.readProblem("p19"));
-		problems.add(ProblemHolmberg.readProblem("p23"));
-		problems.add(ProblemHolmberg.readProblem("p24"));
-		problems.add(ProblemHolmberg.readProblem("p25"));
-		problems.add(ProblemHolmberg.readProblem("p27"));
-		problems.add(ProblemHolmberg.readProblem("p28"));
-		problems.add(ProblemHolmberg.readProblem("p29"));
-		problems.add(ProblemHolmberg.readProblem("p66"));
+//		problems.add(ProblemHolmberg.readProblem("p19"));
+//		problems.add(ProblemHolmberg.readProblem("p23"));
+//		problems.add(ProblemHolmberg.readProblem("p24"));
+//		problems.add(ProblemHolmberg.readProblem("p25"));
+//		problems.add(ProblemHolmberg.readProblem("p27"));
+//		problems.add(ProblemHolmberg.readProblem("p28"));
+//		problems.add(ProblemHolmberg.readProblem("p29"));
+//		problems.add(ProblemHolmberg.readProblem("p66"));
+		problems.add(ProblemBoccia.readProblem("i5050_1.plc"));
 		
 		
 		for (Problem problem : problems) {
