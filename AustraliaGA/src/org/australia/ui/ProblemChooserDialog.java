@@ -9,7 +9,9 @@ package org.australia.ui;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import javax.swing.DefaultListModel;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 
 /**
  *
@@ -23,7 +25,7 @@ public class ProblemChooserDialog extends javax.swing.JDialog {
     
     private JTextField retValField;
     
-    /** Creates new form ProblemChooserDialog 
+    /** Creates new form ProblemChooserDialog
      * @param parent the parent frame to which this Dialog is displayed (correct positioning)
      * @param modal boolean to indicate whether this Dialog should be modal
      * @param field The TextField to where the chosen problem instance's name will be written to
@@ -86,11 +88,7 @@ public class ProblemChooserDialog extends javax.swing.JDialog {
             }
         });
 
-        HolmbergList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+        HolmbergList.setModel(getHolmbergModel());
         HolmbergList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         HolmbergList.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
         HolmbergList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -100,11 +98,7 @@ public class ProblemChooserDialog extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(HolmbergList);
 
-        BocciaList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8", "Item 9", "Item 10", "Item 11", "Item 12", "Item 13" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+        BocciaList.setModel(getBocciaModel());
         BocciaList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         BocciaList.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
         BocciaList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -174,21 +168,60 @@ private void HolmbergListValueChanged(javax.swing.event.ListSelectionEvent evt) 
     if(BocciaList.isEnabled()){
         BocciaList.setEnabled(false);
     }
-//    else{
-//        BocciaList.setEnabled(true);
+    //    else{
+    //        BocciaList.setEnabled(true);
     
-//    }
+    //    }
 }//GEN-LAST:event_HolmbergListValueChanged
 
     private void BocciaListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_BocciaListValueChanged
         
         if(HolmbergList.isEnabled()){
             HolmbergList.setEnabled(false);
-        } 
-//        else{
-//            HolmbergList.setEnabled(true);
-//        }
+        }
+        //        else{
+        //            HolmbergList.setEnabled(true);
+        //        }
 }//GEN-LAST:event_BocciaListValueChanged
+    
+    private DefaultListModel getBocciaModel(){
+        
+        DefaultListModel model = new DefaultListModel();
+        
+        
+        for(int i = 0; i < 75; i++){
+            
+            for (int j = 1; j <= 15; j++) {
+                
+                if(i >= 0 && i <= 15){
+                    model.add(i, "i5050_"+j+".plc");
+                } else if(i >= 15 && i <= 30){
+                    model.add(i, "i5075_"+j+".plc");
+                } else if(i >= 30 && i <= 45){
+                    model.add(i, "i50100_"+j+".plc");
+                } else if(i >= 45 && i <= 60){
+                    model.add(i, "i75100_"+j+".plc");
+                } else if(i >= 60 && i <= 75){
+                    model.add(i, "i7575_"+j+".plc");
+                }
+                
+            }
+            
+        }
+        return model;
+    }
+    
+    private DefaultListModel getHolmbergModel(){
+        
+        DefaultListModel model = new DefaultListModel();
+        
+        for (int i = 0; i < 71; i++) {
+            String name = "P"+(i+1);
+            model.add(i, name);
+        }
+        return model;
+    }
+    
     
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         this.retValField.setText("The Chosen Problem");
