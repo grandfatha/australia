@@ -2,7 +2,7 @@ package org.australia.config;
 
 public class Config {
 	
-	private static int selectionMethod = 0;	// 0=random
+	private static int selectionMethod = 1;	// 0=random
 											// 1= rouletteWheel
 
 	private static double percentageGreedy = 0.3;
@@ -12,8 +12,8 @@ public class Config {
 	private static double fee = 200;
 	private static double newGenerationSize = 2.0;
 	
-	private static int printEachTimes = 500;
-	private static boolean writeToDatabase = false;
+	private static int printEachTimes = 1000;
+	private static boolean writeToDatabase = true;
 	
 	// Database Settings
 	public static final String MYSQL_HOST = "jegga.de";

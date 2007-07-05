@@ -40,21 +40,22 @@ public class AustraliaDatabaseOptimizerStarter {
 //		problems.add(ProblemHolmberg.readProblem("p28"));
 //		problems.add(ProblemHolmberg.readProblem("p29"));
 //		problems.add(ProblemHolmberg.readProblem("p66"));
-		problems.add(ProblemBoccia.readProblem("i5050_1.plc"));
+//		problems.add(ProblemBoccia.readProblem("i5050_1.plc"));
 		
+		problems.add(ProblemHolmberg.readProblem("p61"));
 		
 		for (Problem problem : problems) {
 			int count = 1;
 						
 			do{
-				if(++count > 20){
+				if(++count > 50){
 					break;
 				}
 				
 				// Create an empty population
 				population = new PopulationImpl(problem);
 				
-				if(Math.random() < 0.5){
+				if(Math.random() < 0.7){
 		
 					// get individuals from database for our problem
 					Collection<Individual> individualsFromDatabase = Database.getIndividualsFromDatabase(problem, true, 20);
@@ -72,7 +73,7 @@ public class AustraliaDatabaseOptimizerStarter {
 				population.add(IndividualImpl.generateGreedyIndividual(problem));
 				
 				// add some random individuals to population
-				while(population.getSize() < 150){
+				while(population.getSize() < 200){
 					population.add(IndividualImpl.generateRandomIndividual(problem));
 				}
 				
@@ -81,7 +82,7 @@ public class AustraliaDatabaseOptimizerStarter {
 				
 				// start the ga
 				GA ga = new GA(problem);
-				Individual bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, 20000);
+				Individual bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, 10000);
 				
 				// Output
 				System.out.println("Bestes Individuum:");
@@ -92,7 +93,7 @@ public class AustraliaDatabaseOptimizerStarter {
 					Database.addIndivudual(bestIndividual);
 				}
 			
-			}while(!HolmbergOptimal.isOptimal(population.getBestIndividual()));
+			}while(!(problem instanceof ProblemHolmberg ) || !HolmbergOptimal.isOptimal(population.getBestIndividual()));
 	
 			logger.info("Optimal Individual was found");
 			

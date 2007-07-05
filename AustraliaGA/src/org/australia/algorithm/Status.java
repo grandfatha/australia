@@ -75,11 +75,13 @@ public class Status extends Observable{
 		notifyObservers();
 	}
 
-
 	public void setCurrentIteration(int currentIteration) {
 		this.currentIteration = currentIteration;
 		setChanged();
-		notifyObservers();
+		
+		if(this.currentIteration%100==0){
+			notifyObservers();
+		}
 	}
 
 
@@ -92,6 +94,8 @@ public class Status extends Observable{
 
 	public void setTimeStopped(Calendar timeStopped) {
 		this.timeStopped = timeStopped;
+		setChanged();
+		notifyObservers();
 	}
 	
 	
