@@ -58,7 +58,7 @@
                 <Property name="text" type="java.lang.String" value="Wiederherstellen"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="SepVorZur&#xfc;ck">
+            <MenuItem class="javax.swing.JSeparator" name="SepVorZurueck">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="ZurueckSetzenMenuItem">
               <Properties>
@@ -107,13 +107,18 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="TabbedPanel" min="-2" pref="573" max="-2" attributes="0"/>
-          <Component id="StatusPanel" alignment="0" max="32767" attributes="1"/>
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="StatusPanel" max="32767" attributes="1"/>
+                  <Component id="TabbedPanel" alignment="0" min="-2" pref="573" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <Component id="TabbedPanel" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="StatusPanel" min="-2" max="-2" attributes="0"/>
@@ -135,7 +140,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="MainTabPane" alignment="0" pref="510" max="32767" attributes="0"/>
+              <Component id="MainTabPane" alignment="0" pref="560" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -159,23 +164,32 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="SettingIconLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="79" max="32767" attributes="0"/>
-                                  <Component id="UpperTextLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                      <Component id="SettingIconLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="79" max="32767" attributes="0"/>
+                                      <Component id="UpperTextLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="BasicSettingPanel" max="32767" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="LaufzeitInfoPanel" alignment="0" max="32767" attributes="1"/>
+                                          <Component id="ExtendedSettingPanel" alignment="1" max="32767" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="LaufzeitInfoPanel" max="32767" attributes="1"/>
-                                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="ExtendedSettingPanel" max="32767" attributes="1"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="SetDefaultsButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="BasicSettingPanel" max="32767" attributes="1"/>
+                                  <Component id="CancelGAButton" linkSize="5" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="StartGA" linkSize="5" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -201,7 +215,13 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="ExtendedSettingPanel" min="-2" pref="109" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="LaufzeitInfoPanel" min="-2" pref="137" max="-2" attributes="0"/>
+                          <Component id="LaufzeitInfoPanel" min="-2" pref="107" max="-2" attributes="0"/>
+                          <EmptySpace pref="60" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="SetDefaultsButton" linkSize="6" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="CancelGAButton" linkSize="6" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="StartGA" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -613,42 +633,31 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="1" attributes="0">
-                                          <Group type="102" attributes="0">
-                                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                                  <Component id="BestIndiWareHousesField" linkSize="3" alignment="1" max="32767" attributes="1"/>
-                                                  <Component id="BestIndiFitnessField" linkSize="3" alignment="1" pref="59" max="32767" attributes="1"/>
-                                              </Group>
-                                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="ExecutionTimeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="GAProgressBar" alignment="0" pref="291" max="32767" attributes="0"/>
-                                              </Group>
-                                          </Group>
-                                          <Component id="BestIndiGeneField" pref="424" max="32767" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="SetDefaultsButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="CancelGAButton" linkSize="5" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="StartGA" linkSize="5" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                          <Component id="BestIndiWareHousesField" linkSize="3" alignment="1" max="32767" attributes="1"/>
+                                          <Component id="BestIndiFitnessField" linkSize="3" alignment="1" pref="59" max="32767" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="ExecutionTimeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="GAProgressBar" alignment="0" pref="290" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Component id="BestIndiGeneField" pref="423" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -687,13 +696,7 @@
                                       <Component id="BestIndiGeneField" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="StartGA" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="CancelGAButton" linkSize="6" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="SetDefaultsButton" linkSize="6" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -748,34 +751,6 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="ExecutionTimeLabel">
                     </Component>
-                    <Component class="javax.swing.JButton" name="StartGA">
-                      <Properties>
-                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/org/australia/ui/img/forward16.png"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="GA starten"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="StartGAActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="CancelGAButton">
-                      <Properties>
-                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/org/australia/ui/img/stop16.png"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="GA abbrechen"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelGAButtonActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="SetDefaultsButton">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Standard wiederherstellen"/>
-                      </Properties>
-                    </Component>
                   </SubComponents>
                 </Container>
                 <Component class="javax.swing.JLabel" name="SettingIconLabel">
@@ -784,6 +759,34 @@
                       <Image iconType="3" name="/org/australia/ui/img/configure.png"/>
                     </Property>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="SetDefaultsButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Standard wiederherstellen"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="CancelGAButton">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/org/australia/ui/img/stop16.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="GA abbrechen"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelGAButtonActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="StartGA">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/org/australia/ui/img/forward16.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="GA starten"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="StartGAActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -821,7 +824,7 @@
                           <Component id="jScrollPane1" min="-2" pref="87" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="211" max="32767" attributes="0"/>
+                          <EmptySpace pref="261" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -879,7 +882,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="203" max="-2" attributes="0"/>
                           <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="265" max="32767" attributes="0"/>
+                          <EmptySpace pref="315" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
