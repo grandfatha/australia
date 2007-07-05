@@ -15,8 +15,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
+
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.australia.algorithm.Criterion;
 
 import org.australia.algorithm.GA;
@@ -38,7 +41,7 @@ public class jMole extends javax.swing.JFrame {
     
     /** Creates new form jMole */
     public jMole() {
-        
+		logger.addAppender(new ConsoleAppender(new PatternLayout()));
         initComponents();
     }
     
@@ -113,7 +116,7 @@ public class jMole extends javax.swing.JFrame {
         BearbeitenMenu = new javax.swing.JMenu();
         UndoMenuItem = new javax.swing.JMenuItem();
         RedoMenuItem = new javax.swing.JMenuItem();
-        SepVorZurück = new javax.swing.JSeparator();
+        SepVorZurueck = new javax.swing.JSeparator();
         ZurueckSetzenMenuItem = new javax.swing.JMenuItem();
         HilfeMenu = new javax.swing.JMenu();
         AboutMenuItem = new javax.swing.JMenuItem();
@@ -140,7 +143,7 @@ public class jMole extends javax.swing.JFrame {
 
         PopSizeField.setText("100");
 
-        GenSizeField.setText("100");
+        GenSizeField.setText("10000");
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Verhalten bei Stagnation"));
 
@@ -625,7 +628,7 @@ public class jMole extends javax.swing.JFrame {
 
         RedoMenuItem.setText("Wiederherstellen");
         BearbeitenMenu.add(RedoMenuItem);
-        BearbeitenMenu.add(SepVorZurück);
+        BearbeitenMenu.add(SepVorZurueck);
 
         ZurueckSetzenMenuItem.setText("Einstellungen f\u00fcr GA zur\u00fccksetzen");
         BearbeitenMenu.add(ZurueckSetzenMenuItem);
@@ -705,7 +708,7 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         int generations = Integer.parseInt(this.GenSizeField.getText());
         
         // get chosen instance and chosen behaviour to handle fitness stagnation (->stop GA?)
-        String instance = "P1";                                                                      //TODO
+        String instance = "p61";                                                                      //TODO
         boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
         
         // ERWEITERTE EINSTELLUNGEN einlesen
@@ -740,15 +743,16 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         sb.append(" fees " + fees);
         sb.append(" rouletteSelection " + rouletteSelection);
         
-        logger.log(Level.INFO, sb.toString());
+        logger.debug(sb.toString());
         
         // Input Werte in Config Klasse schreiben
-        
+        logger.debug("forcedChildren: " + forcedChildren);
         Config.setNewGenerationSize(forcedChildren);
         Config.setFee(fees);
         Config.setPercentageGreedy(greedyChance);
         Config.setSelectionMethod(rouletteSelection);
-        Config.setPercentageForeignIndividuals(forcedChildren);
+        
+//        Config.setPercentageForeignIndividuals(forcedChildren);	// jc forcedChildren hat nichts mit setPercentageForeignIndividuals zu tun!
         
         
         // SwingWorker ab hier!
@@ -817,7 +821,7 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     
     protected Individual doInBackground() throws Exception {
         
-        StatusTextLabel.setText("GA läuft...");
+        StatusTextLabel.setText("GA laeuft...");
         
         logger.log(Level.INFO, "Starting GA as background task");
         
@@ -996,7 +1000,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JPanel ResultViewPanel;
     private javax.swing.JRadioButton RouletteSelect;
     private javax.swing.JSeparator SepVorClose;
-    private javax.swing.JSeparator SepVorZurück;
+    private javax.swing.JSeparator SepVorZurueck;
     private javax.swing.JButton SetDefaultsButton;
     private javax.swing.JLabel SettingIconLabel;
     private javax.swing.JButton StartGA;

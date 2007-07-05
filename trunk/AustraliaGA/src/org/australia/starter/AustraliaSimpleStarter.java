@@ -8,7 +8,7 @@ import org.australia.algorithm.GA;
 import org.australia.algorithm.Individual;
 import org.australia.config.Config;
 import org.australia.problem.Problem;
-import org.australia.problem.ProblemBoccia;
+import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Database;
 
 public class AustraliaSimpleStarter {
@@ -19,8 +19,8 @@ public class AustraliaSimpleStarter {
 
 		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
-//		Problem problem = ProblemHolmberg.readProblem("p31");
-		Problem problem = ProblemBoccia.readProblem("i5050_1.plc");
+		Problem problem = ProblemHolmberg.readProblem("p61");
+//		Problem problem = ProblemBoccia.readProblem("i5050_1.plc");
 		
 		
 		Individual bestIndividual = null;
