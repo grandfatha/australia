@@ -18,7 +18,8 @@ public class Status extends Observable{
 	private Individual currentBestValidIndividual;
 	
 	
-	private int currentIteration;
+	private int currentGeneration;
+	private int lastImprovedGeneration;
 	
 
 	
@@ -47,8 +48,8 @@ public class Status extends Observable{
 	}
 
 
-	public int getCurrentIteration() {
-		return currentIteration;
+	public int getCurrentGeneration() {
+		return currentGeneration;
 	}
 
 
@@ -64,6 +65,7 @@ public class Status extends Observable{
 
 	public void setCurrentBestIndividual(Individual currentBestIndividual) {
 		this.currentBestIndividual = currentBestIndividual;
+		this.lastImprovedGeneration = currentGeneration;
 		setChanged();
 		notifyObservers();
 	}
@@ -75,11 +77,11 @@ public class Status extends Observable{
 		notifyObservers();
 	}
 
-	public void setCurrentIteration(int currentIteration) {
-		this.currentIteration = currentIteration;
+	public void setCurrentGeneration(int currentGeneration) {
+		this.currentGeneration = currentGeneration;
 		setChanged();
 		
-		if(this.currentIteration%100==0){
+		if(this.currentGeneration%100==0){
 			notifyObservers();
 		}
 	}
@@ -96,6 +98,11 @@ public class Status extends Observable{
 		this.timeStopped = timeStopped;
 		setChanged();
 		notifyObservers();
+	}
+
+
+	public int getLastImprovedGeneration() {
+		return lastImprovedGeneration;
 	}
 	
 	

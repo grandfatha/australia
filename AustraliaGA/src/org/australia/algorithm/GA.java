@@ -19,6 +19,7 @@ public class GA {
 	private int totalGenerations;
 	private int currentGeneration = 0;
 	private int maxTimeNoImprovements;
+	private int maxGenerationsNoImprovements;
 	private Double currentBestFitness;
 	private Long startTime;
 	private Long stopTime;
@@ -76,6 +77,8 @@ public class GA {
 			totalGenerations = value;
 		}else if(criterion.equals(Criterion.TIMENOIMPROVEMENTS)){
 			maxTimeNoImprovements = value;
+		}else if(criterion.equals(Criterion.GENERATIONSNOIMPROVEMENTS)){
+			maxGenerationsNoImprovements = value;
 		}
 		
 		return startAlgorithm();
@@ -175,10 +178,10 @@ public class GA {
 						baby.mutateNearNeighbor();
 						baby.mutateNearNeighbor();
 						baby.mutateNearNeighbor();
-//					}else if(random < 0.8){
-//						baby.mutateSwitchFacilities();
-					}else{
-						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+					}else if(random < 0.9){
+						baby.mutateBanFacilityAndFindNewFromCurretUsed();
+//					}else{
+//						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 					}
 				}
 				
@@ -213,19 +216,19 @@ public class GA {
 	
 	// handles the stop criterion
 	private boolean stop(){
-		status.setCurrentIteration(currentGeneration);
+		status.setCurrentGeneration(currentGeneration);
 		
 		// some time info
 		if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
 
 			status.setCurrentBestIndividual(currentPopulation.getBestIndividual());
-			status.setCurrentBestValidIndividual(currentPopulation.getBestValidIndividual());
+//			status.setCurrentBestValidIndividual(currentPopulation.getBestValidIndividual());
 			
 			currentBestFitness = currentPopulation.getBestIndividual().getFitness();
 			currentBestFitnessTime = System.currentTimeMillis();
 		}
 		
-		if(stopped){	// abort button was pressed
+		if(stopped){	// abort button was performed
 			return true;
 		}
 		
@@ -240,6 +243,11 @@ public class GA {
 					return true;
 				}
 			}
+		}else if(this.criterion.equals(Criterion.GENERATIONSNOIMPROVEMENTS)){
+			if(currentGeneration  - status.getLastImprovedGeneration() > maxGenerationsNoImprovements){
+				return true;
+			}
+			
 		}
 
 		currentGeneration++;
