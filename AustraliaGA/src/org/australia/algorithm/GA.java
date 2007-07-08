@@ -190,7 +190,7 @@ public class GA {
 			currentPopulation = newGeneration;
 			
 			/* Print best indivual every n times *********************************/
-			if(Config.getPrintEachTimes()!=0 && currentIteration % Config.getPrintEachTimes() == 0){
+			if(Config.getPrintEachTimes()!=0 && currentGeneration % Config.getPrintEachTimes() == 0){
 				System.out.println(currentPopulation.getBestIndividual());
 			}
 			
