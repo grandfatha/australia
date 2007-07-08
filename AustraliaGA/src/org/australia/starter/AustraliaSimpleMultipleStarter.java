@@ -8,7 +8,7 @@ import org.australia.algorithm.Individual;
 import org.australia.algorithm.MultipleGA;
 import org.australia.config.Config;
 import org.australia.problem.Problem;
-import org.australia.problem.ProblemHolmberg;
+import org.australia.problem.ProblemBoccia;
 import org.australia.util.Database;
 
 public class AustraliaSimpleMultipleStarter {
@@ -19,8 +19,10 @@ public class AustraliaSimpleMultipleStarter {
 
 		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
-		Problem problem = ProblemHolmberg.readProblem("p61");
-//		Problem problem = ProblemBoccia.readProblem("i5050_1.plc");
+		Config.setFee(250);
+		
+//		Problem problem = ProblemHolmberg.readProblem("p1");
+		Problem problem = ProblemBoccia.readProblem("i5050_1.plc");
 		
 		
 		Individual bestIndividual = null;
@@ -28,7 +30,7 @@ public class AustraliaSimpleMultipleStarter {
 		MultipleGA ga = new MultipleGA(problem);
 		
 		long start = System.currentTimeMillis();
-		bestIndividual = ga.startMultipleAlgorithm(20, 50, Criterion.GENERATIONSNOIMPROVEMENTS, 20000);
+		bestIndividual = ga.startMultipleAlgorithm(10, 50, Criterion.GENERATIONSNOIMPROVEMENTS, 20000);
 		long end = System.currentTimeMillis();
 
 		
