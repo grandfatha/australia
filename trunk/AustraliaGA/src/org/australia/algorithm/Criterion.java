@@ -1,7 +1,7 @@
 package org.australia.algorithm;
 
 public enum Criterion {
-	ITERATIONS,
+	GENERATIONS,
 	TIMENOIMPROVEMENTS,
 	TOTALTIME
 }
