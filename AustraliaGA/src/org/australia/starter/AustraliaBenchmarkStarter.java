@@ -91,7 +91,7 @@ public class AustraliaBenchmarkStarter {
 
 							GA ga = new GA(problem);
 							Individual bestIndividual = null;
-							bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, iterations);
+							bestIndividual = ga.startAlgorithm(population, Criterion.GENERATIONS, iterations);
 
 //							System.out.println("Bestes Individuum:");
 //							System.out.println(bestIndividual);
