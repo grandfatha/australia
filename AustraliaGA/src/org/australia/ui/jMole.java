@@ -825,7 +825,7 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
         
         logger.log(Level.INFO, "Starting GA as background task");
         
-        Individual bestfound = ga.startAlgorithm(startPopSize, Criterion.ITERATIONS, generations);
+        Individual bestfound = ga.startAlgorithm(startPopSize, Criterion.GENERATIONS, generations);
                
         logger.log(Level.INFO, "Finished GA as background task");
         
