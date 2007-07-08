@@ -178,9 +178,12 @@ public class GA {
 						baby.mutateNearNeighbor();
 						baby.mutateNearNeighbor();
 						baby.mutateNearNeighbor();
+					}else if(random < 0.8){
+						baby.mutateSwitchCustomers();
 					}else if(random < 0.9){
 						baby.mutateBanFacilityAndFindNewFromCurretUsed();
-//					}else{
+					}else{
+						baby.mutateCloseAndOpenAFacility();
 //						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 					}
 				}

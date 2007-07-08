@@ -32,14 +32,14 @@ public class MultipleGA {
 		}
 
 		// add some random individuals to super generation
-		while(population.getSize() < populationSize){
-			population.add(IndividualImpl.generateRandomIndividual(problem));
-		}
+//		while(population.getSize() < populationSize){
+//			population.add(IndividualImpl.generateRandomIndividual(problem));
+//		}
 
 		// run ga on super population
 		logger.info("Run super population");
 		GA ga = new GA(problem);
-		return ga.startAlgorithm(population, criterion, value);
+		return ga.startAlgorithm(population, criterion, value*10);
 
 	}
 
