@@ -1,5 +1,6 @@
 package org.australia.algorithm;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.australia.config.Config;
@@ -16,8 +17,8 @@ public class GA {
 
 	// Variables for stop criteria
 	private Criterion criterion;
-	private int totalIterations;
-	private int currentIteration = 0;
+	private int totalGenerations;
+	private int currentGeneration = 0;
 	private int maxTimeNoImprovements;
 	private Double currentBestFitness;
 	private Long startTime;
@@ -47,8 +48,8 @@ public class GA {
 	 */
 	@Deprecated
 	public Individual startAlgorithm(int populationSize, int iterations){
-		this.criterion = Criterion.ITERATIONS;
-		this.totalIterations = iterations;
+		this.criterion = Criterion.GENERATIONS;
+		this.totalGenerations = iterations;
 		this.populationSize = populationSize;
 		return startAlgorithm();
 	}
@@ -66,8 +67,8 @@ public class GA {
 		this.populationSize = populationSize;
 		this.criterion = criterion;
 
-		if(criterion.equals(Criterion.ITERATIONS)){
-			totalIterations = value;
+		if(criterion.equals(Criterion.GENERATIONS)){
+			totalGenerations = value;
 		}else if(criterion.equals(Criterion.TIMENOIMPROVEMENTS)){
 			maxTimeNoImprovements = value;
 		}
@@ -78,7 +79,7 @@ public class GA {
 
 	/**
 	 * 
-	 * start algotihm with a given startpopulation
+	 * start algorithm with a given start population
 	 * 
 	 * @param startPopulation
 	 * @param criterion
@@ -90,6 +91,7 @@ public class GA {
 		currentPopulation = startPopulation;
 		return startAlgorithm(startPopulation.getSize(), criterion, value);
 	}
+	
 
 	
 	
@@ -125,7 +127,7 @@ public class GA {
 			/* adds the best individual to new generation ****************************/
 			newGeneration.add(currentPopulation.getBestIndividual());
 			
-			/* add some random indiduals from foreign countries to new population *****/
+			/* add some random individuals from foreign countries to new population *****/
 			for(int j=0; j < populationSize * Config.getPercentageForeignIndividuals(); j++){
 				currentPopulation.remove(currentPopulation.getWorstIndividual());
 			}
@@ -206,7 +208,7 @@ public class GA {
 	
 	// handles the stop criterion
 	private boolean stop(){
-		status.setCurrentIteration(currentIteration);
+		status.setCurrentIteration(currentGeneration);
 		
 		// some time info
 		if(currentBestFitness == null || currentPopulation.getBestIndividual().getFitness() < currentBestFitness){
@@ -219,8 +221,8 @@ public class GA {
 		}
 		
 		
-		if(this.criterion.equals(Criterion.ITERATIONS)){		// stop after x generations
-			if(currentIteration > totalIterations){
+		if(this.criterion.equals(Criterion.GENERATIONS)){		// stop after x generations
+			if(currentGeneration > totalGenerations){
 				return true;
 			}
 		}else if(this.criterion.equals(Criterion.TIMENOIMPROVEMENTS)){			// Stop ga after x seconds with no improvement
@@ -232,7 +234,7 @@ public class GA {
 			}
 		}
 
-		currentIteration++;
+		currentGeneration++;
 		
 		return false;
 	}
