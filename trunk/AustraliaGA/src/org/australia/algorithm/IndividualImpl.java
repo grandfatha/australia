@@ -2,6 +2,7 @@ package org.australia.algorithm;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.australia.config.Config;
@@ -428,6 +429,34 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		this.changed = true;
 	}
+	
+	public void mutateBanFacilityAndFindNewFromCurretUsed(){		
+		
+		// add all used warehouses to a set
+		HashSet<Integer> warehouseSet = new HashSet<Integer>();
+		for (int g : gene) {
+			warehouseSet.add(g);
+		}
+		
+		// remove a random warehouse from this list
+		int size = warehouseSet.size();
+		Iterator<Integer> iterator = warehouseSet.iterator();
+		Integer facilityToDelete = iterator.next();
+		for(int i=0; i<(int)(Math.random()*size); i++){
+			facilityToDelete = iterator.next();
+		}
+		warehouseSet.remove(facilityToDelete);
+		
+		for(int i=0; i<gene.length; i++){
+			while(!warehouseSet.contains(gene[i])){
+				int position = Utils.rouletteWheel((int)getProblem().getWarehouses());	// lowest postion has higher chance
+				gene[i] = this.problem.getSortedCosts()[i][position];	// replace facility with new
+			}
+			
+		}
+
+		
+	}
 
 	
 	public Individual haveSex(Individual partner){
@@ -493,6 +522,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 			geneString.append(",");
 		}
 		geneString.deleteCharAt(geneString.lastIndexOf(","));
+		
+		geneString.append(" Facility Utilization: ");
+		geneString.append(getFacilityUtilizationString());
 		return geneString.toString();
 	}
 	
@@ -504,6 +536,34 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		geneString.deleteCharAt(geneString.lastIndexOf(","));
 		return geneString.toString();
+	}
+	
+	public String getFacilityUtilizationString(){
+		Collection<Integer> warehouseSet = new HashSet<Integer>();
+		for (int g : gene) {
+			warehouseSet.add(g);
+		}
+
+		
+		StringBuilder utilizationString = new StringBuilder();
+		for (Integer facility : warehouseSet) {
+			utilizationString.append(facility);
+			utilizationString.append(": ");
+			double sum=0.0;
+			for(int i=0; i<gene.length; i++){
+				if(gene[i]==facility.intValue()){
+					sum+=problem.getNeeds()[i];
+				}
+			}
+			utilizationString.append(sum);
+			utilizationString.append(" (");
+			utilizationString.append(problem.getCap()[facility]);
+			utilizationString.append("), ");
+		}
+		utilizationString.deleteCharAt(utilizationString.lastIndexOf(","));
+		utilizationString.deleteCharAt(utilizationString.lastIndexOf(" "));
+		
+		return utilizationString.toString();
 	}
 	
 	public boolean isValid(){

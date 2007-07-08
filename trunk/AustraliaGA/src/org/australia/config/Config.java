@@ -7,12 +7,12 @@ public class Config {
 
 	private static double percentageGreedy = 0.3;
 	private static double oddsMutation = 0.8;
-	private static double percentageForeignIndividuals = 0.02;
+	private static double percentageForeignIndividuals = 0.05;
 	
-	private static double fee = 200;
+	private static double fee = 1;
 	private static double newGenerationSize = 2.0;
 	
-	private static int printEachTimes = 1000;
+	private static int printEachTimes = 2000;
 	private static boolean writeToDatabase = true;
 	
 	// Database Settings

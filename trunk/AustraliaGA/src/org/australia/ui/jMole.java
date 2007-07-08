@@ -668,7 +668,7 @@ public class jMole extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 private void CancelGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelGAButtonActionPerformed
-    
+   
     task.cancel(true);
     
     StartGA.setEnabled(true);
@@ -899,7 +899,7 @@ class GAProgressRunnable implements Runnable{
              
                 
                 Calendar started = stat.getTimeStarted();
-                int iteration = stat.getCurrentIteration();
+                int iteration = stat.getCurrentGeneration();
                 Individual bestIndi = stat.getCurrentBestIndividual();
         
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
