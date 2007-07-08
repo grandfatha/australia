@@ -38,11 +38,11 @@ public class AustraliaDatabaseStarter {
 			
 			System.out.println("There are " + population.getSize() +" Individuals in the database");
 			
-			population.add(IndividualImpl.generateGreedyIndividual(problem));
+			population.add(IndividualImpl.generateGreedyIndividual());
 			
 			// add some random individuals to population
 			while(population.getSize() < 200){
-				population.add(IndividualImpl.generateRandomIndividual(problem));
+				population.add(IndividualImpl.generateRandomIndividual());
 			}
 			
 			//What is currently the best Individual
@@ -51,7 +51,7 @@ public class AustraliaDatabaseStarter {
 			// start the ga
 			System.out.println("Start Algorithm for Problem " + problem.getInstanceName());
 			GA ga = new GA(problem);
-			Individual bestIndividual = ga.startAlgorithm(population, Criterion.ITERATIONS, 10000);
+			Individual bestIndividual = ga.startAlgorithm(population, Criterion.GENERATIONS, 10000);
 			
 			// Output
 			System.out.println("Bestes Individuum:");
