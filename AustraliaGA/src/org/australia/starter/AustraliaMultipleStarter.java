@@ -58,7 +58,7 @@ public class AustraliaMultipleStarter {
 				GA ga = new GA(problem);
 				
 				
-				individual = ga.startAlgorithm(100, Criterion.ITERATIONS, 10000);
+				individual = ga.startAlgorithm(100, Criterion.GENERATIONS, 10000);
 				
 				if(!individual.isValid()){
 					if(Config.getWriteToDatabase()){

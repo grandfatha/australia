@@ -28,7 +28,7 @@ public class AustraliaSimpleStarter {
 		GA ga = new GA(problem);
 		
 		long start = System.currentTimeMillis();
-		bestIndividual = ga.startAlgorithm(200, Criterion.ITERATIONS, 3000);
+		bestIndividual = ga.startAlgorithm(200, Criterion.GENERATIONS, 3000);
 		long end = System.currentTimeMillis();
 
 		
