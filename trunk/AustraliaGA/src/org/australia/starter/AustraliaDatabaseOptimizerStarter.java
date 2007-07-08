@@ -70,11 +70,11 @@ public class AustraliaDatabaseOptimizerStarter {
 				
 				System.out.println("There are " + population.getSize() +" individuals in the database");
 				
-				population.add(IndividualImpl.generateGreedyIndividual());
+				population.add(IndividualImpl.generateGreedyIndividual(problem));
 				
 				// add some random individuals to population
 				while(population.getSize() < 200){
-					population.add(IndividualImpl.generateRandomIndividual());
+					population.add(IndividualImpl.generateRandomIndividual(problem));
 				}
 				
 				//What is currently the best Individual

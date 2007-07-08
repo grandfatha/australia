@@ -1,6 +1,5 @@
 package org.australia.algorithm;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.australia.config.Config;
@@ -24,8 +23,14 @@ public class GA {
 	private Long startTime;
 	private Long stopTime;
 	private Long currentBestFitnessTime;
+	private boolean stopped=false;
 	
 	
+	public void setStopped(boolean stopped) {
+		this.stopped = stopped;
+	}
+
+
 	/* Constructor	*****************************************************************************************************************/
 	public GA(Problem problem) {
 		super();
@@ -220,6 +225,9 @@ public class GA {
 			currentBestFitnessTime = System.currentTimeMillis();
 		}
 		
+		if(stopped){	// abort button was pressed
+			return true;
+		}
 		
 		if(this.criterion.equals(Criterion.GENERATIONS)){		// stop after x generations
 			if(currentGeneration > totalGenerations){
