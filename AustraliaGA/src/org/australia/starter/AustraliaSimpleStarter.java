@@ -19,7 +19,7 @@ public class AustraliaSimpleStarter {
 
 		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 		
-		Problem problem = ProblemHolmberg.readProblem("p61");
+		Problem problem = ProblemHolmberg.readProblem("p25");
 //		Problem problem = ProblemBoccia.readProblem("i5050_1.plc");
 		
 		

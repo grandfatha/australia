@@ -320,7 +320,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		
 		
-		/* strafkosten / M-Method	**************************************************************/
+		/* panalty fees	**************************************************************/
 		
 		f += getFeeCosts();
 		
@@ -330,7 +330,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	public double getFeeCosts(){
 		double feecosts =0.0;
 		
-		// strafkosten / M-Method
+		// panalty fees
 		double fee = Config.getFee(); 	// fee for one units thats more in warehouse than possible
 		
 		double[] assigned = new double[(int) getProblem().getWarehouses()];
@@ -340,7 +340,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		for (int i = 0; i < gene.length; i++) {
 			// i: number of customer
 			//			need[i]	// Need of customer i (0..n-1)
-			//			gene[i] // Number of Warehouse for customer i (0..n-1)
+			//			gene[i] // Number of facilities for customer i (0..n-1)
 			//			cap[j]  // capacity of warehouse j (0..n-1)
 
 			assigned[gene[i]] += need[i];
@@ -364,9 +364,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		
 		int randomCustomer = (int)(Math.random() * gene.length);	// 0 .. n-1
 		
-		int randomWarehouse = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
+		int randomFacility = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
 		
-		gene[randomCustomer] = randomWarehouse;
+		gene[randomCustomer] = randomFacility;
 		
 		this.changed = true;
 		
@@ -380,6 +380,29 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		int temp = gene[randomCustomer1];
 		gene[randomCustomer1] = gene[randomCustomer2];
 		gene[randomCustomer2] = temp;
+		
+		this.changed = true;
+
+	}
+	
+	public void mutateOnlyCurrentFacilities(){
+		// add all used facilities to a set
+		HashSet<Integer> facilitySet = new HashSet<Integer>();
+		for (int g : gene) {
+			facilitySet.add(g);
+		}
+		
+		// get a random facility
+		Iterator<Integer> iterator = facilitySet.iterator();
+		Integer randomFacility = iterator.next();
+		for(int i=0; i<(int)(Math.random()*facilitySet.size()); i++){
+			randomFacility = iterator.next();
+		}
+		
+		// mutate a random customer with this random facility
+		int randomCustomer = (int)(Math.random() * gene.length);	// 0 .. n-1
+		
+		gene[randomCustomer] = randomFacility;
 		
 		this.changed = true;
 
