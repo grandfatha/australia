@@ -172,12 +172,14 @@ public class GA {
 
 					double random = Math.random();
 
-					if(random < 0.6){
+					if(random < 0.3){
 						baby.mutateNearNeighbor();
+					}else if (random < 0.5){
+						baby.mutateOnlyCurrentFacilities();
 					}else if (random < 0.7){
-						baby.mutateNearNeighbor();
-						baby.mutateNearNeighbor();
-						baby.mutateNearNeighbor();
+						for(int i=0; i< (int)(Math.random()*5); i++){
+							baby.mutateNearNeighbor();
+						}
 					}else if(random < 0.8){
 						baby.mutateSwitchCustomers();
 					}else if(random < 0.9){

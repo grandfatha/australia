@@ -7,6 +7,7 @@ public interface Individual extends Comparable<Individual> {
 	public double getFeeCosts();
 	
 	public void mutate();
+	public void mutateOnlyCurrentFacilities();
 	public void mutateBanFacility();
 	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 	public void mutateBanFacilityAndFindNewFromCurretUsed();
