@@ -13,7 +13,7 @@ public class Config {
 	private static double newGenerationSize = 2.0;
 	private static boolean returnOnlyValidIndividuals = true;
 
-	private static int printEachTimes = 2000;
+	private static int printEachTimes = 1000;
 	private static boolean writeToDatabase = true;
 
 	// Database Settings
