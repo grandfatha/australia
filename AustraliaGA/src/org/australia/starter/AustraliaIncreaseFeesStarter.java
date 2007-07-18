@@ -14,7 +14,7 @@ import org.australia.problem.ProblemBoccia;
 import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Database;
 
-public class AustraliaMultipleStarter {
+public class AustraliaIncreaseFeesStarter {
 
 	private static Logger logger = Logger.getRootLogger();
 
