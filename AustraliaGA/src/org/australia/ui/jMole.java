@@ -909,7 +909,7 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         // Test Ouput of Values  DEV ONLY
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Input-Values: ");
+        sb.append("Input-Values:  ");
         sb.append(" startPopSize " + startPopSize);
         sb.append(" generations " + generations);
         sb.append(" instance " + instance);
