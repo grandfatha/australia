@@ -71,7 +71,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Impact" size="36" style="0"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="jMole 0.2 a"/>
+        <Property name="text" type="java.lang.String" value="jMole 0.4 a"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">

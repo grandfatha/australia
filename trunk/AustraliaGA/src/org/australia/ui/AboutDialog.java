@@ -68,7 +68,7 @@ public class AboutDialog extends javax.swing.JDialog {
         });
 
         jLabel1.setFont(new java.awt.Font("Impact", 0, 36));
-        jLabel1.setText("jMole 0.2 a");
+        jLabel1.setText("jMole 0.4 a");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/jMoleLogo.jpg"))); // NOI18N
 
