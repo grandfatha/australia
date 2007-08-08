@@ -15,6 +15,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
+import org.australia.problem.Problem;
+import org.australia.problem.ProblemBoccia;
+import org.australia.problem.ProblemHolmberg;
 import org.australia.util.Text;
 
 /**
@@ -55,7 +58,7 @@ public class TreeProblemChooser extends javax.swing.JDialog {
     
     private DefaultTreeCellRenderer  getCellRenderer(){
         
-        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer ();
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
         
         ImageIcon icon = new ImageIcon("src/org/australia/ui/img/Leaf.png");
         
@@ -82,7 +85,7 @@ public class TreeProblemChooser extends javax.swing.JDialog {
         DefaultMutableTreeNode  holmberg45 = new DefaultMutableTreeNode("31-45");
         DefaultMutableTreeNode  holmberg60 = new DefaultMutableTreeNode("46-60");
         DefaultMutableTreeNode  holmberg71 = new DefaultMutableTreeNode("61-71");
-                
+        
         holmberg.add(holmberg15);
         holmberg.add(holmberg30);
         holmberg.add(holmberg45);
@@ -169,9 +172,9 @@ public class TreeProblemChooser extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        LagerField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        KundenField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -205,11 +208,11 @@ public class TreeProblemChooser extends javax.swing.JDialog {
 
         jLabel1.setText("Anzahl Lager");
 
-        jTextField1.setEnabled(false);
+        LagerField.setEnabled(false);
 
         jLabel2.setText("Anzahl Kunden");
 
-        jTextField2.setEnabled(false);
+        KundenField.setEnabled(false);
 
         jLabel3.setText("Bitte w\u00e4hlen Sie eine Probleminstanz:");
 
@@ -237,8 +240,8 @@ public class TreeProblemChooser extends javax.swing.JDialog {
                                     .addComponent(jLabel1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE))))))
+                                    .addComponent(KundenField, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                                    .addComponent(LagerField, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
 
@@ -254,11 +257,11 @@ public class TreeProblemChooser extends javax.swing.JDialog {
                         .addGap(41, 41, 41)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(LagerField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(KundenField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(226, 226, 226)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cancelButton)
@@ -271,19 +274,37 @@ public class TreeProblemChooser extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTree1ValueChanged
-    // TODO add your handling code here:
-}//GEN-LAST:event_jTree1ValueChanged
     
+private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTree1ValueChanged
+    DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+            jTree1.getLastSelectedPathComponent();
+    
+    if (node == null) return;
+    
+    String instance = (String)node.getUserObject();
+    Problem problem;
+    if (node.isLeaf()) {
+        if(instance.startsWith("P")){
+            problem = ProblemHolmberg.readProblem(instance);
+        } else{
+            problem = ProblemBoccia.readProblem(instance);
+        }
+
+        
+        LagerField.setText("" + problem.getWarehouses());
+        KundenField.setText(""+ problem.getCustomers());
+    }
+    
+    
+}//GEN-LAST:event_jTree1ValueChanged
+
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         
         DefaultMutableTreeNode selected = (DefaultMutableTreeNode)this.jTree1.getLastSelectedPathComponent();
-      
+        
         if(selected != null){
             this.retValField.setText((String) selected.getUserObject());
-        }
-        else{
+        } else{
             this.retValField.setText(Text.NO_INSTANCE);
         }
         
@@ -325,13 +346,13 @@ private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField KundenField;
+    private javax.swing.JTextField LagerField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTree jTree1;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
