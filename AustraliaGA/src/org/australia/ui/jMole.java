@@ -6,24 +6,22 @@
 
 package org.australia.ui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeSet;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingWorker;
 import javax.swing.Timer;
-import org.apache.log4j.Level;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.australia.algorithm.Criterion;
-
 import org.australia.algorithm.GA;
 import org.australia.algorithm.Individual;
 import org.australia.algorithm.Status;
@@ -31,10 +29,14 @@ import org.australia.config.Config;
 import org.australia.problem.Problem;
 import org.australia.problem.ProblemBoccia;
 import org.australia.problem.ProblemHolmberg;
+import org.jdesktop.swingworker.SwingWorker;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -44,21 +46,24 @@ import org.jfree.data.time.TimeSeriesCollection;
  * @author  Daniel_h4x
  */
 public class jMole extends javax.swing.JFrame {
-    
+
     private GAExecutorTask task;
     private Logger logger = Logger.getRootLogger();
-    
-    
+
+    private TimeSeries dynTimeSeries;
+    private TimeSeriesCollection dynSeriesCollection;
+    private JFreeChart dynChart;
+    private RegularTimePeriod dynPeriod;
+
     /** Creates new form jMole */
     public jMole() {
-        
+
+        logger.addAppender(new ConsoleAppender(new PatternLayout()));
         initComponents();
-        
-        jLabel6.setIcon(drawInitialChart());
-        
+        drawInitialChart();
     }
-    
-    
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -85,6 +90,7 @@ public class jMole extends javax.swing.JFrame {
         PopSizeField1 = new javax.swing.JTextField();
         ChosenProblemField = new javax.swing.JTextField();
         ProblemChooserButton = new javax.swing.JButton();
+        jLabel17 = new javax.swing.JLabel();
         ExtendedSettingPanel = new javax.swing.JPanel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
@@ -113,7 +119,7 @@ public class jMole extends javax.swing.JFrame {
         BestIndiFeeField = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         BestIndiProblemField = new javax.swing.JTextField();
-        ChartLabel = new javax.swing.JLabel();
+        rootChartPanel = new javax.swing.JPanel();
         SetDefaultsButton = new javax.swing.JButton();
         CancelGAButton = new javax.swing.JButton();
         StartGA = new javax.swing.JButton();
@@ -132,20 +138,20 @@ public class jMole extends javax.swing.JFrame {
         VisualPanel = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        TopMenu = new javax.swing.JMenuBar();
-        DateiMenuItem = new javax.swing.JMenu();
-        ExportMenu = new javax.swing.JMenu();
-        CSVMenuItem = new javax.swing.JMenuItem();
-        ExcelMenuItem = new javax.swing.JMenuItem();
-        SepVorClose = new javax.swing.JSeparator();
-        QuitMenuItem = new javax.swing.JMenuItem();
-        BearbeitenMenu = new javax.swing.JMenu();
-        UndoMenuItem = new javax.swing.JMenuItem();
-        RedoMenuItem = new javax.swing.JMenuItem();
-        SepVorZurueck = new javax.swing.JSeparator();
-        ZurueckSetzenMenuItem = new javax.swing.JMenuItem();
-        HilfeMenu = new javax.swing.JMenu();
-        AboutMenuItem = new javax.swing.JMenuItem();
+        TopMenu1 = new javax.swing.JMenuBar();
+        DateiMenuItem1 = new javax.swing.JMenu();
+        ExportMenu1 = new javax.swing.JMenu();
+        CSVMenuItem1 = new javax.swing.JMenuItem();
+        ExcelMenuItem1 = new javax.swing.JMenuItem();
+        SepVorClose1 = new javax.swing.JSeparator();
+        QuitMenuItem1 = new javax.swing.JMenuItem();
+        BearbeitenMenu1 = new javax.swing.JMenu();
+        UndoMenuItem1 = new javax.swing.JMenuItem();
+        RedoMenuItem1 = new javax.swing.JMenuItem();
+        SepVorZurueck1 = new javax.swing.JSeparator();
+        ZurueckSetzenMenuItem1 = new javax.swing.JMenuItem();
+        HilfeMenu1 = new javax.swing.JMenu();
+        AboutMenuItem1 = new javax.swing.JMenuItem();
         StatusLabel1 = new javax.swing.JLabel();
         StatusTextLabel = new javax.swing.JLabel();
         TopMenu = new javax.swing.JMenuBar();
@@ -186,8 +192,10 @@ public class jMole extends javax.swing.JFrame {
         GreedySpinner.setModel(new javax.swing.SpinnerListModel(new String[] {"0% ", "25%", "50%", "75%", "100%"}));
 
         jLabel8.setText("Durchl\u00e4ufe");
+        jLabel8.setEnabled(false);
 
         PopSizeField1.setText("1");
+        PopSizeField1.setEnabled(false);
 
         ChosenProblemField.setEditable(false);
         ChosenProblemField.setText("Keine Instanz gew\u00e4hlt");
@@ -199,61 +207,73 @@ public class jMole extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout BasicSettingPanelLayout = new javax.swing.GroupLayout(BasicSettingPanel);
+        jLabel17.setText("Probleminstanz");
+
+        org.jdesktop.layout.GroupLayout BasicSettingPanelLayout = new org.jdesktop.layout.GroupLayout(BasicSettingPanel);
         BasicSettingPanel.setLayout(BasicSettingPanelLayout);
         BasicSettingPanelLayout.setHorizontalGroup(
-            BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BasicSettingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(BasicSettingPanelLayout.createSequentialGroup()
-                        .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(StartpopLabel)
-                            .addComponent(GenSizeLabel))
-                        .addGap(8, 8, 8)
-                        .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(GenSizeField)
-                            .addComponent(PopSizeField, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, BasicSettingPanelLayout.createSequentialGroup()
-                        .addComponent(GreedyLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(GreedySpinner)))
-                .addGap(18, 18, 18)
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FeeLabel)
-                    .addComponent(jLabel8))
-                .addGap(30, 30, 30)
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(FeeSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(PopSizeField1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ChosenProblemField, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ProblemChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(55, 55, 55))
+            BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(BasicSettingPanelLayout.createSequentialGroup()
+                .addContainerGap(16, Short.MAX_VALUE)
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
+                        .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(StartpopLabel)
+                            .add(GenSizeLabel))
+                        .add(8, 8, 8)
+                        .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(GenSizeField)
+                            .add(PopSizeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, BasicSettingPanelLayout.createSequentialGroup()
+                        .add(GreedyLabel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GreedySpinner)))
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
+                        .add(17, 17, 17)
+                        .add(FeeLabel))
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
+                        .add(18, 18, 18)
+                        .add(jLabel8)))
+                .add(17, 17, 17)
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(PopSizeField1)
+                    .add(FeeSpinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jLabel17)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 122, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(ProblemChooserButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
         BasicSettingPanelLayout.setVerticalGroup(
-            BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BasicSettingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(StartpopLabel)
-                    .addComponent(PopSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(FeeLabel)
-                    .addComponent(FeeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ChosenProblemField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(GenSizeLabel)
-                    .addComponent(GenSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(PopSizeField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ProblemChooserButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BasicSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(GreedyLabel)
-                    .addComponent(GreedySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+            BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(BasicSettingPanelLayout.createSequentialGroup()
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(StartpopLabel)
+                            .add(PopSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel17)
+                            .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(FeeSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, BasicSettingPanelLayout.createSequentialGroup()
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(FeeLabel)
+                        .add(9, 9, 9)))
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(GenSizeLabel)
+                    .add(GenSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(ProblemChooserButton)
+                    .add(PopSizeField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel8))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(GreedyLabel)
+                    .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(14, 14, 14))
         );
 
         ExtendedSettingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Kriterium f\u00fcr GA-Abbruch"));
@@ -267,19 +287,27 @@ public class jMole extends javax.swing.JFrame {
         buttonGroup2.add(jRadioButton2);
         jRadioButton2.setText("beenden nach");
         jRadioButton2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton2.setEnabled(false);
         jRadioButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         buttonGroup2.add(jRadioButton3);
         jRadioButton3.setText("beenden nach");
         jRadioButton3.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton3.setEnabled(false);
         jRadioButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         buttonGroup2.add(jRadioButton4);
         jRadioButton4.setText("beenden nach");
         jRadioButton4.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jRadioButton4.setEnabled(false);
         jRadioButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
         jTextField1.setText("Min..");
+        jTextField1.setEnabled(false);
+
+        jTextField2.setEnabled(false);
+
+        jTextField3.setEnabled(false);
 
         jLabel7.setText("an Laufzeit");
 
@@ -287,54 +315,54 @@ public class jMole extends javax.swing.JFrame {
 
         jLabel20.setText("Generationen Stagnation");
 
-        javax.swing.GroupLayout ExtendedSettingPanelLayout = new javax.swing.GroupLayout(ExtendedSettingPanel);
+        org.jdesktop.layout.GroupLayout ExtendedSettingPanelLayout = new org.jdesktop.layout.GroupLayout(ExtendedSettingPanel);
         ExtendedSettingPanel.setLayout(ExtendedSettingPanelLayout);
         ExtendedSettingPanelLayout.setHorizontalGroup(
-            ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ExtendedSettingPanelLayout.createSequentialGroup()
-                .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ExtendedSettingPanelLayout.createSequentialGroup()
-                        .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ExtendedSettingPanelLayout.createSequentialGroup()
-                                .addComponent(jRadioButton4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField3))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ExtendedSettingPanelLayout.createSequentialGroup()
-                                .addComponent(jRadioButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField2))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ExtendedSettingPanelLayout.createSequentialGroup()
-                                .addComponent(jRadioButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel20))))
+            ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(ExtendedSettingPanelLayout.createSequentialGroup()
+                .add(ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jRadioButton1)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, ExtendedSettingPanelLayout.createSequentialGroup()
+                        .add(ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, ExtendedSettingPanelLayout.createSequentialGroup()
+                                .add(jRadioButton4)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(jTextField3))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, ExtendedSettingPanelLayout.createSequentialGroup()
+                                .add(jRadioButton3)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(jTextField2))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, ExtendedSettingPanelLayout.createSequentialGroup()
+                                .add(jRadioButton2)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 62, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel7)
+                            .add(jLabel9)
+                            .add(jLabel20))))
                 .addContainerGap())
         );
         ExtendedSettingPanelLayout.setVerticalGroup(
-            ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ExtendedSettingPanelLayout.createSequentialGroup()
-                .addComponent(jRadioButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(ExtendedSettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(ExtendedSettingPanelLayout.createSequentialGroup()
+                .add(jRadioButton1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jRadioButton2)
+                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel7))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jRadioButton3)
+                    .add(jTextField2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel9))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(ExtendedSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jRadioButton4)
+                    .add(jTextField3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel20))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         LaufzeitInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Laufzeit-Informationen"));
@@ -377,88 +405,86 @@ public class jMole extends javax.swing.JFrame {
         BestIndiProblemField.setEditable(false);
         BestIndiProblemField.setToolTipText("Anzahl der verwendeten Lager des besten Individuums.");
 
-        javax.swing.GroupLayout LaufzeitInfoPanelLayout = new javax.swing.GroupLayout(LaufzeitInfoPanel);
+        org.jdesktop.layout.GroupLayout LaufzeitInfoPanelLayout = new org.jdesktop.layout.GroupLayout(LaufzeitInfoPanel);
         LaufzeitInfoPanel.setLayout(LaufzeitInfoPanelLayout);
         LaufzeitInfoPanelLayout.setHorizontalGroup(
-            LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
-                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+            LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(LaufzeitInfoPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
-                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
-                                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
-                                                .addComponent(BestIndiWareHousesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jLabel12)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
-                                                .addComponent(BestIndiFitnessField, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jLabel15)
-                                                .addGap(10, 10, 10)))
-                                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(BestIndiFeeField)
-                                            .addComponent(BestIndiValidField, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel16)
-                                            .addComponent(jLabel4))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(BestIndiDurationField)
-                                            .addComponent(BestIndiProblemField, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
-                                        .addGap(291, 291, 291))
-                                    .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(GAProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(BestIndiGeneField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(jLabel5)))
-                    .addComponent(ChartLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(jLabel1)
+                                    .add(jLabel2)
+                                    .add(jLabel3))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                            .add(org.jdesktop.layout.GroupLayout.TRAILING, BestIndiFitnessField)
+                                            .add(org.jdesktop.layout.GroupLayout.TRAILING, BestIndiWareHousesField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE))
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                            .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                .add(jLabel12)
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+                                            .add(org.jdesktop.layout.GroupLayout.TRAILING, LaufzeitInfoPanelLayout.createSequentialGroup()
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                .add(jLabel15)
+                                                .add(10, 10, 10)))
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                            .add(BestIndiFeeField)
+                                            .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                            .add(jLabel16)
+                                            .add(jLabel4))
+                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                                            .add(BestIndiDurationField)
+                                            .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)))
+                                    .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                        .add(GAProgressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                        .add(org.jdesktop.layout.GroupLayout.LEADING, BestIndiGeneField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(jLabel5)))
+                    .add(rootChartPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 576, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(2, Short.MAX_VALUE))
         );
-
-        LaufzeitInfoPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BestIndiFitnessField, BestIndiValidField, BestIndiWareHousesField});
-
         LaufzeitInfoPanelLayout.setVerticalGroup(
-            LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(LaufzeitInfoPanelLayout.createSequentialGroup()
+            LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(LaufzeitInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(GAProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(BestIndiGeneField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BestIndiWareHousesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel12)
-                    .addComponent(BestIndiValidField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16)
-                    .addComponent(BestIndiProblemField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(LaufzeitInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BestIndiFitnessField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel15)
-                    .addComponent(BestIndiFeeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(BestIndiDurationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ChartLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
+                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel5)
+                    .add(GAProgressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel1)
+                    .add(BestIndiGeneField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel2)
+                    .add(jLabel12)
+                    .add(BestIndiWareHousesField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel16)
+                    .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel3)
+                    .add(jLabel15)
+                    .add(BestIndiFitnessField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel4)
+                    .add(BestIndiFeeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(rootChartPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
         );
 
         SetDefaultsButton.setText("Standard wiederherstellen");
+        SetDefaultsButton.setEnabled(false);
 
         CancelGAButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/stop16.png"))); // NOI18N
         CancelGAButton.setText("GA abbrechen");
@@ -498,106 +524,101 @@ public class jMole extends javax.swing.JFrame {
 
         ChildrenSpinner.setModel(new javax.swing.SpinnerNumberModel(2.0d, 1.0d, 5.0d, 1.0d));
 
-        javax.swing.GroupLayout SelPressurePanel2Layout = new javax.swing.GroupLayout(SelPressurePanel2);
+        org.jdesktop.layout.GroupLayout SelPressurePanel2Layout = new org.jdesktop.layout.GroupLayout(SelPressurePanel2);
         SelPressurePanel2.setLayout(SelPressurePanel2Layout);
         SelPressurePanel2Layout.setHorizontalGroup(
-            SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                        .addComponent(ParentSelLabel2)
-                        .addGap(55, 55, 55)
-                        .addGroup(SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(RouletteSelect)
-                            .addComponent(RandomSelect)))
-                    .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                        .addGroup(SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addComponent(jLabel19))
-                            .addComponent(jLabel18))
-                        .addGap(50, 50, 50)
-                        .addComponent(ChildrenSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(SelPressurePanel2Layout.createSequentialGroup()
+                .addContainerGap(16, Short.MAX_VALUE)
+                .add(SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(SelPressurePanel2Layout.createSequentialGroup()
+                        .add(ParentSelLabel2)
+                        .add(55, 55, 55)
+                        .add(SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(RouletteSelect)
+                            .add(RandomSelect)))
+                    .add(SelPressurePanel2Layout.createSequentialGroup()
+                        .add(SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(SelPressurePanel2Layout.createSequentialGroup()
+                                .add(38, 38, 38)
+                                .add(jLabel19))
+                            .add(jLabel18))
+                        .add(50, 50, 50)
+                        .add(ChildrenSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .add(29, 29, 29))
+            .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
         );
         SelPressurePanel2Layout.setVerticalGroup(
-            SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                .addGroup(SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                        .addComponent(RouletteSelect)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(RandomSelect))
-                    .addGroup(SelPressurePanel2Layout.createSequentialGroup()
+            SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(SelPressurePanel2Layout.createSequentialGroup()
+                .add(SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(SelPressurePanel2Layout.createSequentialGroup()
+                        .add(RouletteSelect)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(RandomSelect))
+                    .add(SelPressurePanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(ParentSelLabel2)))
-                .addGap(20, 20, 20)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(SelPressurePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel18)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel19))
-                    .addGroup(SelPressurePanel2Layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(ChildrenSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .add(ParentSelLabel2)))
+                .add(20, 20, 20)
+                .add(jSeparator3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(SelPressurePanel2Layout.createSequentialGroup()
+                        .add(jLabel18)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jLabel19))
+                    .add(SelPressurePanel2Layout.createSequentialGroup()
+                        .add(5, 5, 5)
+                        .add(ChildrenSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout GASettingPanelLayout = new javax.swing.GroupLayout(GASettingPanel);
+        org.jdesktop.layout.GroupLayout GASettingPanelLayout = new org.jdesktop.layout.GroupLayout(GASettingPanel);
         GASettingPanel.setLayout(GASettingPanelLayout);
         GASettingPanelLayout.setHorizontalGroup(
-            GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(GASettingPanelLayout.createSequentialGroup()
-                .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(GASettingPanelLayout.createSequentialGroup()
+            GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(GASettingPanelLayout.createSequentialGroup()
+                .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(GASettingPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(GASettingPanelLayout.createSequentialGroup()
-                                .addComponent(SetDefaultsButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(CancelGAButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(StartGA))
-                            .addComponent(LaufzeitInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, GASettingPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(ExtendedSettingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(SelPressurePanel2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, GASettingPanelLayout.createSequentialGroup()
-                            .addGap(5, 5, 5)
-                            .addComponent(BasicSettingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        GASettingPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {CancelGAButton, StartGA});
-
-        GASettingPanelLayout.setVerticalGroup(
-            GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(GASettingPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(BasicSettingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SelPressurePanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ExtendedSettingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LaufzeitInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(GASettingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(CancelGAButton)
-                        .addComponent(StartGA))
-                    .addComponent(SetDefaultsButton))
+                        .add(ExtendedSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 321, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(GASettingPanelLayout.createSequentialGroup()
+                        .add(196, 196, 196)
+                        .add(SetDefaultsButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(CancelGAButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(StartGA, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(GASettingPanelLayout.createSequentialGroup()
+                        .add(5, 5, 5)
+                        .add(BasicSettingPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(GASettingPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(LaufzeitInfoPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 594, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+        GASettingPanelLayout.setVerticalGroup(
+            GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(GASettingPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(BasicSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                    .add(ExtendedSettingPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(LaufzeitInfoPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(SetDefaultsButton)
+                    .add(CancelGAButton)
+                    .add(StartGA))
+                .add(5, 5, 5))
+        );
 
-        GASettingPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {CancelGAButton, SetDefaultsButton});
+        GASettingPanelLayout.linkSize(new java.awt.Component[] {CancelGAButton, SetDefaultsButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
         MainTabPane.addTab("Genetischer Algorithmus", GASettingPanel);
 
@@ -616,27 +637,27 @@ public class jMole extends javax.swing.JFrame {
 
         jLabel14.setText("TODO: Anbindung an DB, View konzipiern");
 
-        javax.swing.GroupLayout ResultViewPanelLayout = new javax.swing.GroupLayout(ResultViewPanel);
+        org.jdesktop.layout.GroupLayout ResultViewPanelLayout = new org.jdesktop.layout.GroupLayout(ResultViewPanel);
         ResultViewPanel.setLayout(ResultViewPanelLayout);
         ResultViewPanelLayout.setHorizontalGroup(
-            ResultViewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ResultViewPanelLayout.createSequentialGroup()
-                .addGroup(ResultViewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ResultViewPanelLayout.createSequentialGroup()
+            ResultViewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(ResultViewPanelLayout.createSequentialGroup()
+                .add(ResultViewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(ResultViewPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))
-                    .addGroup(ResultViewPanelLayout.createSequentialGroup()
-                        .addGap(168, 168, 168)
-                        .addComponent(jLabel14)))
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))
+                    .add(ResultViewPanelLayout.createSequentialGroup()
+                        .add(168, 168, 168)
+                        .add(jLabel14)))
                 .addContainerGap())
         );
         ResultViewPanelLayout.setVerticalGroup(
-            ResultViewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ResultViewPanelLayout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(122, 122, 122)
-                .addComponent(jLabel14)
+            ResultViewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(ResultViewPanelLayout.createSequentialGroup()
+                .add(48, 48, 48)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 87, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(122, 122, 122)
+                .add(jLabel14)
                 .addContainerGap(423, Short.MAX_VALUE))
         );
 
@@ -644,94 +665,92 @@ public class jMole extends javax.swing.JFrame {
 
         jLabel13.setText("maybe JFreeChart Time-View");
 
-        javax.swing.GroupLayout VisualPanelLayout = new javax.swing.GroupLayout(VisualPanel);
+        org.jdesktop.layout.GroupLayout VisualPanelLayout = new org.jdesktop.layout.GroupLayout(VisualPanel);
         VisualPanel.setLayout(VisualPanelLayout);
         VisualPanelLayout.setHorizontalGroup(
-            VisualPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(VisualPanelLayout.createSequentialGroup()
-                .addGroup(VisualPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(VisualPanelLayout.createSequentialGroup()
+            VisualPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(VisualPanelLayout.createSequentialGroup()
+                .add(VisualPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(VisualPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel13))
-                    .addGroup(VisualPanelLayout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .add(jLabel13))
+                    .add(VisualPanelLayout.createSequentialGroup()
+                        .add(28, 28, 28)
+                        .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 512, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(74, Short.MAX_VALUE))
         );
         VisualPanelLayout.setVerticalGroup(
-            VisualPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(VisualPanelLayout.createSequentialGroup()
+            VisualPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(VisualPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel13)
-                .addGap(38, 38, 38)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .add(jLabel13)
+                .add(38, 38, 38)
+                .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(413, Short.MAX_VALUE))
         );
 
         MainTabPane.addTab("Visualisierung", VisualPanel);
 
-        javax.swing.GroupLayout TabbedPanelLayout = new javax.swing.GroupLayout(TabbedPanel);
+        org.jdesktop.layout.GroupLayout TabbedPanelLayout = new org.jdesktop.layout.GroupLayout(TabbedPanel);
         TabbedPanel.setLayout(TabbedPanelLayout);
         TabbedPanelLayout.setHorizontalGroup(
-            TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(MainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 619, javax.swing.GroupLayout.PREFERRED_SIZE)
+            TabbedPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(MainTabPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 619, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         TabbedPanelLayout.setVerticalGroup(
-            TabbedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(MainTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 722, javax.swing.GroupLayout.PREFERRED_SIZE)
+            TabbedPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(MainTabPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 722, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
 
-        DateiMenuItem.setMnemonic('D');
-        DateiMenuItem.setText("Datei");
+        DateiMenuItem1.setMnemonic('D');
+        DateiMenuItem1.setText("Datei");
 
-        ExportMenu.setText("Exportieren");
+        ExportMenu1.setText("Exportieren");
 
-        CSVMenuItem.setText("Komma-getrennte Datei");
-        ExportMenu.add(CSVMenuItem);
+        CSVMenuItem1.setText("Komma-getrennte Datei");
+        ExportMenu1.add(CSVMenuItem1);
 
-        ExcelMenuItem.setText("Excel Spreadsheet");
-        ExportMenu.add(ExcelMenuItem);
+        ExcelMenuItem1.setText("Excel Spreadsheet");
+        ExportMenu1.add(ExcelMenuItem1);
 
-        DateiMenuItem.add(ExportMenu);
-        DateiMenuItem.add(SepVorClose);
+        DateiMenuItem1.add(ExportMenu1);
+        DateiMenuItem1.add(SepVorClose1);
 
-        QuitMenuItem.setText("jMole beenden");
-        QuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        QuitMenuItem1.setText("jMole beenden");
+        QuitMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 QuitMenuItemActionPerformed(evt);
             }
         });
-        DateiMenuItem.add(QuitMenuItem);
+        DateiMenuItem1.add(QuitMenuItem1);
 
-        TopMenu.add(DateiMenuItem);
+        TopMenu1.add(DateiMenuItem1);
 
-        BearbeitenMenu.setText("Bearbeiten");
+        BearbeitenMenu1.setText("Bearbeiten");
 
-        UndoMenuItem.setText("R\u00fcckg\u00e4ngig");
-        BearbeitenMenu.add(UndoMenuItem);
+        UndoMenuItem1.setText("R\u00fcckg\u00e4ngig");
+        BearbeitenMenu1.add(UndoMenuItem1);
 
-        RedoMenuItem.setText("Wiederherstellen");
-        BearbeitenMenu.add(RedoMenuItem);
-        BearbeitenMenu.add(SepVorZurueck);
+        RedoMenuItem1.setText("Wiederherstellen");
+        BearbeitenMenu1.add(RedoMenuItem1);
+        BearbeitenMenu1.add(SepVorZurueck1);
 
-        ZurueckSetzenMenuItem.setText("Einstellungen f\u00fcr GA zur\u00fccksetzen");
-        BearbeitenMenu.add(ZurueckSetzenMenuItem);
+        ZurueckSetzenMenuItem1.setText("Einstellungen f\u00fcr GA zur\u00fccksetzen");
+        BearbeitenMenu1.add(ZurueckSetzenMenuItem1);
 
-        TopMenu.add(BearbeitenMenu);
+        TopMenu1.add(BearbeitenMenu1);
 
-        HilfeMenu.setText("Hilfe");
+        HilfeMenu1.setText("Hilfe");
 
-        AboutMenuItem.setText("\u00dcber jMole");
-        AboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        AboutMenuItem1.setText("\u00dcber jMole");
+        AboutMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AboutMenuItemActionPerformed(evt);
             }
         });
-        HilfeMenu.add(AboutMenuItem);
+        HilfeMenu1.add(AboutMenuItem1);
 
-        TopMenu.add(HilfeMenu);
-
-        setJMenuBar(TopMenu);
+        TopMenu1.add(HilfeMenu1);
 
         StatusLabel1.setText("Status:");
 
@@ -789,137 +808,141 @@ public class jMole extends javax.swing.JFrame {
 
         setJMenuBar(TopMenu);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(TabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(StatusLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(StatusTextLabel))
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(TabbedPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(layout.createSequentialGroup()
+                .add(2, 2, 2)
+                .add(StatusLabel1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(StatusTextLabel))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(TabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(StatusLabel1)
-                    .addComponent(StatusTextLabel)))
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(TabbedPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(1, 1, 1)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(StatusLabel1)
+                    .add(StatusTextLabel)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    private boolean askForExit(){
-        
-        int n = JOptionPane.showOptionDialog(this, "Sind Sie sicher, dass Sie jMole beenden wollen?","Bitte bestätigen!",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null );
-        
-        return (n == JOptionPane.YES_OPTION);
+
+    private boolean askForExit() {
+
+        int n = JOptionPane.showOptionDialog(this, "Sind Sie sicher, dass Sie jMole beenden wollen?", "Bitte bestätigen!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        return n == JOptionPane.YES_OPTION;
     }
-    
-    
 private void CancelGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelGAButtonActionPerformed
-   
-    task.cancel(true);
-    
+
+    task.stop();
     StartGA.setEnabled(true);
     CancelGAButton.setEnabled(false);
-    BestIndiFitnessField.setText("");
-    BestIndiGeneField.setText("");
-    BestIndiWareHousesField.setText("");
-    GAProgressBar.setValue(0);
-    
+
 }//GEN-LAST:event_CancelGAButtonActionPerformed
 
 private void ProblemChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProblemChooserButtonActionPerformed
-    
+
     new TreeProblemChooser(this, true, ChosenProblemField).setVisible(true);
-    
 }//GEN-LAST:event_ProblemChooserButtonActionPerformed
 
 private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitMenuItemActionPerformed
-    
-    if(askForExit()){
+
+    if (askForExit()) {
         this.dispose();
         System.exit(0);
     }
-    
 }//GEN-LAST:event_QuitMenuItemActionPerformed
 
     private void StartGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartGAActionPerformed
-        
+
+        // if we run the GA for the second time, the TimeSeries for the chart needs to be empty!
+        dynTimeSeries.clear();
         
         // ALLGEMEINE EINSTELLUNGEN einlesen
-        
+        // get start pop size and amount of generations
+
+
+        // ALLGEMEINE EINSTELLUNGEN einlesen
         // get start pop size and amount of generations
         int startPopSize = Integer.parseInt(this.PopSizeField.getText());
         int generations = Integer.parseInt(this.GenSizeField.getText());
-        
+
+        // get chosen instance
+
         // get chosen instance
         String instance = ChosenProblemField.getText();
         //boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
-        
         // ERWEITERTE EINSTELLUNGEN einlesen
-        
+        // get greedy chance
+        //boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
+        // ERWEITERTE EINSTELLUNGEN einlesen
         // get greedy chance
         SpinnerModel greedyModel = this.GreedySpinner.getModel();
         double greedyChance = this.ConvertGreedyPercentage(greedyModel.getValue());
-        
+
+        // get amount of children to be reproduced
+
         // get amount of children to be reproduced
         SpinnerNumberModel childrenModel = (SpinnerNumberModel) this.ChildrenSpinner.getModel();
         double forcedChildren = childrenModel.getNumber().doubleValue();
-        
+
+        // get the value for fees
+
         // get the value for fees
         SpinnerNumberModel feeModel = (SpinnerNumberModel) this.FeeSpinner.getModel();
         double fees = feeModel.getNumber().doubleValue();
-        
+
         // get selection method
-        boolean  rouletteSelected = this.RouletteSelect.isSelected() ? true : false;
+
+        // get selection method
+        boolean rouletteSelected = this.RouletteSelect.isSelected() ? true : false;
         int rouletteSelection = rouletteSelected ? 1 : 0;
-        
+
         // Test Ouput of Values  DEV ONLY
-        
+
+        // Test Ouput of Values  DEV ONLY
         StringBuilder sb = new StringBuilder();
-        
-        sb.append("Input-Values: \n");
+
+        sb.append("Input-Values: ");
         sb.append(" startPopSize " + startPopSize);
-        sb.append(" generations " +  generations);
+        sb.append(" generations " + generations);
         sb.append(" instance " + instance);
         sb.append(" greedyChance " + greedyChance);
         sb.append(" forcedChildren " + forcedChildren);
         sb.append(" fees " + fees);
         sb.append(" rouletteSelection " + rouletteSelection);
-        
-        logger.log(Level.INFO, sb.toString());
-        
+
+        logger.info( sb.toString());
+
         // Input Werte in Config Klasse schreiben
-        
         Config.setNewGenerationSize(forcedChildren);
         Config.setFee(fees);
         Config.setPercentageGreedy(greedyChance);
         Config.setSelectionMethod(rouletteSelection);
-        
-        try{
-            
+
+        try {
+
             Problem problem = null;
-            
+
             // SwingWorker ab hier!
-            if(instance.startsWith("P")){
+            if (instance.startsWith("P")) {
                 problem = ProblemHolmberg.readProblem(instance);
-            } else if(instance.startsWith("i")){
+            } else if (instance.startsWith("i")) {
                 problem = ProblemBoccia.readProblem(instance);
-            } else if(instance.startsWith("Keine")){
+            } else if (instance.startsWith("Keine")) {
                 StatusTextLabel.setText("Konnte GA nicht starten. Fehler: Keine Probleminstanz gewählt!");
             }
-            
-            if(problem != null){
+
+            if (problem != null) {
                 task = new GAExecutorTask(problem, startPopSize, generations);
-                
-                       
+
+
                 GAProgressBar.setValue(0);
                 BestIndiDurationField.setText("");
                 BestIndiFitnessField.setText("");
@@ -927,16 +950,13 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
                 BestIndiWareHousesField.setText("");
                 StartGA.setEnabled(false);
                 CancelGAButton.setEnabled(true);
-                
+
                 task.execute();
-                
             }
-            
-        }catch(Exception e){
-            
+        } catch (Exception e) {
+
             StatusTextLabel.setText("Konnte GA nicht starten. Fehler:" + e.getClass().getName());
         }
-        
 }//GEN-LAST:event_StartGAActionPerformed
     
     private void AboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutMenuItemActionPerformed
@@ -972,49 +992,52 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     Problem problem;
     GA ga;
     GAStateObserver gaso;
-    GADurationTimer gadt;
     DurationLabelListener durationListener;
+    ChartUpdateListener chartupdater;
+    
+    Timer timer;
+    
     int startPopSize;
     int generations;
+    boolean stoppedByUser = false;
     
     public GAExecutorTask(Problem problem, int startPopSize, int generations){
         
         this.problem = problem;
         this.startPopSize = startPopSize;
         this.generations = generations;
-        
-        gaso = new GAStateObserver(this.generations);
-        
+                
         durationListener = new DurationLabelListener();
-        
-        gadt = new GADurationTimer(1000, durationListener);
-        
+        chartupdater = new ChartUpdateListener(dynTimeSeries,dynPeriod);
+                
+        gaso = new GAStateObserver(this.generations, chartupdater);
         ga = new GA(problem);
         ga.getStatus().addObserver(gaso);
        
     }
     
-   
-    
     protected Individual doInBackground() {
         
         Individual  bestfound = null;
-        
-        
+                
         try {
             StatusTextLabel.setText("GA läuft...");
             
-            logger.log(Level.INFO, "Starting GA as background task");
+            logger.info("Starting GA as background task");
+           
+            // start the Timer to throw Actionevents to the chartupdater/DurationListener every 1000 ms
+                      
+            timer = new Timer(1000, chartupdater);
             
-            //set the durationfield actionlistener in waiting mode (he expects actionevents from that point)
             durationListener.aboutToStart();
-            // start the Timer to throw Actionevents to the DurationListener every 1000 ms
-            gadt.start();
+            timer.addActionListener(durationListener);
+            timer.start();
+
             
             // Finally start the GA
             bestfound = ga.startAlgorithm(startPopSize, Criterion.GENERATIONS, generations);
-            
-            logger.log(Level.INFO, "Finished GA as background task");
+                        
+            logger.info("Finished GA as background task");
             
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -1027,16 +1050,20 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     @Override
     protected void done() {
         
-        gadt.removeActionListener(durationListener);
-        gadt.stop();
+        // remove and stop the timer services -> no more updates to chart/durationlabel     
+        timer.removeActionListener(chartupdater);
+        timer.removeActionListener(durationListener);
+        timer.stop();
         
-        if(isCancelled()){
+        if(isCancelled() || stoppedByUser == true){
             StatusTextLabel.setText("GA abgebrochen!");
         } else{
             StatusTextLabel.setText("GA abgeschlossen!");
         }
         StartGA.setEnabled(true);
         CancelGAButton.setEnabled(false);
+        
+        
 
    
         
@@ -1046,64 +1073,66 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
         
     }
     
+    public void stop(){
+        
+        try{
+            this.ga.setStopped(true);
+            stoppedByUser = true;
+        }catch(Exception e){
+            logger.fatal("Attempt to stop GA failed for reason: \n", e);
+            e.printStackTrace();
+        }
+        
+    }
+    
 }
 
 
 class GAStateObserver implements Observer{
     
-    protected int generations;
+    private ChartUpdateListener cul;
+    private int generations;
     
-    public GAStateObserver(int generations){
+    public GAStateObserver(int generations, ChartUpdateListener cul){
         
         this.generations = generations;
+        this.cul = cul;
         
     }
     
     //update UI
     public void update(Observable o, Object arg) {
         
-        //        logger.log(Level.INFO, "update called");
-        //        System.out.println(Thread.currentThread().getName());
-        
         Status stat = (Status) o;
            
         try{
-            java.awt.EventQueue.invokeAndWait( new GAProgressRunnable(stat, generations));
+            java.awt.EventQueue.invokeAndWait( new GAProgressRunnable(stat, generations, cul));
         } catch(Exception e){
             e.printStackTrace();
             
         }
-        
     }
-    
-    
 }
 
 class GAProgressRunnable implements Runnable{
     
     
-    Status stat;
-    int generations;
+    private Status stat;
+    private int generations;
     
-    public GAProgressRunnable(Status stat, int generations) {
+    private ChartUpdateListener cul;
+    
+    public GAProgressRunnable(Status stat, int generations, ChartUpdateListener cul) {
         this.stat = stat;
         this.generations = generations;
+        this.cul = cul;
     }
     
     public void run() {
-        
-        
-        Calendar started = stat.getTimeStarted();
+
         int iteration = stat.getCurrentGeneration();
         Individual bestIndi = stat.getCurrentBestIndividual();
-        
-        //                logger.log(Level.INFO, "Inside GAProgressRunnable");
-        //                logger.log(Level.INFO, Thread.currentThread().getName();
-        
-        if(started != null){
-            long start = started.getTimeInMillis();
-        }
-        
+
         // update UI according to these values
         
         //progressbar
@@ -1111,7 +1140,7 @@ class GAProgressRunnable implements Runnable{
         int progress = (int)((iteration / (double)generations) * 100);
         GAProgressBar.setValue(progress);
         
-        //bestIndi Fields
+        // update the runtime-info field for the best individual
         
         if(bestIndi != null){
             
@@ -1120,20 +1149,24 @@ class GAProgressRunnable implements Runnable{
             if(!geneString.equals(BestIndiGeneField.getText())){
                 BestIndiGeneField.setText(geneString);
             }
+            
+            double fitness = bestIndi.getFitness();
+            cul.setFitness(fitness);
                         
-            BestIndiFitnessField.setText(bestIndi.getFitness().toString());
-            BestIndiFeeField.setText(""+bestIndi.getFeeCosts());
+            BestIndiFitnessField.setText("" + fitness);
+            BestIndiFeeField.setText("" + bestIndi.getFeeCosts());
             
             if(bestIndi.isValid()){
                 BestIndiValidField.setText("Zulässig!");
-            }
-            else{
-                 BestIndiValidField.setText("Unzulässig!");
-            }
+                BestIndiValidField.setForeground(Color.GREEN);
+            } else {
+                BestIndiValidField.setText("Unzulässig!");
+               BestIndiValidField.setForeground(Color.RED);
+            }              
 
-            
+            // add all genes to a set to remove duplicates -> amount of warehouse == size of set
             int[] genes = bestIndi.getGene();
-            TreeSet set = new TreeSet();
+            TreeSet<Integer> set = new TreeSet<Integer>();
             
             for (int i = 0; i < genes.length; i++) {
                 set.add(genes[i]);
@@ -1141,35 +1174,15 @@ class GAProgressRunnable implements Runnable{
             
             BestIndiWareHousesField.setText("" + set.size());
             
-        }
-        
-    }
-    
-<<<<<<< .working
-}
-=======
-        public void run() {
-             
+        }        
                 
-                Calendar started = stat.getTimeStarted();
-                int iteration = stat.getCurrentGeneration();
-                Individual bestIndi = stat.getCurrentBestIndividual();
-        
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
->>>>>>> .merge-right.r75
+    }   
 
-
-class GADurationTimer extends Timer {
-    
-        public GADurationTimer(int delay, ActionListener listener) {
-            super(delay, listener);
-        }    
 }
 
 class DurationLabelListener implements ActionListener{
 
-       Date start = null;
-    
+       private Date start = null;
        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
 
         public void aboutToStart() {
@@ -1187,35 +1200,96 @@ class DurationLabelListener implements ActionListener{
            } 
             
            long ms = new Date().getTime() -  start.getTime();
-            
            BestIndiDurationField.setText(sdf.format(new Date(ms)));
 
         }
-    
-    
 }
 
+/**
+ * Updates the chart curve every 1000 ms to the value of its property fitness
+ * 
+ * 
+ * */
+class ChartUpdateListener implements ActionListener{
 
-private ImageIcon drawInitialChart(){
+    private double fitness = 0;
+    private TimeSeries series = null;
+    private RegularTimePeriod period = null;
+
+        public ChartUpdateListener(TimeSeries series, RegularTimePeriod period) {
+            
+            this.series = series;
+            this.period = period;
+        } 
+    
+        public double getFitness() {
+            return fitness;
+        }
+
+        public void setFitness(double fitness) {
+            this.fitness = fitness;
+        }
    
-    ImageIcon icon = null;
+        public void actionPerformed(ActionEvent evt) {
+            
+            period = period.next();  
+            series.add(period, fitness);
+            
+        }
+        
+}
+
+private void drawInitialChart(){
+
+    logger.info("Trying to draw initial chart");
     
-    TimeSeries series = new TimeSeries("Verlauf der Fitness", Second.class);
-    TimeSeriesCollection dataset = new TimeSeriesCollection(series);
-    
-    JFreeChart chart = ChartFactory.createTimeSeriesChart("Dynamischer Verlauf der Fitness", "Zeit", "Fitness",
-                                                          dataset, true, true, false);
-    XYPlot plot = chart.getXYPlot();
-    ValueAxis axis = plot.getDomainAxis();
-//    axis.setAutoRange(true);
-//    axis.setFixedAutoRange(60000.0);
-//    
-//    axis = plot.getRangeAxis();
-//    axis.setRange(0.0, 1000.0);
-    
-    icon = new ImageIcon(chart.createBufferedImage(ChartLabel.getWidth(), ChartLabel.getHeight()));
-    
-    return icon;
+       dynPeriod = new Second();
+       dynTimeSeries = new TimeSeries("Verlauf der Fitness", Second.class);
+       dynSeriesCollection = new TimeSeriesCollection(dynTimeSeries);
+       
+       dynChart = ChartFactory.createTimeSeriesChart(
+                "",                              // title
+                "Zeit",                         // time axis label (x)
+                "Fitness",                      // value axis label (y)
+                dynSeriesCollection,            // the timeseriescollection
+                false,                          // legend
+                true,                           // tooltips
+                false);                         // urls
+        
+        XYPlot plot = dynChart.getXYPlot();
+        ValueAxis axis = plot.getDomainAxis();
+        axis.setAutoRange(true);
+        
+        // sets the x-axis on a fixed size/range
+        //axis.setFixedAutoRange(60000.0);  // 60 seconds
+        
+        axis = plot.getRangeAxis();
+        //axis.setRange(0.0, 100.0);
+
+        
+        plot.setBackgroundPaint(Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white);
+        plot.setRangeGridlinePaint(Color.white);
+        
+        //draw a line on y-axis across the graph
+        //draw the line only on actual data points
+        plot.setRangeCrosshairVisible(true);
+        plot.setRangeCrosshairLockedOnData(true);
+        
+                
+        XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) plot.getRenderer();
+        r.setUseFillPaint(true);
+        r.setBaseFillPaint(Color.white);
+
+        int w = rootChartPanel.getWidth();
+        int h = rootChartPanel.getHeight();
+        
+        ChartPanel chartPanel = new ChartPanel(dynChart,w,h,w,h,w,h,true,false,false,false,true,true);
+        
+        rootChartPanel.add(chartPanel);
+        
+        logger.info("Added initial chart to UI");
+ 
 }
 
 /**
@@ -1245,8 +1319,10 @@ private double ConvertGreedyPercentage(Object spinnerValue){
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem AboutMenuItem;
+    private javax.swing.JMenuItem AboutMenuItem1;
     private javax.swing.JPanel BasicSettingPanel;
     private javax.swing.JMenu BearbeitenMenu;
+    private javax.swing.JMenu BearbeitenMenu1;
     private javax.swing.JTextField BestIndiDurationField;
     private javax.swing.JTextField BestIndiFeeField;
     private javax.swing.JTextField BestIndiFitnessField;
@@ -1255,13 +1331,16 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JTextField BestIndiValidField;
     private javax.swing.JTextField BestIndiWareHousesField;
     private javax.swing.JMenuItem CSVMenuItem;
+    private javax.swing.JMenuItem CSVMenuItem1;
     private javax.swing.JButton CancelGAButton;
-    private javax.swing.JLabel ChartLabel;
     private javax.swing.JSpinner ChildrenSpinner;
     private javax.swing.JTextField ChosenProblemField;
     private javax.swing.JMenu DateiMenuItem;
+    private javax.swing.JMenu DateiMenuItem1;
     private javax.swing.JMenuItem ExcelMenuItem;
+    private javax.swing.JMenuItem ExcelMenuItem1;
     private javax.swing.JMenu ExportMenu;
+    private javax.swing.JMenu ExportMenu1;
     private javax.swing.JPanel ExtendedSettingPanel;
     private javax.swing.JLabel FeeLabel;
     private javax.swing.JSpinner FeeSpinner;
@@ -1272,6 +1351,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JLabel GreedyLabel;
     private javax.swing.JSpinner GreedySpinner;
     private javax.swing.JMenu HilfeMenu;
+    private javax.swing.JMenu HilfeMenu1;
     private javax.swing.JPanel LaufzeitInfoPanel;
     private javax.swing.JTabbedPane MainTabPane;
     private javax.swing.JLabel ParentSelLabel2;
@@ -1279,13 +1359,17 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JTextField PopSizeField1;
     private javax.swing.JButton ProblemChooserButton;
     private javax.swing.JMenuItem QuitMenuItem;
+    private javax.swing.JMenuItem QuitMenuItem1;
     private javax.swing.JRadioButton RandomSelect;
     private javax.swing.JMenuItem RedoMenuItem;
+    private javax.swing.JMenuItem RedoMenuItem1;
     private javax.swing.JPanel ResultViewPanel;
     private javax.swing.JRadioButton RouletteSelect;
     private javax.swing.JPanel SelPressurePanel2;
     private javax.swing.JSeparator SepVorClose;
+    private javax.swing.JSeparator SepVorClose1;
     private javax.swing.JSeparator SepVorZurueck;
+    private javax.swing.JSeparator SepVorZurueck1;
     private javax.swing.JButton SetDefaultsButton;
     private javax.swing.JButton StartGA;
     private javax.swing.JLabel StartpopLabel;
@@ -1293,9 +1377,12 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JLabel StatusTextLabel;
     private javax.swing.JPanel TabbedPanel;
     private javax.swing.JMenuBar TopMenu;
+    private javax.swing.JMenuBar TopMenu1;
     private javax.swing.JMenuItem UndoMenuItem;
+    private javax.swing.JMenuItem UndoMenuItem1;
     private javax.swing.JPanel VisualPanel;
     private javax.swing.JMenuItem ZurueckSetzenMenuItem;
+    private javax.swing.JMenuItem ZurueckSetzenMenuItem1;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JLabel jLabel1;
@@ -1304,6 +1391,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -1325,6 +1413,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JPanel rootChartPanel;
     // End of variables declaration//GEN-END:variables
     
 }
