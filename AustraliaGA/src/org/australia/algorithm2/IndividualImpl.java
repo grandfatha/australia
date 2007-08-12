@@ -1,15 +1,17 @@
-package org.australia.algorithm;
+package org.australia.algorithm2;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
+import java.util.TreeSet;
 
 import org.australia.config.Config;
-import org.australia.problem.*;
-import org.australia.util.Utils;
+import org.australia.problem.Problem;
 
 public class IndividualImpl implements Comparable<Individual>, Individual {
+	
+	ArrayList<Integer> allowedFacilities;
 
 	private int[] gene;		// size: Number of customers; int[0] = 123 --> customer 0 gets goods from warehouse 123
 
@@ -21,20 +23,18 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	
 	
 	
-	
-	
 	// Constructor		//////////////////////////////////////////////////////////////////////////
-	public IndividualImpl(Problem problem) {
+	public IndividualImpl(Problem problem, ArrayList<Integer> allowedFacilities) {
 		this.problem = problem;
+		this.allowedFacilities = allowedFacilities;
 	}
 	
-	public IndividualImpl(Problem problem,  int[] gene) {
+	public IndividualImpl(Problem problem, int[] gene) {
 		this.problem = problem;
 		this.gene = gene;
+		this.allowedFacilities = getFacilities(gene);
 		this.changed = true;
 	}
-	
-	
 	
 
 	// Factory methods		//////////////////////////////////////////////////////////////////////////
@@ -62,9 +62,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * @return Individual
 	 * @author jochen
 	 */
-	public static Individual generateRandomIndividual(Problem problem){
+	public static Individual generateRandomIndividual(Problem problem, ArrayList<Integer> allowedFacilities){
 
-		IndividualImpl result = new IndividualImpl(problem);
+		IndividualImpl result = new IndividualImpl(problem, allowedFacilities);
 		
 		// number of customers
 		int numberOfCustomers = (int)problem.getCustomers();
@@ -72,13 +72,10 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		// generate an empty gene
 		result.gene = new int[numberOfCustomers];
 
-		// number of warehouses
-		double warehouses = problem.getWarehouses();
-		
 		// assign every customer a random warehouse
 		//TODO make less random and improve nearest neighbor...
 		for (int i = 0; i < numberOfCustomers; i++) {
-			result.gene[i] = getRandomWarehouse(warehouses);
+			result.gene[i] = result.getRandomWarehouse();
 		}
 
 		return result;
@@ -91,9 +88,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * @return Individual
 	 * @author benjamin
 	 */
-	public static Individual generateGreedyIndividual(Problem problem){
+/*	public static Individual generateGreedyIndividual(Problem problem, ArrayList<Integer> allowedFacilities){
 
-		IndividualImpl result = new IndividualImpl(problem);
+		IndividualImpl result = new IndividualImpl(problem, allowedFacilities);
 		
 		// number of customers
 		int numberOfCustomers = (int)problem.getCustomers();
@@ -158,7 +155,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		return result;
 	}
-	
+*/	
 	
 	
 	
@@ -168,7 +165,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * @return Individual
 	 * @author benjamin, jochen
 	 */
-	public static Individual generateGreedyIndividualWithRouletteWheel(Problem problem){
+/*	public static Individual generateGreedyIndividualWithRouletteWheel(Problem problem){
 
 		IndividualImpl result = new IndividualImpl(problem);
 		
@@ -233,16 +230,18 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		return result;
 	}
-	
+*/	
 
 	
 	/**
 	 * Warehouses are in the range from 0 to #warehouses-1
-	 * @param warehouses
 	 * @return a random warehousenumber
 	 */
-	private static int getRandomWarehouse(double warehouses){
-		return ((int) (Math.random()*warehouses));	// 0 .. ;warehouses-1
+	private int getRandomWarehouse(){
+		int random = (int) (getAllowedFacilities().size() * Math.random());
+		
+		return getAllowedFacilities().get(random);
+		
 	}
 
 	
@@ -260,6 +259,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	 * @author jochen
 	 */
 	public boolean checkConstraints(){
+
 		// prevent gene is null
 		if(gene==null){
 			throw new RuntimeException("Gene is null");
@@ -290,6 +290,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		return true;
 	}
+	
+
+	
 	
 	public void calculateFitness(){
 		if (gene==null){
@@ -358,13 +361,11 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	}
 	
 	
-	//TODO make less random
-	//TODO daniel wants a true mutation
 	public void mutate(){
 		
 		int randomCustomer = (int)(Math.random() * gene.length);	// 0 .. n-1
 		
-		int randomFacility = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
+		int randomFacility = this.getRandomWarehouse();
 		
 		gene[randomCustomer] = randomFacility;
 		
@@ -385,76 +386,6 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 	}
 	
-	public void mutateOnlyCurrentFacilities(){
-		// add all used facilities to a set
-		HashSet<Integer> facilitySet = new HashSet<Integer>();
-		for (int g : gene) {
-			facilitySet.add(g);
-		}
-		
-		// get a random facility
-		Iterator<Integer> iterator = facilitySet.iterator();
-		Integer randomFacility = iterator.next();
-		for(int i=0; i<(int)(Math.random()*facilitySet.size()); i++){
-			randomFacility = iterator.next();
-		}
-		
-		// mutate a random customer with this random facility
-		int randomCustomer = (int)(Math.random() * gene.length);	// 0 .. n-1
-		
-		gene[randomCustomer] = randomFacility;
-		
-		this.changed = true;
-
-	}
-	
-
-	
-	public void mutateCloseAndOpenAFacility(){
-
-		// add all used warehouses to a set
-		HashSet<Integer> warehouseSet = new HashSet<Integer>();
-		for (int g : gene) {
-			warehouseSet.add(g);
-		}
-		
-		// remove a random warehouse from this list
-		int size = warehouseSet.size();
-		Iterator<Integer> iterator = warehouseSet.iterator();
-		Integer facilityToDelete = iterator.next();
-		for(int i=0; i<(int)(Math.random()*size); i++){
-			facilityToDelete = iterator.next();
-		}
-		warehouseSet.remove(facilityToDelete);
-		
-		// add a new random facility
-		warehouseSet.add((int)(Math.random()*size));
-		
-		// replace facilities
-		for(int i=0; i<gene.length; i++){
-			while(!warehouseSet.contains(gene[i])){
-				int position = Utils.rouletteWheel((int)getProblem().getWarehouses());	// lowest postion has higher chance
-				gene[i] = this.problem.getSortedCosts()[i][position];	// replace facility with new
-			}
-			
-		}
-		this.changed = true;
-
-	}
-	
-
-	
-	public void mutateNearNeighbor(){
-		
-		int randomCustomer = (int)(Math.random() * gene.length);	// 0 .. n-1
-
-		int position = Utils.rouletteWheel((int)problem.getWarehouses());	// lowest postion has higher chance
-		
-		gene[randomCustomer] = this.problem.getSortedCosts()[randomCustomer][position];
-		
-		this.changed = true;
-		
-	}
 	
 	
 	
@@ -464,56 +395,11 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 
 		for(int i=0; i<gene.length; i++){
 			while(gene[i]==randomFacility){
-				gene[i] = (int)(Math.random() * getProblem().getWarehouses());
+				gene[i] = getRandomWarehouse();
 			}
 		}
 		this.changed = true;
 	}
-
-	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel(){
-		// this facility will be banned
-		int randomFacility = (int)(Math.random() * getProblem().getWarehouses());	// 0 .. n-1
-
-		for(int currentCustomerNr=0; currentCustomerNr<gene.length; currentCustomerNr++){
-
-			while(gene[currentCustomerNr]==randomFacility){
-			
-				int position = Utils.rouletteWheel((int)this.problem.getWarehouses());	// lowest postion has higher chance
-				gene[currentCustomerNr] = this.problem.getSortedCosts()[currentCustomerNr][position];	// replace facility with new
-			
-			}
-			
-		}
-		this.changed = true;
-	}
-	
-	public void mutateBanFacilityAndFindNewFromCurretUsed(){		
-		
-		// add all used warehouses to a set
-		HashSet<Integer> warehouseSet = new HashSet<Integer>();
-		for (int g : gene) {
-			warehouseSet.add(g);
-		}
-		
-		// remove a random warehouse from this list
-		int size = warehouseSet.size();
-		Iterator<Integer> iterator = warehouseSet.iterator();
-		Integer facilityToDelete = iterator.next();
-		for(int i=0; i<(int)(Math.random()*size); i++){
-			facilityToDelete = iterator.next();
-		}
-		warehouseSet.remove(facilityToDelete);
-		
-		for(int i=0; i<gene.length; i++){
-			while(!warehouseSet.contains(gene[i])){
-				int position = Utils.rouletteWheel((int)getProblem().getWarehouses());	// lowest postion has higher chance
-				gene[i] = this.problem.getSortedCosts()[i][position];	// replace facility with new
-			}
-			
-		}
-		this.changed = true;
-	}
-
 
 
 	
@@ -596,12 +482,34 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		return geneString.toString();
 	}
 	
-	public Collection<Integer> getFacilities(){
-		Collection<Integer> warehouseSet = new HashSet<Integer>();
+	public ArrayList<Integer> getFacilities(){
+		TreeSet<Integer> warehouseSet = new TreeSet<Integer>();
 		for (int g : gene) {
 			warehouseSet.add(g);
 		}
-		return warehouseSet;
+		
+		ArrayList<Integer> warehouseArrayList = new ArrayList<Integer>();
+		for (Integer integer : warehouseArrayList) {			
+			warehouseArrayList.add(integer);
+		}
+		
+		return warehouseArrayList;
+	}
+
+	public static ArrayList<Integer> getFacilities(int[] gene){
+		
+		TreeSet<Integer> warehouseSet = new TreeSet<Integer>();
+		for (int g : gene) {
+			warehouseSet.add(g);
+		}
+		
+		ArrayList<Integer> warehouseArrayList = new ArrayList<Integer>();
+		for (Integer integer : warehouseSet) {			
+			warehouseArrayList.add(integer);
+		}
+		
+		
+		return warehouseArrayList;
 	}
 	
 	public String getFacilityUtilizationString(){
@@ -632,6 +540,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		return utilizationString.toString();
 	}
 	
+
 	public boolean isValid(){
 		if(getFeeCosts() > 0.0){
 			return false;
@@ -654,6 +563,9 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 		}
 		return fitness;
 	}
+	public ArrayList<Integer> getAllowedFacilities() {
+		return allowedFacilities;
+	}
 	
 	//	 Setter	////////////////////////////////////////////////////////////////////////////////////
 	public void setGene(int[] gene) {
@@ -672,6 +584,7 @@ public class IndividualImpl implements Comparable<Individual>, Individual {
 	public int compareTo(Individual o) {
 		return this.getFitness().compareTo(o.getFitness());
 	}
+
 
 
 

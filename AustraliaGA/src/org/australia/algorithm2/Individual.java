@@ -1,21 +1,15 @@
-package org.australia.algorithm;
+package org.australia.algorithm2;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 import org.australia.problem.Problem;
 
 public interface Individual extends Comparable<Individual> {
-	public boolean checkConstraints();
 	public double getFeeCosts();
 	
 	public void mutate();
-	public void mutateOnlyCurrentFacilities();
 	public void mutateBanFacility();
-	public void mutateBanFacilityAndFindNewFacilityByRouletteWheel();
-	public void mutateBanFacilityAndFindNewFromCurretUsed();
-	public void mutateNearNeighbor();
 	public void mutateSwitchCustomers();
-	public void mutateCloseAndOpenAFacility();
 	
 	public Double getFitness();
 	public Problem getProblem();
@@ -26,5 +20,5 @@ public interface Individual extends Comparable<Individual> {
 	public boolean isValid();
 	public String getGeneString();
 	
-	public Collection<Integer> getFacilities();
+	public ArrayList<Integer> getFacilities();
 }
