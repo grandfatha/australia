@@ -10,8 +10,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.australia.algorithm.GA;
 import org.australia.algorithm.Individual;
 import org.australia.algorithm.IndividualImpl;
+import org.australia.algorithm.Status;
 import org.australia.config.Config;
 import org.australia.problem.Problem;
 import org.australia.problem.ProblemHolmberg;
@@ -98,6 +100,48 @@ public class Database {
 		 	statement.execute( "INSERT INTO individuals (gene, fitness, valid, instance, fee) "+
 		 			"VALUES ('"+ individual.getGeneString() +"', " + individual.getFitness() +", " + valid + ", '" + individual.getProblem().getInstanceName() +"', "+ Config.getFee() +")");
 		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				connection.close();
+				logger.info("Individual successfully added to database");
+			} catch (SQLException e) {
+				logger.error("Could not close connection to database.", e);
+			}
+		}
+	}
+	
+	public static void addIndivudualNew(Individual individual, GA ga){
+		
+		Connection connection = getConnection();
+		
+		if(connection==null){
+			return;
+		}
+		
+		// valid = 0; invalid = -1
+		int valid = -1;
+		if(individual.isValid()){
+			valid=0;
+		}
+		
+		Status status = ga.getStatus();
+		
+		try {
+		 	Statement statement = connection.createStatement();
+		 	
+//		 	statement.execute( "INSERT INTO individuals (gene, fitness, valid, instance, fee) "+
+//		 			"VALUES ('"+ individual.getGeneString() +"', " + individual.getFitness() +", " + valid + ", '" + individual.getProblem().getInstanceName() +"', "+ Config.getFee() +")");
+		
+		 	
+		 	statement.execute("INSERT INTO ergebnisse ( instance , gene , fitness , valid , duration , generations , populationSize , iterations , fee , selectionMethod , percentageGreedy , oddsMutation , percentageForeignIndividuals , newGenerationSize )"+
+		 	"VALUES ("+
+		 	"'"+individual.getProblem().getInstanceName()+"', '"+individual.getGeneString()+"', '"+individual.getFitness()+"', '"+valid+"', '"+status.getDuration()+"', '"+status.getCurrentGeneration()+"', '"+ga.getPopulationSize()+"', null , "+Config.getFee()+" ,'"+Config.getSelectionMethod()+"', '"+Config.getPercentageGreedy()+"', '"+Config.getOddsMutation()+"', '"+Config.getPercentageForeignIndividuals()+"', '"+Config.getNewGenerationSize()+"'"+
+		 	")");
+		 	
+		 	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

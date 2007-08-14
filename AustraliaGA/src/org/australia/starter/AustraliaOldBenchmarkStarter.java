@@ -24,7 +24,7 @@ import org.australia.util.Database;
  * @author jochen
  *
  */
-public class AustraliaBenchmarkStarter {
+public class AustraliaOldBenchmarkStarter {
 
 	public static void main(String[] args) {
 
