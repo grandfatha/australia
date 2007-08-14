@@ -182,11 +182,12 @@ public class GA {
 						}
 					}else if(random < 0.8){
 						baby.mutateSwitchCustomers();
-					}else if(random < 0.9){
+					}else if(random < 0.85){
 						baby.mutateBanFacilityAndFindNewFromCurretUsed();
-					}else{
+					}else if(random< 0.9){
 						baby.mutateCloseAndOpenAFacility();
-//						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
+					}else if(random< 0.95){
+						baby.mutateBanFacilityAndFindNewFacilityByRouletteWheel();
 					}
 				}
 
@@ -284,6 +285,11 @@ public class GA {
 
 	public Status getStatus() {
 		return status;
+	}
+
+
+	public int getPopulationSize() {
+		return populationSize;
 	}
 
 }

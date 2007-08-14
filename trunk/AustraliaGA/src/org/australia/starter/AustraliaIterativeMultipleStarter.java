@@ -22,12 +22,17 @@ public class AustraliaIterativeMultipleStarter {
 
 		logger.addAppender(new ConsoleAppender(new PatternLayout()));
 
+		// Config
+		int iterations = 20;
+		
+
+
 
 		ArrayList<Problem> problems = new ArrayList<Problem>();
 
 		if(true){
-			for(int i=24; i<=71; i++){
-				if(i!=26&&i!=47){	// problems with these files
+			for(int i=1; i<=71; i++){
+				if(i!=47){	// problems with these files
 					problems.add(ProblemHolmberg.readProblem("p" + i));
 				}
 			}
@@ -51,6 +56,8 @@ public class AustraliaIterativeMultipleStarter {
 			}else{
 				Config.setFee(200);
 			}
+			
+			
 
 			Individual bestIndividual = null;
 
