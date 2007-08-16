@@ -185,7 +185,7 @@ public class jMole extends javax.swing.JFrame {
 
         FeeLabel.setText("H\u00f6he der Strafkosten");
 
-        FeeSpinner.setModel(new javax.swing.SpinnerNumberModel(10.5d, 0.1d, 100.0d, 0.5d));
+        FeeSpinner.setModel(new javax.swing.SpinnerNumberModel(10.5d, 0.1d, 1000.0d, 0.5d));
 
         GreedyLabel.setText("Chance auf \"Greedy\"-Start");
 
@@ -198,9 +198,9 @@ public class jMole extends javax.swing.JFrame {
         PopSizeField1.setEnabled(false);
 
         ChosenProblemField.setEditable(false);
-        ChosenProblemField.setText("Keine Instanz gew\u00e4hlt");
 
         ProblemChooserButton.setText("Ausw\u00e4hlen");
+        ProblemChooserButton.setToolTipText("Dialog zum Ausw\u00e4hlen der Probleminstanz");
         ProblemChooserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ProblemChooserButtonActionPerformed(evt);
@@ -214,8 +214,8 @@ public class jMole extends javax.swing.JFrame {
         BasicSettingPanelLayout.setHorizontalGroup(
             BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(BasicSettingPanelLayout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
-                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                .addContainerGap()
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(BasicSettingPanelLayout.createSequentialGroup()
                         .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(StartpopLabel)
@@ -223,28 +223,29 @@ public class jMole extends javax.swing.JFrame {
                         .add(8, 8, 8)
                         .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(GenSizeField)
-                            .add(PopSizeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, BasicSettingPanelLayout.createSequentialGroup()
+                            .add(PopSizeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)))
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
                         .add(GreedyLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(GreedySpinner)))
+                        .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 43, Short.MAX_VALUE)
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(BasicSettingPanelLayout.createSequentialGroup()
                         .add(17, 17, 17)
                         .add(FeeLabel))
                     .add(BasicSettingPanelLayout.createSequentialGroup()
                         .add(18, 18, 18)
-                        .add(jLabel8)))
-                .add(17, 17, 17)
+                        .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel17)
+                            .add(jLabel8))))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(PopSizeField1)
-                    .add(FeeSpinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLabel17)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 122, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(ProblemChooserButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                    .add(FeeSpinner)
+                    .add(PopSizeField1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                .add(33, 33, 33)
+                .add(ProblemChooserButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 93, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         BasicSettingPanelLayout.setVerticalGroup(
             BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -255,8 +256,6 @@ public class jMole extends javax.swing.JFrame {
                         .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(StartpopLabel)
                             .add(PopSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel17)
-                            .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(FeeSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, BasicSettingPanelLayout.createSequentialGroup()
@@ -265,14 +264,16 @@ public class jMole extends javax.swing.JFrame {
                         .add(9, 9, 9)))
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(GenSizeLabel)
-                    .add(GenSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(ProblemChooserButton)
+                    .add(jLabel8)
                     .add(PopSizeField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel8))
+                    .add(GenSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(GreedyLabel)
-                    .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel17)
+                    .add(ProblemChooserButton)
+                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(14, 14, 14))
         );
 
@@ -374,6 +375,7 @@ public class jMole extends javax.swing.JFrame {
         jLabel3.setText("Fitness");
 
         BestIndiGeneField.setEditable(false);
+        BestIndiGeneField.setToolTipText("Gene des besten Individuums");
 
         BestIndiWareHousesField.setEditable(false);
         BestIndiWareHousesField.setToolTipText("Anzahl der verwendeten Lager des besten Individuums.");
@@ -388,22 +390,24 @@ public class jMole extends javax.swing.JFrame {
         jLabel4.setText("Dauer");
 
         BestIndiDurationField.setEditable(false);
-        BestIndiDurationField.setToolTipText("Fitness des derzeit besten Individuums.");
+        BestIndiDurationField.setToolTipText("Bisherige Dauer des aktuellen Durchlaufs");
 
         jLabel12.setText("Zul\u00e4ssigkeit");
 
         BestIndiValidField.setEditable(false);
-        BestIndiValidField.setToolTipText("Anzahl der verwendeten Lager des besten Individuums.");
+        BestIndiValidField.setToolTipText("G\u00fcltigkeit des besten Individuums.");
 
         jLabel15.setText("Strafkosten");
 
         BestIndiFeeField.setEditable(false);
-        BestIndiFeeField.setToolTipText("Anzahl der verwendeten Lager des besten Individuums.");
+        BestIndiFeeField.setToolTipText("Strafkosten des besten Individuums.");
 
-        jLabel16.setText("Probleminstanz");
+        jLabel16.setText("Durchlauf");
+        jLabel16.setEnabled(false);
 
         BestIndiProblemField.setEditable(false);
-        BestIndiProblemField.setToolTipText("Anzahl der verwendeten Lager des besten Individuums.");
+        BestIndiProblemField.setToolTipText("Aktueller Durchlauf");
+        BestIndiProblemField.setEnabled(false);
 
         org.jdesktop.layout.GroupLayout LaufzeitInfoPanelLayout = new org.jdesktop.layout.GroupLayout(LaufzeitInfoPanel);
         LaufzeitInfoPanel.setLayout(LaufzeitInfoPanelLayout);
@@ -420,37 +424,35 @@ public class jMole extends javax.swing.JFrame {
                                     .add(jLabel2)
                                     .add(jLabel3))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                     .add(LaufzeitInfoPanelLayout.createSequentialGroup()
                                         .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                             .add(org.jdesktop.layout.GroupLayout.TRAILING, BestIndiFitnessField)
                                             .add(org.jdesktop.layout.GroupLayout.TRAILING, BestIndiWareHousesField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE))
+                                        .add(41, 41, 41)
                                         .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                            .add(jLabel12)
+                                            .add(jLabel15))
+                                        .add(18, 18, 18)
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                                             .add(LaufzeitInfoPanelLayout.createSequentialGroup()
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                .add(jLabel12)
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
-                                            .add(org.jdesktop.layout.GroupLayout.TRAILING, LaufzeitInfoPanelLayout.createSequentialGroup()
-                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                .add(jLabel15)
-                                                .add(10, 10, 10)))
-                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                            .add(BestIndiFeeField)
-                                            .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 78, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                                .add(21, 21, 21))
+                                            .add(org.jdesktop.layout.GroupLayout.LEADING, LaufzeitInfoPanelLayout.createSequentialGroup()
+                                                .add(BestIndiFeeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                                .add(23, 23, 23)))
                                         .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                             .add(jLabel16)
                                             .add(jLabel4))
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                            .add(BestIndiDurationField)
-                                            .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)))
-                                    .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                        .add(GAProgressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                        .add(org.jdesktop.layout.GroupLayout.LEADING, BestIndiGeneField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                                        .add(44, 44, 44)
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                            .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                                            .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)))
+                                    .add(GAProgressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(BestIndiGeneField)))
                             .add(jLabel5)))
                     .add(rootChartPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 576, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(2, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         LaufzeitInfoPanelLayout.setVerticalGroup(
             LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -464,23 +466,30 @@ public class jMole extends javax.swing.JFrame {
                     .add(jLabel1)
                     .add(BestIndiGeneField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel2)
-                    .add(jLabel12)
-                    .add(BestIndiWareHousesField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel16)
-                    .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jLabel2)
+                            .add(BestIndiWareHousesField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel12))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jLabel3)
+                            .add(BestIndiFitnessField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel15)))
+                    .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jLabel16)
+                            .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jLabel4)
+                            .add(BestIndiFeeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel3)
-                    .add(jLabel15)
-                    .add(BestIndiFitnessField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel4)
-                    .add(BestIndiFeeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(rootChartPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+                .add(rootChartPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         SetDefaultsButton.setText("Standard wiederherstellen");
@@ -529,7 +538,7 @@ public class jMole extends javax.swing.JFrame {
         SelPressurePanel2Layout.setHorizontalGroup(
             SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(SelPressurePanel2Layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
+                .addContainerGap(14, Short.MAX_VALUE)
                 .add(SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(SelPressurePanel2Layout.createSequentialGroup()
                         .add(ParentSelLabel2)
@@ -546,7 +555,7 @@ public class jMole extends javax.swing.JFrame {
                         .add(50, 50, 50)
                         .add(ChildrenSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .add(29, 29, 29))
-            .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+            .add(jSeparator3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
         );
         SelPressurePanel2Layout.setVerticalGroup(
             SelPressurePanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -580,30 +589,31 @@ public class jMole extends javax.swing.JFrame {
             .add(GASettingPanelLayout.createSequentialGroup()
                 .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(GASettingPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(ExtendedSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 321, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(GASettingPanelLayout.createSequentialGroup()
-                        .add(196, 196, 196)
-                        .add(SetDefaultsButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(CancelGAButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(StartGA, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(GASettingPanelLayout.createSequentialGroup()
                         .add(5, 5, 5)
                         .add(BasicSettingPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, GASettingPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(SetDefaultsButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(CancelGAButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(StartGA, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(4, 4, 4))
                     .add(GASettingPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(LaufzeitInfoPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 594, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, GASettingPanelLayout.createSequentialGroup()
+                                .add(ExtendedSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 321, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, LaufzeitInfoPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 594, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         GASettingPanelLayout.setVerticalGroup(
             GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(GASettingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(BasicSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(BasicSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
@@ -615,7 +625,7 @@ public class jMole extends javax.swing.JFrame {
                     .add(SetDefaultsButton)
                     .add(CancelGAButton)
                     .add(StartGA))
-                .add(5, 5, 5))
+                .addContainerGap())
         );
 
         GASettingPanelLayout.linkSize(new java.awt.Component[] {CancelGAButton, SetDefaultsButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
@@ -1152,13 +1162,13 @@ class GAProgressRunnable implements Runnable{
             
             double fitness = bestIndi.getFitness();
             cul.setFitness(fitness);
-                        
+                   
             BestIndiFitnessField.setText("" + fitness);
             BestIndiFeeField.setText("" + bestIndi.getFeeCosts());
             
             if(bestIndi.isValid()){
                 BestIndiValidField.setText("Zulässig!");
-                BestIndiValidField.setForeground(Color.GREEN);
+                BestIndiValidField.setForeground(new Color(50, 205, 50));
             } else {
                 BestIndiValidField.setText("Unzulässig!");
                BestIndiValidField.setForeground(Color.RED);
