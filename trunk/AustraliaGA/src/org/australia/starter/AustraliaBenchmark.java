@@ -36,32 +36,27 @@ public class AustraliaBenchmark {
 		
 		// don't change from here
 		
-		for(double i=0.2; i<20; i+=0.2){
-			
-			Config.setFee(i);
-	
-			logger.addAppender(new ConsoleAppender(new PatternLayout()));
-			
-			Individual bestIndividual = null;
-			
-			GA ga = new GA(problem);
-			
-			logger.info("Start Instance " + problem.getInstanceName());
-			long start = System.currentTimeMillis();
-			bestIndividual = ga.startAlgorithm(startPopulation, criterion, criterionValue);
-			long end = System.currentTimeMillis();
-	
-			
-			logger.info("Bestes Individuum:");
-			logger.info(bestIndividual);
-			
-	
-			if(Config.getWriteToDatabase()){
-				Database.addIndivudualNew(bestIndividual, ga);
-			}
-			logger.debug("Dauer: " + (end-start));
-			
+		logger.addAppender(new ConsoleAppender(new PatternLayout()));
+		
+		Individual bestIndividual = null;
+		
+		GA ga = new GA(problem);
+		
+		logger.info("Start Instance " + problem.getInstanceName());
+		long start = System.currentTimeMillis();
+		bestIndividual = ga.startAlgorithm(startPopulation, criterion, criterionValue);
+		long end = System.currentTimeMillis();
+
+		
+		logger.info("Bestes Individuum:");
+		logger.info(bestIndividual);
+		
+
+		if(Config.getWriteToDatabase()){
+			Database.addIndivudualNew(bestIndividual, ga);
 		}
+		logger.debug("Dauer: " + (end-start));
+		
 			
 		logger.debug("Ende");
 
