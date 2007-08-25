@@ -68,7 +68,7 @@ public class AboutDialog extends javax.swing.JDialog {
         });
 
         jLabel1.setFont(new java.awt.Font("Impact", 0, 36));
-        jLabel1.setText("jMole 0.4 a");
+        jLabel1.setText("jMole 0.8 beta");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/jMoleLogo.jpg"))); // NOI18N
 
@@ -79,10 +79,6 @@ public class AboutDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(145, 145, 145)
-                .add(jLabel1)
-                .addContainerGap(152, Short.MAX_VALUE))
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(80, Short.MAX_VALUE)
                 .add(jLabel2)
@@ -95,6 +91,10 @@ public class AboutDialog extends javax.swing.JDialog {
                 .add(190, 190, 190)
                 .add(okButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 67, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(196, Short.MAX_VALUE))
+            .add(layout.createSequentialGroup()
+                .add(122, 122, 122)
+                .add(jLabel1)
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

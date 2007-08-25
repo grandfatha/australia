@@ -29,6 +29,7 @@ import org.australia.config.Config;
 import org.australia.problem.Problem;
 import org.australia.problem.ProblemBoccia;
 import org.australia.problem.ProblemHolmberg;
+import org.australia.util.HolmbergOptimal;
 import org.jdesktop.swingworker.SwingWorker;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -46,24 +47,62 @@ import org.jfree.data.time.TimeSeriesCollection;
  * @author  Daniel_h4x
  */
 public class jMole extends javax.swing.JFrame {
-
+    
     private GAExecutorTask task;
     private Logger logger = Logger.getRootLogger();
-
+    
     private TimeSeries dynTimeSeries;
     private TimeSeriesCollection dynSeriesCollection;
     private JFreeChart dynChart;
     private RegularTimePeriod dynPeriod;
-
+    
+    //colors and messages for certain events during GA execution
+    private static String OPT_HIT_MSG = "Optimum getroffen !!";
+    private static Color OPT_HIT_COLOR = new Color(50, 205, 50);
+   
+    
+    private static String VALID_MSG = "Zul\u00e4ssig!";
+    private static Color VALID_CLR =new Color(50, 205, 50);
+    
+    private static String INVALID_MSG = "Unzul\u00e4ssig!";
+    private static Color INVALID_CLR = Color.RED;
+        
+    //restore the def-bg-color for textfields (second run of ga needs to be clean)
+    private static Color DEF_BG_COLOR;
+    
+    //default values for the settings panel
+    private static final String DEF_INSTANCE = "P1";
+    private static final String DEF_GREEDY = "50%";
+    private static final int DEF_POPSIZE = 100;
+    private static final int DEF_GENERATIONS = 3000;
+    private static final int DEF_FEE = 200;
+    private static final int DEF_NEWGENSIZE = 2;
+    private static final Selection DEF_SELMETHOD = Selection.ROULETTE;
+    
+    private static enum Selection{
+        /**
+         * Random selection
+         */
+        RANDOM,
+        /**
+         * roulette wheel selection
+         */
+        ROULETTE
+    }
+    
+    
     /** Creates new form jMole */
     public jMole() {
-
+        
         logger.addAppender(new ConsoleAppender(new PatternLayout()));
         initComponents();
+        setDefaultValues();
         drawInitialChart();
+        
+        DEF_BG_COLOR = OptimField.getBackground();
     }
-
-
+    
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -86,8 +125,6 @@ public class jMole extends javax.swing.JFrame {
         FeeSpinner = new javax.swing.JSpinner();
         GreedyLabel = new javax.swing.JLabel();
         GreedySpinner = new javax.swing.JSpinner();
-        jLabel8 = new javax.swing.JLabel();
-        PopSizeField1 = new javax.swing.JTextField();
         ChosenProblemField = new javax.swing.JTextField();
         ProblemChooserButton = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
@@ -117,9 +154,9 @@ public class jMole extends javax.swing.JFrame {
         BestIndiValidField = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         BestIndiFeeField = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
-        BestIndiProblemField = new javax.swing.JTextField();
         rootChartPanel = new javax.swing.JPanel();
+        OptimLabel = new javax.swing.JLabel();
+        OptimField = new javax.swing.JTextField();
         SetDefaultsButton = new javax.swing.JButton();
         CancelGAButton = new javax.swing.JButton();
         StartGA = new javax.swing.JButton();
@@ -135,9 +172,6 @@ public class jMole extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel14 = new javax.swing.JLabel();
-        VisualPanel = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         TopMenu1 = new javax.swing.JMenuBar();
         DateiMenuItem1 = new javax.swing.JMenu();
         ExportMenu1 = new javax.swing.JMenu();
@@ -191,15 +225,9 @@ public class jMole extends javax.swing.JFrame {
 
         GreedySpinner.setModel(new javax.swing.SpinnerListModel(new String[] {"0% ", "25%", "50%", "75%", "100%"}));
 
-        jLabel8.setText("Durchl\u00e4ufe");
-        jLabel8.setEnabled(false);
-
-        PopSizeField1.setText("1");
-        PopSizeField1.setEnabled(false);
-
         ChosenProblemField.setEditable(false);
 
-        ProblemChooserButton.setText("Ausw\u00e4hlen");
+        ProblemChooserButton.setText("Probleminstanz ausw\u00e4hlen");
         ProblemChooserButton.setToolTipText("Dialog zum Ausw\u00e4hlen der Probleminstanz");
         ProblemChooserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -216,19 +244,16 @@ public class jMole extends javax.swing.JFrame {
             .add(BasicSettingPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(BasicSettingPanelLayout.createSequentialGroup()
-                        .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(StartpopLabel)
-                            .add(GenSizeLabel))
-                        .add(8, 8, 8)
-                        .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(GenSizeField)
-                            .add(PopSizeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)))
-                    .add(BasicSettingPanelLayout.createSequentialGroup()
-                        .add(GreedyLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 43, Short.MAX_VALUE)
+                    .add(StartpopLabel)
+                    .add(GenSizeLabel)
+                    .add(jLabel17))
+                .add(18, 18, 18)
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(GenSizeField)
+                        .add(PopSizeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
+                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(BasicSettingPanelLayout.createSequentialGroup()
                         .add(17, 17, 17)
@@ -236,16 +261,13 @@ public class jMole extends javax.swing.JFrame {
                     .add(BasicSettingPanelLayout.createSequentialGroup()
                         .add(18, 18, 18)
                         .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel17)
-                            .add(jLabel8))))
+                            .add(ProblemChooserButton)
+                            .add(GreedyLabel))))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                    .add(FeeSpinner)
-                    .add(PopSizeField1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
-                .add(33, 33, 33)
-                .add(ProblemChooserButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 93, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                    .add(GreedySpinner)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, FeeSpinner))
+                .add(124, 124, 124))
         );
         BasicSettingPanelLayout.setVerticalGroup(
             BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -262,19 +284,23 @@ public class jMole extends javax.swing.JFrame {
                         .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(FeeLabel)
                         .add(9, 9, 9)))
-                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(GenSizeLabel)
-                    .add(jLabel8)
-                    .add(PopSizeField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(GenSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(GenSizeLabel)
+                        .add(GenSizeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(GreedyLabel))
+                    .add(BasicSettingPanelLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(GreedyLabel)
-                    .add(GreedySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel17)
-                    .add(ProblemChooserButton)
-                    .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(14, 14, 14))
+                .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(BasicSettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(jLabel17)
+                        .add(ChosenProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(ProblemChooserButton))
+                .add(8, 8, 8))
         );
 
         ExtendedSettingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Kriterium f\u00fcr GA-Abbruch"));
@@ -402,12 +428,10 @@ public class jMole extends javax.swing.JFrame {
         BestIndiFeeField.setEditable(false);
         BestIndiFeeField.setToolTipText("Strafkosten des besten Individuums.");
 
-        jLabel16.setText("Durchlauf");
-        jLabel16.setEnabled(false);
+        OptimLabel.setText("Optimum");
 
-        BestIndiProblemField.setEditable(false);
-        BestIndiProblemField.setToolTipText("Aktueller Durchlauf");
-        BestIndiProblemField.setEnabled(false);
+        OptimField.setEditable(false);
+        OptimField.setToolTipText("Bisherige Dauer des aktuellen Durchlaufs");
 
         org.jdesktop.layout.GroupLayout LaufzeitInfoPanelLayout = new org.jdesktop.layout.GroupLayout(LaufzeitInfoPanel);
         LaufzeitInfoPanel.setLayout(LaufzeitInfoPanelLayout);
@@ -424,7 +448,7 @@ public class jMole extends javax.swing.JFrame {
                                     .add(jLabel2)
                                     .add(jLabel3))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(LaufzeitInfoPanelLayout.createSequentialGroup()
                                         .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                             .add(org.jdesktop.layout.GroupLayout.TRAILING, BestIndiFitnessField)
@@ -434,20 +458,19 @@ public class jMole extends javax.swing.JFrame {
                                             .add(jLabel12)
                                             .add(jLabel15))
                                         .add(18, 18, 18)
-                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                            .add(BestIndiFeeField)
+                                            .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
+                                        .add(18, 18, 18)
+                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                             .add(LaufzeitInfoPanelLayout.createSequentialGroup()
-                                                .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 78, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                .add(21, 21, 21))
-                                            .add(org.jdesktop.layout.GroupLayout.LEADING, LaufzeitInfoPanelLayout.createSequentialGroup()
-                                                .add(BestIndiFeeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                .add(23, 23, 23)))
-                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                            .add(jLabel16)
-                                            .add(jLabel4))
-                                        .add(44, 44, 44)
-                                        .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                            .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
-                                            .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)))
+                                                .add(jLabel4)
+                                                .add(18, 18, 18)
+                                                .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                            .add(LaufzeitInfoPanelLayout.createSequentialGroup()
+                                                .add(OptimLabel)
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                .add(OptimField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                                     .add(GAProgressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 473, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                     .add(BestIndiGeneField)))
                             .add(jLabel5)))
@@ -479,21 +502,25 @@ public class jMole extends javax.swing.JFrame {
                             .add(jLabel15)))
                     .add(LaufzeitInfoPanelLayout.createSequentialGroup()
                         .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel16)
                             .add(BestIndiValidField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(BestIndiProblemField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jLabel4)
+                            .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(LaufzeitInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel4)
                             .add(BestIndiFeeField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(BestIndiDurationField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(OptimLabel)
+                            .add(OptimField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(rootChartPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         SetDefaultsButton.setText("Standard wiederherstellen");
-        SetDefaultsButton.setEnabled(false);
+        SetDefaultsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SetDefaultsButtonActionPerformed(evt);
+            }
+        });
 
         CancelGAButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/australia/ui/img/stop16.png"))); // NOI18N
         CancelGAButton.setText("GA abbrechen");
@@ -616,7 +643,7 @@ public class jMole extends javax.swing.JFrame {
                 .add(BasicSettingPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(GASettingPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                    .add(SelPressurePanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                     .add(ExtendedSettingPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(LaufzeitInfoPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -672,34 +699,6 @@ public class jMole extends javax.swing.JFrame {
         );
 
         MainTabPane.addTab("Resultat", ResultViewPanel);
-
-        jLabel13.setText("maybe JFreeChart Time-View");
-
-        org.jdesktop.layout.GroupLayout VisualPanelLayout = new org.jdesktop.layout.GroupLayout(VisualPanel);
-        VisualPanel.setLayout(VisualPanelLayout);
-        VisualPanelLayout.setHorizontalGroup(
-            VisualPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(VisualPanelLayout.createSequentialGroup()
-                .add(VisualPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(VisualPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jLabel13))
-                    .add(VisualPanelLayout.createSequentialGroup()
-                        .add(28, 28, 28)
-                        .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 512, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(74, Short.MAX_VALUE))
-        );
-        VisualPanelLayout.setVerticalGroup(
-            VisualPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(VisualPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jLabel13)
-                .add(38, 38, 38)
-                .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 218, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(413, Short.MAX_VALUE))
-        );
-
-        MainTabPane.addTab("Visualisierung", VisualPanel);
 
         org.jdesktop.layout.GroupLayout TabbedPanelLayout = new org.jdesktop.layout.GroupLayout(TabbedPanel);
         TabbedPanel.setLayout(TabbedPanelLayout);
@@ -841,140 +840,139 @@ public class jMole extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private boolean askForExit() {
-
-        int n = JOptionPane.showOptionDialog(this, "Sind Sie sicher, dass Sie jMole beenden wollen?", "Bitte bestätigen!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        return n == JOptionPane.YES_OPTION;
-    }
-private void CancelGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelGAButtonActionPerformed
-
-    task.stop();
-    StartGA.setEnabled(true);
-    CancelGAButton.setEnabled(false);
-
-}//GEN-LAST:event_CancelGAButtonActionPerformed
+    
+private void SetDefaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetDefaultsButtonActionPerformed
+    setDefaultValues();
+}//GEN-LAST:event_SetDefaultsButtonActionPerformed
 
 private void ProblemChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProblemChooserButtonActionPerformed
-
     new TreeProblemChooser(this, true, ChosenProblemField).setVisible(true);
 }//GEN-LAST:event_ProblemChooserButtonActionPerformed
 
-private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitMenuItemActionPerformed
+private void CancelGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelGAButtonActionPerformed
+    task.stop();
+    StartGA.setEnabled(true);
+    SetDefaultsButton.setEnabled(true);
+    CancelGAButton.setEnabled(false);
+}//GEN-LAST:event_CancelGAButtonActionPerformed
 
+private void StartGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartGAActionPerformed
+    
+    // if we run the GA for the second time, the TimeSeries for the chart needs to be empty!
+    dynTimeSeries.clear();
+    
+    //disable the defaults button
+    SetDefaultsButton.setEnabled(false);
+    
+    //disable optimal-hit colorization
+    
+    BestIndiFitnessField.setBackground(DEF_BG_COLOR);
+    OptimField.setBackground(DEF_BG_COLOR);
+    
+    // ALLGEMEINE EINSTELLUNGEN einlesen
+    // get start pop size and amount of generations
+    
+    
+    // ALLGEMEINE EINSTELLUNGEN einlesen
+    // get start pop size and amount of generations
+    int startPopSize = Integer.parseInt(this.PopSizeField.getText());
+    int generations = Integer.parseInt(this.GenSizeField.getText());
+    
+    // get chosen instance
+    
+    // get chosen instance
+    String instance = ChosenProblemField.getText();
+    //boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
+    // ERWEITERTE EINSTELLUNGEN einlesen
+    // get greedy chance
+    //boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
+    // ERWEITERTE EINSTELLUNGEN einlesen
+    // get greedy chance
+    SpinnerModel greedyModel = this.GreedySpinner.getModel();
+    double greedyChance = this.ConvertGreedyPercentage(greedyModel.getValue());
+    
+    // get amount of children to be reproduced
+    
+    // get amount of children to be reproduced
+    SpinnerNumberModel childrenModel = (SpinnerNumberModel) this.ChildrenSpinner.getModel();
+    double forcedChildren = childrenModel.getNumber().doubleValue();
+    
+    // get the value for fees
+    
+    // get the value for fees
+    SpinnerNumberModel feeModel = (SpinnerNumberModel) this.FeeSpinner.getModel();
+    double fees = feeModel.getNumber().doubleValue();
+    
+    // get selection method
+    
+    // get selection method
+    boolean rouletteSelected = this.RouletteSelect.isSelected() ? true : false;
+    int rouletteSelection = rouletteSelected ? 1 : 0;
+    
+    
+    // Input Werte in Config Klasse schreiben
+    Config.setNewGenerationSize(forcedChildren);
+    Config.setFee(fees);
+    Config.setPercentageGreedy(greedyChance);
+    Config.setSelectionMethod(rouletteSelection);
+    
+    try {
+        
+        Problem problem = null;
+        
+        // SwingWorker ab hier!
+        if (instance.startsWith("P")) {
+            problem = ProblemHolmberg.readProblem(instance);
+            OptimField.setText(""+ HolmbergOptimal.getOptimal(problem));
+        } else if (instance.startsWith("i")) {
+            problem = ProblemBoccia.readProblem(instance);
+            OptimField.setText("n/a");
+        } else if (!instance.startsWith("P") & !instance.startsWith("i")) {
+            StatusTextLabel.setText("Konnte GA nicht starten. Fehler: Keine Probleminstanz gew\u00e4hlt!");
+        }
+        
+        if (problem != null) {
+            task = new GAExecutorTask(problem, startPopSize, generations);
+            
+            
+            GAProgressBar.setValue(0);
+            BestIndiDurationField.setText("");
+            BestIndiFitnessField.setText("");
+            BestIndiGeneField.setText("");
+            BestIndiWareHousesField.setText("");
+            StartGA.setEnabled(false);
+            CancelGAButton.setEnabled(true);
+            
+            // here we go !
+            task.execute();
+        }
+    } catch (Exception e) {
+        
+        StatusTextLabel.setText("Konnte GA nicht starten. Fehler:" + e.getClass().getName());
+        logger.fatal(e.getMessage(),e);
+    }
+}//GEN-LAST:event_StartGAActionPerformed
+
+private boolean askForExit() {
+    
+    int n = JOptionPane.showOptionDialog(this, "Sind Sie sicher, dass Sie jMole beenden wollen?", "Bitte best\u00e4tigen!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+    
+    return n == JOptionPane.YES_OPTION;
+}
+private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitMenuItemActionPerformed
+    
     if (askForExit()) {
         this.dispose();
         System.exit(0);
     }
 }//GEN-LAST:event_QuitMenuItemActionPerformed
 
-    private void StartGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartGAActionPerformed
-
-        // if we run the GA for the second time, the TimeSeries for the chart needs to be empty!
-        dynTimeSeries.clear();
-        
-        // ALLGEMEINE EINSTELLUNGEN einlesen
-        // get start pop size and amount of generations
-
-
-        // ALLGEMEINE EINSTELLUNGEN einlesen
-        // get start pop size and amount of generations
-        int startPopSize = Integer.parseInt(this.PopSizeField.getText());
-        int generations = Integer.parseInt(this.GenSizeField.getText());
-
-        // get chosen instance
-
-        // get chosen instance
-        String instance = ChosenProblemField.getText();
-        //boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
-        // ERWEITERTE EINSTELLUNGEN einlesen
-        // get greedy chance
-        //boolean mindStagnation = this.QuitStagnation.isSelected() ? true : false;
-        // ERWEITERTE EINSTELLUNGEN einlesen
-        // get greedy chance
-        SpinnerModel greedyModel = this.GreedySpinner.getModel();
-        double greedyChance = this.ConvertGreedyPercentage(greedyModel.getValue());
-
-        // get amount of children to be reproduced
-
-        // get amount of children to be reproduced
-        SpinnerNumberModel childrenModel = (SpinnerNumberModel) this.ChildrenSpinner.getModel();
-        double forcedChildren = childrenModel.getNumber().doubleValue();
-
-        // get the value for fees
-
-        // get the value for fees
-        SpinnerNumberModel feeModel = (SpinnerNumberModel) this.FeeSpinner.getModel();
-        double fees = feeModel.getNumber().doubleValue();
-
-        // get selection method
-
-        // get selection method
-        boolean rouletteSelected = this.RouletteSelect.isSelected() ? true : false;
-        int rouletteSelection = rouletteSelected ? 1 : 0;
-
-        // Test Ouput of Values  DEV ONLY
-
-        // Test Ouput of Values  DEV ONLY
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Input-Values:  ");
-        sb.append(" startPopSize " + startPopSize);
-        sb.append(" generations " + generations);
-        sb.append(" instance " + instance);
-        sb.append(" greedyChance " + greedyChance);
-        sb.append(" forcedChildren " + forcedChildren);
-        sb.append(" fees " + fees);
-        sb.append(" rouletteSelection " + rouletteSelection);
-
-        logger.info( sb.toString());
-
-        // Input Werte in Config Klasse schreiben
-        Config.setNewGenerationSize(forcedChildren);
-        Config.setFee(fees);
-        Config.setPercentageGreedy(greedyChance);
-        Config.setSelectionMethod(rouletteSelection);
-
-        try {
-
-            Problem problem = null;
-
-            // SwingWorker ab hier!
-            if (instance.startsWith("P")) {
-                problem = ProblemHolmberg.readProblem(instance);
-            } else if (instance.startsWith("i")) {
-                problem = ProblemBoccia.readProblem(instance);
-            } else if (instance.startsWith("Keine")) {
-                StatusTextLabel.setText("Konnte GA nicht starten. Fehler: Keine Probleminstanz gewählt!");
-            }
-
-            if (problem != null) {
-                task = new GAExecutorTask(problem, startPopSize, generations);
-
-
-                GAProgressBar.setValue(0);
-                BestIndiDurationField.setText("");
-                BestIndiFitnessField.setText("");
-                BestIndiGeneField.setText("");
-                BestIndiWareHousesField.setText("");
-                StartGA.setEnabled(false);
-                CancelGAButton.setEnabled(true);
-
-                task.execute();
-            }
-        } catch (Exception e) {
-
-            StatusTextLabel.setText("Konnte GA nicht starten. Fehler:" + e.getClass().getName());
-        }
-}//GEN-LAST:event_StartGAActionPerformed
-    
     private void AboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutMenuItemActionPerformed
         new AboutDialog(this, false).setVisible(true);
 }//GEN-LAST:event_AboutMenuItemActionPerformed
     
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-            }//GEN-LAST:event_jMenuItem1ActionPerformed
+                }//GEN-LAST:event_jMenuItem1ActionPerformed
 
 /**
  * @param args the command line arguments
@@ -996,7 +994,11 @@ public static void main(String args[]) {
     }
 }
 
-
+/**
+ * Subclass of Swingworker to execute the GA asynchronously in a background thread (responsive UI)
+ * 
+ * 
+ * */
 class GAExecutorTask extends SwingWorker<Individual, Status>{
     
     Problem problem;
@@ -1016,43 +1018,43 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
         this.problem = problem;
         this.startPopSize = startPopSize;
         this.generations = generations;
-                
+        
         durationListener = new DurationLabelListener();
         chartupdater = new ChartUpdateListener(dynTimeSeries,dynPeriod);
-                
+        
         gaso = new GAStateObserver(this.generations, chartupdater);
         ga = new GA(problem);
         ga.getStatus().addObserver(gaso);
-       
+        
     }
     
     protected Individual doInBackground() {
         
         Individual  bestfound = null;
-                
+        
         try {
-            StatusTextLabel.setText("GA läuft...");
+            StatusTextLabel.setText("GA l\u00e4uft...");
             
             logger.info("Starting GA as background task");
-           
+            
             // start the Timer to throw Actionevents to the chartupdater/DurationListener every 1000 ms
-                      
+            
             timer = new Timer(1000, chartupdater);
             
             durationListener.aboutToStart();
             timer.addActionListener(durationListener);
             timer.start();
-
+            
             
             // Finally start the GA
             bestfound = ga.startAlgorithm(startPopSize, Criterion.GENERATIONS, generations);
-                        
+            
             logger.info("Finished GA as background task");
             
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-
+        
         
         return bestfound;
     }
@@ -1060,7 +1062,7 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     @Override
     protected void done() {
         
-        // remove and stop the timer services -> no more updates to chart/durationlabel     
+        // remove and stop the timer services -> no more updates to chart/durationlabel
         timer.removeActionListener(chartupdater);
         timer.removeActionListener(durationListener);
         timer.stop();
@@ -1072,12 +1074,8 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
         }
         StartGA.setEnabled(true);
         CancelGAButton.setEnabled(false);
+        SetDefaultsButton.setEnabled(true);
         
-        
-
-   
-        
-        // print final duration
         // update database (?) / update table on tab 2 (?)
         
         
@@ -1097,7 +1095,11 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     
 }
 
-
+/**
+ * Observes the GA and receives updates from it in order to update the UI (delegation)
+ * 
+ * 
+ * */
 class GAStateObserver implements Observer{
     
     private ChartUpdateListener cul;
@@ -1114,7 +1116,7 @@ class GAStateObserver implements Observer{
     public void update(Observable o, Object arg) {
         
         Status stat = (Status) o;
-           
+        
         try{
             java.awt.EventQueue.invokeAndWait( new GAProgressRunnable(stat, generations, cul));
         } catch(Exception e){
@@ -1124,6 +1126,12 @@ class GAStateObserver implements Observer{
     }
 }
 
+/**
+ * Runnable that encapsulates the UI-update logic
+ * 
+ * will be put on the EventDispatchThread by the GAStateObserver.
+ *  
+ * */
 class GAProgressRunnable implements Runnable{
     
     
@@ -1139,10 +1147,10 @@ class GAProgressRunnable implements Runnable{
     }
     
     public void run() {
-
+        
         int iteration = stat.getCurrentGeneration();
         Individual bestIndi = stat.getCurrentBestIndividual();
-
+        
         // update UI according to these values
         
         //progressbar
@@ -1162,18 +1170,24 @@ class GAProgressRunnable implements Runnable{
             
             double fitness = bestIndi.getFitness();
             cul.setFitness(fitness);
-                   
+            
+            if(HolmbergOptimal.isOptimal(bestIndi) && !StatusTextLabel.getText().contains(OPT_HIT_MSG)){
+                StatusTextLabel.setText(StatusTextLabel.getText() + OPT_HIT_MSG );
+                BestIndiFitnessField.setBackground(OPT_HIT_COLOR);
+                OptimField.setBackground(OPT_HIT_COLOR);
+            }
+            
             BestIndiFitnessField.setText("" + fitness);
             BestIndiFeeField.setText("" + bestIndi.getFeeCosts());
             
             if(bestIndi.isValid()){
-                BestIndiValidField.setText("Zulässig!");
-                BestIndiValidField.setForeground(new Color(50, 205, 50));
+                BestIndiValidField.setText(VALID_MSG);
+                BestIndiValidField.setForeground(VALID_CLR);
             } else {
-                BestIndiValidField.setText("Unzulässig!");
-               BestIndiValidField.setForeground(Color.RED);
-            }              
-
+                BestIndiValidField.setText(INVALID_MSG);
+                BestIndiValidField.setForeground(INVALID_CLR);
+            }
+            
             // add all genes to a set to remove duplicates -> amount of warehouse == size of set
             int[] genes = bestIndi.getGene();
             TreeSet<Integer> set = new TreeSet<Integer>();
@@ -1184,122 +1198,145 @@ class GAProgressRunnable implements Runnable{
             
             BestIndiWareHousesField.setText("" + set.size());
             
-        }        
-                
-    }   
-
-}
-
-class DurationLabelListener implements ActionListener{
-
-       private Date start = null;
-       SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
-
-        public void aboutToStart() {
-            
-            if(start == null){
-                this.start = new Date();
-            }
-            
         }
+        
+    }
     
-        public void actionPerformed(ActionEvent e) {
-           
-           if(start == null){
-               throw new RuntimeException("A Timer-Event was created, but aboutToStart() has not been called.");               
-           } 
-            
-           long ms = new Date().getTime() -  start.getTime();
-           BestIndiDurationField.setText(sdf.format(new Date(ms)));
-
-        }
 }
+
 
 /**
- * Updates the chart curve every 1000 ms to the value of its property fitness
+ * Listener to update the durationLabel. Gets called by a Swing Timer every 1000 ms to asure the correct time.
  * 
  * 
  * */
-class ChartUpdateListener implements ActionListener{
+class DurationLabelListener implements ActionListener{
+    
+    private Date start = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+    
+    public void aboutToStart() {
+        
+        if(start == null){
+            this.start = new Date();
+        }
+        
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        
+        if(start == null){
+            throw new RuntimeException("A Timer-Event was created, but aboutToStart() has not been called.");
+        }
+        
+        long ms = new Date().getTime() -  start.getTime();
+        BestIndiDurationField.setText(sdf.format(new Date(ms)));
+        
+    }
+}
 
+/**
+ * Updates the chart curve every 1000 ms to the value of its property fitness. Accuracy using Swing.Timer
+ *
+ *
+ * */
+class ChartUpdateListener implements ActionListener{
+    
     private double fitness = 0;
     private TimeSeries series = null;
     private RegularTimePeriod period = null;
-
-        public ChartUpdateListener(TimeSeries series, RegularTimePeriod period) {
-            
-            this.series = series;
-            this.period = period;
-        } 
     
-        public double getFitness() {
-            return fitness;
-        }
-
-        public void setFitness(double fitness) {
-            this.fitness = fitness;
-        }
-   
-        public void actionPerformed(ActionEvent evt) {
-            
-            period = period.next();  
-            series.add(period, fitness);
-            
-        }
+    public ChartUpdateListener(TimeSeries series, RegularTimePeriod period) {
         
+        this.series = series;
+        this.period = period;
+    }
+    
+    public double getFitness() {
+        return fitness;
+    }
+    
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
+    }
+    
+    public void actionPerformed(ActionEvent evt) {
+        
+        period = period.next();
+        series.add(period, fitness);
+        
+    }
+    
 }
 
 private void drawInitialChart(){
-
+    
     logger.info("Trying to draw initial chart");
     
-       dynPeriod = new Second();
-       dynTimeSeries = new TimeSeries("Verlauf der Fitness", Second.class);
-       dynSeriesCollection = new TimeSeriesCollection(dynTimeSeries);
-       
-       dynChart = ChartFactory.createTimeSeriesChart(
-                "",                              // title
-                "Zeit",                         // time axis label (x)
-                "Fitness",                      // value axis label (y)
-                dynSeriesCollection,            // the timeseriescollection
-                false,                          // legend
-                true,                           // tooltips
-                false);                         // urls
-        
-        XYPlot plot = dynChart.getXYPlot();
-        ValueAxis axis = plot.getDomainAxis();
-        axis.setAutoRange(true);
-        
-        // sets the x-axis on a fixed size/range
-        //axis.setFixedAutoRange(60000.0);  // 60 seconds
-        
-        axis = plot.getRangeAxis();
-        //axis.setRange(0.0, 100.0);
+    dynPeriod = new Second();
+    dynTimeSeries = new TimeSeries("Verlauf der Fitness", Second.class);
+    dynSeriesCollection = new TimeSeriesCollection(dynTimeSeries);
+    
+    dynChart = ChartFactory.createTimeSeriesChart(
+            "",                              // title
+            "Zeit",                         // time axis label (x)
+            "Fitness",                      // value axis label (y)
+            dynSeriesCollection,            // the timeseriescollection
+            false,                          // legend
+            true,                           // tooltips
+            false);                         // urls
+    
+    XYPlot plot = dynChart.getXYPlot();
+    ValueAxis axis = plot.getDomainAxis();
+    axis.setAutoRange(true);
+    
+    // sets the x-axis on a fixed size/range
+    //axis.setFixedAutoRange(60000.0);  // 60 seconds
+    
+    axis = plot.getRangeAxis();
+    //axis.setRange(0.0, 100.0);
+    
+    
+    plot.setBackgroundPaint(Color.lightGray);
+    plot.setDomainGridlinePaint(Color.white);
+    plot.setRangeGridlinePaint(Color.white);
+    
+    //draw a line on y-axis across the graph
+    //draw the line only on actual data points
+    plot.setRangeCrosshairVisible(true);
+    plot.setRangeCrosshairLockedOnData(true);
+    
+    
+    XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) plot.getRenderer();
+    r.setUseFillPaint(true);
+    r.setBaseFillPaint(Color.white);
+    
+    int w = rootChartPanel.getWidth();
+    int h = rootChartPanel.getHeight();
+    
+    ChartPanel chartPanel = new ChartPanel(dynChart,w,h,w,h,w,h,true,false,false,false,true,true);
+    
+    rootChartPanel.add(chartPanel);
+    
+    logger.info("Added initial chart to UI");
+    
+}
 
-        
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        
-        //draw a line on y-axis across the graph
-        //draw the line only on actual data points
-        plot.setRangeCrosshairVisible(true);
-        plot.setRangeCrosshairLockedOnData(true);
-        
-                
-        XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) plot.getRenderer();
-        r.setUseFillPaint(true);
-        r.setBaseFillPaint(Color.white);
 
-        int w = rootChartPanel.getWidth();
-        int h = rootChartPanel.getHeight();
-        
-        ChartPanel chartPanel = new ChartPanel(dynChart,w,h,w,h,w,h,true,false,false,false,true,true);
-        
-        rootChartPanel.add(chartPanel);
-        
-        logger.info("Added initial chart to UI");
- 
+private void setDefaultValues(){
+    
+    this.PopSizeField.setText(""+ this.DEF_POPSIZE);
+    this.GenSizeField.setText(""+ this.DEF_GENERATIONS);
+    this.FeeSpinner.setValue(this.DEF_FEE);
+    this.ChosenProblemField.setText(""+this.DEF_INSTANCE);
+    
+    this.GreedySpinner.getModel().setValue((Object)this.DEF_GREEDY);
+    this.ChildrenSpinner.getModel().setValue(this.DEF_NEWGENSIZE);
+    
+    
+    this.RouletteSelect.setSelected(this.DEF_SELMETHOD.equals(Selection.ROULETTE));
+    
+    
 }
 
 /**
@@ -1337,7 +1374,6 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JTextField BestIndiFeeField;
     private javax.swing.JTextField BestIndiFitnessField;
     private javax.swing.JTextField BestIndiGeneField;
-    private javax.swing.JTextField BestIndiProblemField;
     private javax.swing.JTextField BestIndiValidField;
     private javax.swing.JTextField BestIndiWareHousesField;
     private javax.swing.JMenuItem CSVMenuItem;
@@ -1364,9 +1400,10 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JMenu HilfeMenu1;
     private javax.swing.JPanel LaufzeitInfoPanel;
     private javax.swing.JTabbedPane MainTabPane;
+    private javax.swing.JTextField OptimField;
+    private javax.swing.JLabel OptimLabel;
     private javax.swing.JLabel ParentSelLabel2;
     private javax.swing.JTextField PopSizeField;
-    private javax.swing.JTextField PopSizeField1;
     private javax.swing.JButton ProblemChooserButton;
     private javax.swing.JMenuItem QuitMenuItem;
     private javax.swing.JMenuItem QuitMenuItem1;
@@ -1390,17 +1427,14 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JMenuBar TopMenu1;
     private javax.swing.JMenuItem UndoMenuItem;
     private javax.swing.JMenuItem UndoMenuItem1;
-    private javax.swing.JPanel VisualPanel;
     private javax.swing.JMenuItem ZurueckSetzenMenuItem;
     private javax.swing.JMenuItem ZurueckSetzenMenuItem1;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
@@ -1409,9 +1443,7 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
