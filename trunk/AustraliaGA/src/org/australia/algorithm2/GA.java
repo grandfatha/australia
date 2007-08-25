@@ -7,9 +7,9 @@ import org.australia.config.Config;
 import org.australia.problem.Problem;
 
 /**
- * mit diesem ga in diesem package soll ersteinmal testweise der ga so ausgeführt werden, dass nur 
+ * mit diesem ga in diesem package soll ersteinmal testweise der ga so ausgefÃ¼hrt werden, dass nur 
  * bestimmte facilities benutzt werden.
- * Diese müssen vorher z. B. durch den normalen ga als sehr gut ermittelt werden
+ * Diese mÃ¼ssen vorher z. B. durch den normalen ga als sehr gut ermittelt werden
  * 
  * @author jochen
  *

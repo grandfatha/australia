@@ -116,7 +116,7 @@ public class HolmbergOptimal {
     
     
     public static double getOptimal(Problem problem){
-    	return getOptimals().get(problem.getInstanceName());
+    	return getOptimals().get(problem.getInstanceName().toLowerCase());
     }
     
     public static boolean isOptimal(Individual individual){    	

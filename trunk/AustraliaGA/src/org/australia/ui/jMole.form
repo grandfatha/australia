@@ -199,7 +199,7 @@
                           <Component id="BasicSettingPanel" min="-2" pref="118" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="SelPressurePanel2" pref="146" max="32767" attributes="1"/>
+                              <Component id="SelPressurePanel2" pref="149" max="32767" attributes="1"/>
                               <Component id="ExtendedSettingPanel" alignment="0" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -229,26 +229,21 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="StartpopLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="GenSizeLabel" alignment="0" min="-2" max="-2" attributes="1"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="GenSizeField" max="32767" attributes="1"/>
-                                          <Component id="PopSizeField" alignment="0" pref="57" max="32767" attributes="1"/>
-                                      </Group>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="GreedyLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="GreedySpinner" min="-2" pref="57" max="-2" attributes="1"/>
-                                  </Group>
+                                  <Component id="StartpopLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="GenSizeLabel" alignment="0" min="-2" max="-2" attributes="1"/>
+                                  <Component id="jLabel17" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="43" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="GenSizeField" max="32767" attributes="1"/>
+                                      <Component id="PopSizeField" alignment="0" pref="60" max="32767" attributes="1"/>
+                                  </Group>
+                                  <Component id="ChosenProblemField" pref="60" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
@@ -257,20 +252,17 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jLabel17" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="ProblemChooserButton" alignment="0" min="-2" max="-2" attributes="1"/>
+                                          <Component id="GreedyLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="ChosenProblemField" alignment="0" pref="80" max="32767" attributes="1"/>
-                                  <Component id="FeeSpinner" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="PopSizeField1" alignment="0" pref="72" max="32767" attributes="1"/>
+                                  <Component id="GreedySpinner" max="32767" attributes="1"/>
+                                  <Component id="FeeSpinner" alignment="1" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                              <Component id="ProblemChooserButton" min="-2" pref="93" max="-2" attributes="1"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -293,21 +285,29 @@
                                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="GenSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="PopSizeField1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="GenSizeField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="GenSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="GenSizeField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="GreedyLabel" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="GreedySpinner" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="GreedyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="GreedySpinner" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ProblemChooserButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ChosenProblemField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                      <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="ChosenProblemField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="ProblemChooserButton" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -363,18 +363,6 @@
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel8">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Durchl&#xe4;ufe"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JTextField" name="PopSizeField1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="1"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
                     <Component class="javax.swing.JTextField" name="ChosenProblemField">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
@@ -382,7 +370,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="ProblemChooserButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Ausw&#xe4;hlen"/>
+                        <Property name="text" type="java.lang.String" value="Probleminstanz ausw&#xe4;hlen"/>
                         <Property name="toolTipText" type="java.lang.String" value="Dialog zum Ausw&#xe4;hlen der Probleminstanz"/>
                       </Properties>
                       <Events>
@@ -594,7 +582,7 @@
                                                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" attributes="0">
                                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                                           <Component id="BestIndiFitnessField" alignment="1" max="32767" attributes="1"/>
@@ -606,24 +594,22 @@
                                                           <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                                                       </Group>
                                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                      <Group type="103" groupAlignment="1" attributes="0">
+                                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                          <Component id="BestIndiFeeField" max="32767" attributes="1"/>
+                                                          <Component id="BestIndiValidField" alignment="0" pref="78" max="32767" attributes="1"/>
+                                                      </Group>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
                                                           <Group type="102" attributes="0">
-                                                              <Component id="BestIndiValidField" min="-2" pref="78" max="-2" attributes="1"/>
-                                                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                                                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                              <Component id="BestIndiDurationField" min="-2" pref="76" max="-2" attributes="1"/>
                                                           </Group>
-                                                          <Group type="102" alignment="0" attributes="0">
-                                                              <Component id="BestIndiFeeField" min="-2" pref="76" max="-2" attributes="1"/>
-                                                              <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                                                          <Group type="102" attributes="0">
+                                                              <Component id="OptimLabel" min="-2" max="-2" attributes="0"/>
+                                                              <EmptySpace max="-2" attributes="0"/>
+                                                              <Component id="OptimField" min="-2" pref="76" max="-2" attributes="1"/>
                                                           </Group>
-                                                      </Group>
-                                                      <Group type="103" groupAlignment="0" attributes="0">
-                                                          <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
-                                                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                                                      <Group type="103" groupAlignment="0" attributes="0">
-                                                          <Component id="BestIndiDurationField" pref="86" max="32767" attributes="1"/>
-                                                          <Component id="BestIndiProblemField" alignment="0" pref="86" max="32767" attributes="1"/>
                                                       </Group>
                                                   </Group>
                                                   <Component id="GAProgressBar" alignment="0" min="-2" pref="473" max="-2" attributes="0"/>
@@ -669,15 +655,15 @@
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="BestIndiValidField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="BestIndiProblemField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="BestIndiDurationField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="BestIndiFeeField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="BestIndiDurationField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="OptimLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="OptimField" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -765,30 +751,30 @@
                         <Property name="toolTipText" type="java.lang.String" value="Strafkosten des besten Individuums."/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel16">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Durchlauf"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JTextField" name="BestIndiProblemField">
-                      <Properties>
-                        <Property name="editable" type="boolean" value="false"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Aktueller Durchlauf"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
                     <Container class="javax.swing.JPanel" name="rootChartPanel">
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
                     </Container>
+                    <Component class="javax.swing.JLabel" name="OptimLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Optimum"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="OptimField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Bisherige Dauer des aktuellen Durchlaufs"/>
+                      </Properties>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Component class="javax.swing.JButton" name="SetDefaultsButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Standard wiederherstellen"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SetDefaultsButtonActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="CancelGAButton">
                   <Properties>
@@ -1013,55 +999,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="TODO: Anbindung an DB, View konzipiern"/>
                   </Properties>
-                </Component>
-              </SubComponents>
-            </Container>
-            <Container class="javax.swing.JPanel" name="VisualPanel">
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Visualisierung">
-                    <Property name="tabTitle" type="java.lang.String" value="Visualisierung"/>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="jLabel6" min="-2" pref="512" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace pref="74" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                          <Component id="jLabel6" min="-2" pref="218" max="-2" attributes="0"/>
-                          <EmptySpace pref="413" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-              <SubComponents>
-                <Component class="javax.swing.JLabel" name="jLabel13">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="maybe JFreeChart Time-View"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel6">
                 </Component>
               </SubComponents>
             </Container>
