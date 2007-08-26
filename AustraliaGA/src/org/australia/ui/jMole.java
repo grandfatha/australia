@@ -9,15 +9,20 @@ package org.australia.ui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -55,18 +60,32 @@ public class jMole extends javax.swing.JFrame {
     private TimeSeriesCollection dynSeriesCollection;
     private JFreeChart dynChart;
     private RegularTimePeriod dynPeriod;
+    private static SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("dd:MM:yy' 'HH:mm:ss");
+    private static DecimalFormat TWO_DIGIT = new DecimalFormat();
+    
+        
     
     //colors and messages for certain events during GA execution
     private static String OPT_HIT_MSG = "Optimum getroffen !!";
     private static Color OPT_HIT_COLOR = new Color(50, 205, 50);
-   
     
     private static String VALID_MSG = "Zul\u00e4ssig!";
     private static Color VALID_CLR =new Color(50, 205, 50);
     
     private static String INVALID_MSG = "Unzul\u00e4ssig!";
     private static Color INVALID_CLR = Color.RED;
-        
+    
+    private static String STATE_GA_CANCELED = "GA abgebrochen!";
+    private static String STATE_GA_FINISHED = "GA abgeschlossen!";
+    private static String STATE_GA_RUNNING = "GA l\u00e4uft...";
+    private static String STATE_GA_FAILED_START_ATTEMPT = "Konnte GA nicht starten. Fehler: ";
+    private static String STATE_GA_FAILED_START_ATTEMPT_NO_INSTANCE = "Konnte GA nicht starten. Fehler: " + 
+            "Keine Probleminstanz gew\u00e4hlt!";
+    
+    private static String DIALOG_EXIT_QUESTION = "Sind Sie sicher, dass Sie jMole beenden wollen?"; 
+    private static String DIALOG_EXIT_CONFRIRM_EXIT = "Bitte best\u00e4tigen!";
+
+    
     //restore the def-bg-color for textfields (second run of ga needs to be clean)
     private static Color DEF_BG_COLOR;
     
@@ -80,13 +99,7 @@ public class jMole extends javax.swing.JFrame {
     private static final Selection DEF_SELMETHOD = Selection.ROULETTE;
     
     private static enum Selection{
-        /**
-         * Random selection
-         */
         RANDOM,
-        /**
-         * roulette wheel selection
-         */
         ROULETTE
     }
     
@@ -100,6 +113,7 @@ public class jMole extends javax.swing.JFrame {
         drawInitialChart();
         
         DEF_BG_COLOR = OptimField.getBackground();
+        TWO_DIGIT.setMaximumFractionDigits(2);
     }
     
     
@@ -171,7 +185,6 @@ public class jMole extends javax.swing.JFrame {
         ResultViewPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel14 = new javax.swing.JLabel();
         TopMenu1 = new javax.swing.JMenuBar();
         DateiMenuItem1 = new javax.swing.JMenu();
         ExportMenu1 = new javax.swing.JMenu();
@@ -203,9 +216,14 @@ public class jMole extends javax.swing.JFrame {
         HilfeMenu = new javax.swing.JMenu();
         AboutMenuItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("jMole");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         BasicSettingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Allgemeine Einstellungen"));
 
@@ -659,43 +677,23 @@ public class jMole extends javax.swing.JFrame {
 
         MainTabPane.addTab("Genetischer Algorithmus", GASettingPanel);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        jTable1.setModel(drawInitialTable());
         jScrollPane1.setViewportView(jTable1);
-
-        jLabel14.setText("TODO: Anbindung an DB, View konzipiern");
 
         org.jdesktop.layout.GroupLayout ResultViewPanelLayout = new org.jdesktop.layout.GroupLayout(ResultViewPanel);
         ResultViewPanel.setLayout(ResultViewPanelLayout);
         ResultViewPanelLayout.setHorizontalGroup(
             ResultViewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(ResultViewPanelLayout.createSequentialGroup()
-                .add(ResultViewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(ResultViewPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))
-                    .add(ResultViewPanelLayout.createSequentialGroup()
-                        .add(168, 168, 168)
-                        .add(jLabel14)))
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ResultViewPanelLayout.setVerticalGroup(
             ResultViewPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(ResultViewPanelLayout.createSequentialGroup()
-                .add(48, 48, 48)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 87, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(122, 122, 122)
-                .add(jLabel14)
-                .addContainerGap(423, Short.MAX_VALUE))
+                .addContainerGap()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         MainTabPane.addTab("Resultat", ResultViewPanel);
@@ -840,6 +838,13 @@ public class jMole extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+       if (askForExit()) {
+        this.dispose();
+        System.exit(0);
+    }
+}//GEN-LAST:event_formWindowClosing
     
 private void SetDefaultsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetDefaultsButtonActionPerformed
     setDefaultValues();
@@ -928,7 +933,7 @@ private void StartGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
             problem = ProblemBoccia.readProblem(instance);
             OptimField.setText("n/a");
         } else if (!instance.startsWith("P") & !instance.startsWith("i")) {
-            StatusTextLabel.setText("Konnte GA nicht starten. Fehler: Keine Probleminstanz gew\u00e4hlt!");
+            StatusTextLabel.setText(STATE_GA_FAILED_START_ATTEMPT_NO_INSTANCE);
         }
         
         if (problem != null) {
@@ -948,14 +953,20 @@ private void StartGAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
         }
     } catch (Exception e) {
         
-        StatusTextLabel.setText("Konnte GA nicht starten. Fehler:" + e.getClass().getName());
+        StatusTextLabel.setText(STATE_GA_FAILED_START_ATTEMPT + e.getClass().getName());
         logger.fatal(e.getMessage(),e);
     }
 }//GEN-LAST:event_StartGAActionPerformed
 
 private boolean askForExit() {
     
-    int n = JOptionPane.showOptionDialog(this, "Sind Sie sicher, dass Sie jMole beenden wollen?", "Bitte best\u00e4tigen!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+    int n = JOptionPane.showOptionDialog(
+            this,             
+            DIALOG_EXIT_QUESTION,
+            DIALOG_EXIT_CONFRIRM_EXIT,
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null, null, null);
     
     return n == JOptionPane.YES_OPTION;
 }
@@ -972,7 +983,7 @@ private void QuitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_AboutMenuItemActionPerformed
     
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-                }//GEN-LAST:event_jMenuItem1ActionPerformed
+                    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
 /**
  * @param args the command line arguments
@@ -996,8 +1007,8 @@ public static void main(String args[]) {
 
 /**
  * Subclass of Swingworker to execute the GA asynchronously in a background thread (responsive UI)
- * 
- * 
+ *
+ *
  * */
 class GAExecutorTask extends SwingWorker<Individual, Status>{
     
@@ -1033,7 +1044,7 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
         Individual  bestfound = null;
         
         try {
-            StatusTextLabel.setText("GA l\u00e4uft...");
+            StatusTextLabel.setText(STATE_GA_RUNNING);
             
             logger.info("Starting GA as background task");
             
@@ -1061,24 +1072,26 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
     
     @Override
     protected void done() {
-        
-        // remove and stop the timer services -> no more updates to chart/durationlabel
-        timer.removeActionListener(chartupdater);
-        timer.removeActionListener(durationListener);
-        timer.stop();
-        
-        if(isCancelled() || stoppedByUser == true){
-            StatusTextLabel.setText("GA abgebrochen!");
-        } else{
-            StatusTextLabel.setText("GA abgeschlossen!");
-        }
-        StartGA.setEnabled(true);
-        CancelGAButton.setEnabled(false);
-        SetDefaultsButton.setEnabled(true);
-        
-        // update database (?) / update table on tab 2 (?)
-        
-        
+                          
+            timer.removeActionListener(chartupdater);
+            timer.removeActionListener(durationListener);
+            timer.stop();
+            if (isCancelled() || stoppedByUser == true) {
+                StatusTextLabel.setText(STATE_GA_CANCELED);
+            } else {
+                StatusTextLabel.setText(STATE_GA_FINISHED);
+            }
+            StartGA.setEnabled(true);
+            CancelGAButton.setEnabled(false);
+            SetDefaultsButton.setEnabled(true);
+           
+                //after we are done, we add the best indi to the table on the second tab
+           try {   
+                appendBestIndividual2Table(get(), new java.util.Date(), BestIndiDurationField.getText());
+                
+           } 
+           catch (InterruptedException ex) {logger.fatal(ex.getMessage(),ex); } 
+           catch (ExecutionException ex) { logger.fatal(ex.getMessage(),ex);  }
     }
     
     public void stop(){
@@ -1097,8 +1110,8 @@ class GAExecutorTask extends SwingWorker<Individual, Status>{
 
 /**
  * Observes the GA and receives updates from it in order to update the UI (delegation)
- * 
- * 
+ *
+ *
  * */
 class GAStateObserver implements Observer{
     
@@ -1128,9 +1141,9 @@ class GAStateObserver implements Observer{
 
 /**
  * Runnable that encapsulates the UI-update logic
- * 
+ *
  * will be put on the EventDispatchThread by the GAStateObserver.
- *  
+ *
  * */
 class GAProgressRunnable implements Runnable{
     
@@ -1171,13 +1184,17 @@ class GAProgressRunnable implements Runnable{
             double fitness = bestIndi.getFitness();
             cul.setFitness(fitness);
             
-            if(HolmbergOptimal.isOptimal(bestIndi) && !StatusTextLabel.getText().contains(OPT_HIT_MSG)){
-                StatusTextLabel.setText(StatusTextLabel.getText() + OPT_HIT_MSG );
-                BestIndiFitnessField.setBackground(OPT_HIT_COLOR);
-                OptimField.setBackground(OPT_HIT_COLOR);
+            if (bestIndi.getProblem() instanceof ProblemHolmberg) {
+                if(HolmbergOptimal.isOptimal(bestIndi) && !StatusTextLabel.getText().contains(OPT_HIT_MSG)){
+                    StatusTextLabel.setText(StatusTextLabel.getText() + OPT_HIT_MSG );
+                    BestIndiFitnessField.setBackground(OPT_HIT_COLOR);
+                    OptimField.setBackground(OPT_HIT_COLOR);
+                }
             }
             
-            BestIndiFitnessField.setText("" + fitness);
+            
+            
+            BestIndiFitnessField.setText(TWO_DIGIT.format(fitness));
             BestIndiFeeField.setText("" + bestIndi.getFeeCosts());
             
             if(bestIndi.isValid()){
@@ -1207,8 +1224,8 @@ class GAProgressRunnable implements Runnable{
 
 /**
  * Listener to update the durationLabel. Gets called by a Swing Timer every 1000 ms to asure the correct time.
- * 
- * 
+ *
+ *
  * */
 class DurationLabelListener implements ActionListener{
     
@@ -1339,6 +1356,54 @@ private void setDefaultValues(){
     
 }
 
+private TableModel drawInitialTable(){
+    
+    TableModel t =  new DefaultTableModel
+     ( new Object [][] {}, 
+       new String []{"ID", "Datum", "Probleminstanz", "Fitness", "Lager", "Zul\u00e4ssig", "Strafkosten", "Dauer"}
+     ) 
+    {
+        Class[] types = new Class [] {
+            Integer.class, String.class, String.class, String.class, Integer.class, Boolean.class, Double.class, String.class
+        };
+        boolean[] canEdit = new boolean [] {
+            false, false, false, false, false, false, false, false
+        };
+        
+        public Class getColumnClass(int columnIndex) {
+            return types [columnIndex];
+        }
+        
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return canEdit [columnIndex];
+        }
+    };
+    
+    logger.info("Added initial table to UI");
+    
+    return t;
+}
+
+private void appendBestIndividual2Table(Individual indi, Date date, String duration){
+    
+    int lastRow = jTable1.getModel().getRowCount();
+  
+    DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+    
+    Object[] data = {lastRow+1,                             // ID
+                     DAY_FORMAT.format(date),               // Date
+                     indi.getProblem().getInstanceName(),   // instance
+                     TWO_DIGIT.format(indi.getFitness()),   // fitness
+                     indi.getFacilities().size(),           // warehouses
+                     indi.isValid(),                        // valid?
+                     indi.getFeeCosts(),                    // fees 
+                     duration                               // GA run duration
+                    };
+    
+    model.addRow(data);
+}
+
+
 /**
  * BAAAAAD practice.....
  *
@@ -1433,7 +1498,6 @@ private double ConvertGreedyPercentage(Object spinnerValue){
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
