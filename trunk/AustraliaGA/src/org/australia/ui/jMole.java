@@ -63,7 +63,6 @@ public class jMole extends javax.swing.JFrame {
     private static SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("dd:MM:yy' 'HH:mm:ss");
     private static DecimalFormat TWO_DIGIT = new DecimalFormat();
     
-        
     
     //colors and messages for certain events during GA execution
     private static String OPT_HIT_MSG = "Optimum getroffen !!";
@@ -1405,8 +1404,7 @@ private void appendBestIndividual2Table(Individual indi, Date date, String durat
 
 
 /**
- * BAAAAAD practice.....
- *
+ * 
  * it feels so wrong... at least it works
  *
  */
