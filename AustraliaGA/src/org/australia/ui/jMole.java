@@ -16,7 +16,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -1341,16 +1340,16 @@ private void drawInitialChart(){
 
 private void setDefaultValues(){
     
-    this.PopSizeField.setText(""+ this.DEF_POPSIZE);
-    this.GenSizeField.setText(""+ this.DEF_GENERATIONS);
-    this.FeeSpinner.setValue(this.DEF_FEE);
-    this.ChosenProblemField.setText(""+this.DEF_INSTANCE);
+    this.PopSizeField.setText(""+ jMole.DEF_POPSIZE);
+    this.GenSizeField.setText(""+ jMole.DEF_GENERATIONS);
+    this.FeeSpinner.setValue(jMole.DEF_FEE);
+    this.ChosenProblemField.setText(""+jMole.DEF_INSTANCE);
     
-    this.GreedySpinner.getModel().setValue((Object)this.DEF_GREEDY);
-    this.ChildrenSpinner.getModel().setValue(this.DEF_NEWGENSIZE);
+    this.GreedySpinner.getModel().setValue((Object)jMole.DEF_GREEDY);
+    this.ChildrenSpinner.getModel().setValue(jMole.DEF_NEWGENSIZE);
     
     
-    this.RouletteSelect.setSelected(this.DEF_SELMETHOD.equals(Selection.ROULETTE));
+    this.RouletteSelect.setSelected(jMole.DEF_SELMETHOD.equals(Selection.ROULETTE));
     
     
 }
@@ -1358,9 +1357,11 @@ private void setDefaultValues(){
 private TableModel drawInitialTable(){
     
     TableModel t =  new DefaultTableModel
-     ( new Object [][] {}, 
+     // constructor parameters
+     ( new Object [][] {},
        new String []{"ID", "Datum", "Probleminstanz", "Fitness", "Lager", "Zul\u00e4ssig", "Strafkosten", "Dauer"}
-     ) 
+     )
+     //anonymous class starting from here
     {
         Class[] types = new Class [] {
             Integer.class, String.class, String.class, String.class, Integer.class, Boolean.class, Double.class, String.class
@@ -1369,10 +1370,12 @@ private TableModel drawInitialTable(){
             false, false, false, false, false, false, false, false
         };
         
+            @Override
         public Class getColumnClass(int columnIndex) {
             return types [columnIndex];
         }
         
+            @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return canEdit [columnIndex];
         }
