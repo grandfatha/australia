@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exe4j version="4.0.3" transformSequenceNumber="1">
+  <directoryPresets config="F:/Dokumente und Einstellungen/Daniel_h4x/Eigene Dateien/NetBeansProjects/AustraliaGA" />
+  <application name="jMole" distributionSourceDir="F:/Dokumente und Einstellungen/Daniel_h4x/Eigene Dateien/NetBeansProjects/AustraliaGA/src">
+    <languages>
+      <principalLanguage id="en" customLocalizationFile="" />
+    </languages>
+  </application>
+  <executable name="jMole" type="1" iconSet="true" iconFile="F:/Dokumente und Einstellungen/Daniel_h4x/Eigene Dateien/NetBeansProjects/AustraliaGA/src/org/australia/ui/img/Golf.ico" executableDir="./org/australia/ui" redirectStderr="true" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" amd64="false">
+    <messageSet />
+    <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" companyName="" productVersion="" />
+  </executable>
+  <splashScreen show="true" autoOff="true" alwaysOnTop="true" width="299" height="387" bitmapFile="F:/Dokumente und Einstellungen/Daniel_h4x/Eigene Dateien/NetBeansProjects/AustraliaGA/src/org/australia/ui/img/jMoleLogo.PNG">
+    <text>
+      <statusLine x="20" y="20" text="Loading jMole..." font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+      <versionLine x="20" y="40" text="version %VERSION%" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+    </text>
+  </splashScreen>
+  <java mainClass="org.australia.ui.jMole" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" minVersion="1.5" maxVersion="" allowBetaVM="true" jdkOnly="false">
+    <searchSequence>
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <classPath>
+      <archive location="../mysql-connector-java-5.0.6-bin.jar" failOnError="true" />
+      <directory location="../build/classes" failOnError="true" />
+      <archive location="../lib/jcommon-1.0.10.jar" failOnError="true" />
+      <archive location="../lib/jfreechart-1.0.6.jar" failOnError="true" />
+      <archive location="../lib/swing-layout-1.0.2.jar" failOnError="true" />
+      <archive location="../lib/swing-worker-1.1.jar" failOnError="true" />
+      <archive location="../lib/log4j-1.2.14.jar" failOnError="true" />
+      <directory location="../problem" failOnError="true" />
+    </classPath>
+    <nativeLibraryDirectories />
+  </java>
+  <includedFiles />
+  <unextractableFiles />
+</exe4j>
+
